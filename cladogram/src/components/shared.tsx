@@ -60,6 +60,7 @@ const PAGES = [
   { href: "/circos/guide", label: "The DNA web, explained" },
   { href: "/circos", label: "The full circle chart" },
   { href: "/pairs", label: "Breed pairs" },
+  { href: "/purpose", label: "Built for purpose" },
 ];
 
 export function SiteNav() {
