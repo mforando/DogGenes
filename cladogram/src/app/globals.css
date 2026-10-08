@@ -587,3 +587,78 @@ body::before {
   .timeline { overflow-x: auto; overscroll-behavior-x: contain; }
   .timeline svg { min-width: 760px; max-height: none; }
 }
+
+/* ---------- breed pairs page ---------- */
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.pairs { padding: 84px var(--gutter) 4rem; max-width: 1240px; margin: 0 auto; }
+.pairs-head { max-width: 50rem; margin-bottom: 2.5rem; }
+.pairs-head h1 { font-family: var(--font-display); font-weight: 500; font-size: var(--step-2); line-height: 1.08; margin: 0 0 1rem; }
+.pairs-lede { color: var(--ink-2); font-size: var(--step-0); margin: 0 0 1.2rem; }
+.pairs-lede strong { color: var(--ink); }
+.pairs-jump { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.8rem; }
+.pairs-jump a {
+  font-family: var(--font-label); font-size: 0.9rem; color: var(--ink); text-decoration: none;
+  border: 1px solid var(--rule); padding: 0.35rem 0.8rem; border-radius: 999px;
+}
+.pairs-jump a:hover { border-color: var(--gold-dim); color: var(--gold); }
+.pairs-tip { font-family: var(--font-label); font-size: 0.82rem; color: var(--ink-3); margin: 0; }
+.pairs-section { margin-top: 3.2rem; scroll-margin-top: 24px; }
+.pairs-section h2 { font-family: var(--font-display); font-weight: 500; font-size: var(--step-1); margin: 0 0 0.5rem; }
+.pairs-section > p { color: var(--ink-2); max-width: 52rem; margin: 0 0 1.2rem; }
+.pairs-section > p strong, .pairs-section > p em { color: var(--ink); }
+
+.pair-table-wrap { overflow-x: auto; border: 1px solid var(--rule); background: var(--bg-raise); }
+.pair-table { width: 100%; border-collapse: collapse; font-family: var(--font-label); min-width: 760px; }
+.pair-table th {
+  text-align: left; font-weight: 500; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--ink-3); border-bottom: 1px solid var(--rule); padding: 0; background: #111715; position: sticky; top: 0;
+}
+.pair-table th button {
+  all: unset; box-sizing: border-box; width: 100%; cursor: pointer; padding: 0.75rem 0.8rem;
+  display: flex; align-items: center; gap: 0.4rem; line-height: 1.25;
+}
+.pair-table th button:hover { color: var(--ink); }
+.pair-table th button:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
+.pair-table th[aria-sort="ascending"], .pair-table th[aria-sort="descending"] { color: var(--gold); }
+.pair-table th.num button { justify-content: flex-end; text-align: right; }
+.pair-table th.rank { padding: 0.75rem 0.6rem; }
+.sort-arrow { font-size: 0.7rem; opacity: 0.8; }
+.pair-table td { padding: 0.6rem 0.8rem; border-bottom: 1px solid #1a211e; vertical-align: middle; color: var(--ink-2); }
+.pair-table tbody tr:hover td { background: #161d1a; }
+.pair-table td:nth-child(3) { position: relative; }
+.pair-table .num { text-align: right; font-variant-numeric: tabular-nums; }
+.pair-table .rank { width: 2.5rem; color: var(--ink-3); padding-left: 0.6rem; padding-right: 0.2rem; }
+.pair-table .arrow { position: absolute; left: -0.55rem; top: 50%; transform: translateY(-50%); color: var(--gold); font-size: 1.1rem; }
+.pair-breed { display: flex; align-items: center; gap: 0.75rem; min-width: 13rem; }
+.pair-breed img, .pair-noimg {
+  width: 56px; height: 56px; object-fit: cover; border-radius: 4px; flex: none;
+  filter: sepia(0.2) saturate(0.9); background: #1a211e;
+}
+.pair-table tr:hover .pair-breed img { filter: none; }
+.pair-noimg {
+  display: grid; place-items: center; border: 1.5px dashed; color: var(--ink-3);
+  font-family: var(--font-display); font-size: 1.1rem; filter: none; box-sizing: border-box;
+}
+.pair-text { display: grid; gap: 0.15rem; min-width: 0; }
+.pair-name { color: var(--ink); font-size: 0.98rem; }
+.pair-family { display: flex; align-items: center; gap: 0.4rem; font-size: 0.78rem; color: var(--ink-3); }
+.pair-family i { width: 8px; height: 8px; border-radius: 2px; flex: none; }
+.col-share { width: 15rem; }
+.share { display: flex; align-items: center; gap: 0.7rem; }
+.share-bar { flex: 1; height: 8px; background: #1f2724; border-radius: 4px; overflow: hidden; min-width: 5rem; }
+.share-bar span { display: block; height: 100%; background: var(--gold); border-radius: 4px; }
+.share-num { display: grid; text-align: right; color: var(--ink); font-variant-numeric: tabular-nums; min-width: 3.4rem; font-size: 0.98rem; }
+.share-mb { font-size: 0.72rem; color: var(--ink-3); }
+.col-steps { width: 7rem; }
+.col-note { min-width: 16rem; max-width: 22rem; font-family: var(--font-body); font-size: 0.92rem; line-height: 1.45; }
+.show-all {
+  display: block; width: 100%; font-family: var(--font-label); font-size: 0.9rem; color: var(--gold);
+  background: #111715; border: 0; border-top: 1px solid var(--rule); padding: 0.75rem; cursor: pointer;
+}
+.show-all:hover { background: #151c19; }
+.pairs-foot { margin-top: 3.5rem; padding-top: 1.5rem; border-top: 1px solid var(--rule); font-size: 0.88rem; color: var(--ink-3); max-width: 56rem; }
+.pairs-foot a { color: var(--gold); }
+@media (max-width: 900px) {
+  .pairs { padding: 72px 16px 3rem; }
+  .pair-breed img, .pair-noimg { width: 44px; height: 44px; }
+}

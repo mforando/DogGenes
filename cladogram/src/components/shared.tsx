@@ -59,6 +59,7 @@ const PAGES = [
   { href: "/", label: "The family tree" },
   { href: "/circos/guide", label: "The DNA web, explained" },
   { href: "/circos", label: "The full circle chart" },
+  { href: "/pairs", label: "Breed pairs" },
 ];
 
 export function SiteNav() {
