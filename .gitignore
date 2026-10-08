@@ -1,0 +1,6 @@
+# App build caches and dependencies (the published site in this folder IS committed)
+cladogram/node_modules/
+cladogram/.next/
+cladogram/out/
+cladogram/next-env.d.ts
+cladogram/*.tsbuildinfo

@@ -1,0 +1,17 @@
+{
+  "note": "Files copied here by cladogram/scripts/publish.mjs. Safe to delete with them.",
+  "entries": [
+    "404",
+    "404.html",
+    "circos",
+    "icon.svg",
+    "index.html",
+    "index.txt",
+    "_next",
+    "_not-found",
+    "__next._full.txt",
+    "__next._tree.txt",
+    "__next.__PAGE__.txt",
+    ".nojekyll"
+  ]
+}

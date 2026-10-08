@@ -1,0 +1,6314 @@
+{
+"breeds": [
+{
+"code": "WOLF",
+"name": "Grey Wolf",
+"clade": "Wild",
+"weakClade": false
+},
+{
+"code": "BSJI",
+"name": "Basenji",
+"clade": "Basenji",
+"weakClade": false
+},
+{
+"code": "XIGO",
+"name": "Xigou",
+"clade": "AsianSpitz",
+"weakClade": false
+},
+{
+"code": "CHTM",
+"name": "Tibetan Mastiff - COO",
+"clade": "AsianSpitz",
+"weakClade": false
+},
+{
+"code": "TIBM",
+"name": "Tibetan Mastiff - USA",
+"clade": "AsianSpitz",
+"weakClade": false
+},
+{
+"code": "HUSK",
+"name": "Siberian Husky",
+"clade": "AsianSpitz",
+"weakClade": false
+},
+{
+"code": "GREE",
+"name": "Greenland Sledge Dog",
+"clade": "AsianSpitz",
+"weakClade": false
+},
+{
+"code": "AMAL",
+"name": "Alaskan Malamute",
+"clade": "AsianSpitz",
+"weakClade": false
+},
+{
+"code": "SHIB",
+"name": "Shiba Inu",
+"clade": "AsianSpitz",
+"weakClade": false
+},
+{
+"code": "AKIT",
+"name": "Akita",
+"clade": "AsianSpitz",
+"weakClade": false
+},
+{
+"code": "SHAR",
+"name": "Chinese Shar-Pei",
+"clade": "AsianSpitz",
+"weakClade": false
+},
+{
+"code": "CHOW",
+"name": "Chow Chow",
+"clade": "AsianSpitz",
+"weakClade": false
+},
+{
+"code": "EURA",
+"name": "Eurasier",
+"clade": null,
+"weakClade": false
+},
+{
+"code": "SAMO",
+"name": "Samoyed",
+"clade": null,
+"weakClade": false
+},
+{
+"code": "FINS",
+"name": "Finish Spitz",
+"clade": null,
+"weakClade": false
+},
+{
+"code": "CHIN",
+"name": "Japanese Chin",
+"clade": "AsianToy",
+"weakClade": false
+},
+{
+"code": "TIBS",
+"name": "Tibetan Spaniel",
+"clade": "AsianToy",
+"weakClade": false
+},
+{
+"code": "PEKE",
+"name": "Pekingese",
+"clade": "AsianToy",
+"weakClade": false
+},
+{
+"code": "LHSA",
+"name": "Lhasa Apso",
+"clade": "AsianToy",
+"weakClade": false
+},
+{
+"code": "SHIH",
+"name": "Shih Tzu",
+"clade": "AsianToy",
+"weakClade": false
+},
+{
+"code": "TIBT",
+"name": "Tibetan Terrier",
+"clade": null,
+"weakClade": false
+},
+{
+"code": "NELK",
+"name": "Norwegian Elkhound",
+"clade": "NordicSpitz",
+"weakClade": false
+},
+{
+"code": "SVAL",
+"name": "Swedish Vallhund",
+"clade": "NordicSpitz",
+"weakClade": false
+},
+{
+"code": "ICES",
+"name": "Icelandic Sheepdog",
+"clade": "NordicSpitz",
+"weakClade": false
+},
+{
+"code": "KEES",
+"name": "Keeshond",
+"clade": "NordicSpitz",
+"weakClade": false
+},
+{
+"code": "SSNZ",
+"name": "Standard Schnauzer",
+"clade": "Schnauzer",
+"weakClade": false
+},
+{
+"code": "MSNZ",
+"name": "Miniature Schnauzer",
+"clade": "Schnauzer",
+"weakClade": false
+},
+{
+"code": "AESK",
+"name": "American Eskimo Dog",
+"clade": "SmallSpitz",
+"weakClade": false
+},
+{
+"code": "VPIN",
+"name": "Volpino",
+"clade": "SmallSpitz",
+"weakClade": false
+},
+{
+"code": "POM",
+"name": "Pomeranian",
+"clade": "SmallSpitz",
+"weakClade": false
+},
+{
+"code": "SKIP",
+"name": "Schipperke",
+"clade": "ToySpitz",
+"weakClade": false
+},
+{
+"code": "PAPI",
+"name": "Papillon",
+"clade": "ToySpitz",
+"weakClade": false
+},
+{
+"code": "BRUS",
+"name": "Brussels Griffon",
+"clade": "ToySpitz",
+"weakClade": false
+},
+{
+"code": "PUG",
+"name": "PugDog",
+"clade": "ToySpitz",
+"weakClade": false
+},
+{
+"code": "PULI",
+"name": "Puli",
+"clade": "Hungarian",
+"weakClade": false
+},
+{
+"code": "PUMI",
+"name": "Pumi",
+"clade": "Hungarian",
+"weakClade": false
+},
+{
+"code": "COTO",
+"name": "Coton de Tulear",
+"clade": "Poodle",
+"weakClade": true
+},
+{
+"code": "PTWD",
+"name": "Portuguese Water Dog",
+"clade": "Poodle",
+"weakClade": true
+},
+{
+"code": "SPOO",
+"name": "Standard Poodle",
+"clade": "Poodle",
+"weakClade": false
+},
+{
+"code": "TPOO",
+"name": "Toy Poodle",
+"clade": "Poodle",
+"weakClade": false
+},
+{
+"code": "MPOO",
+"name": "Miniature Poodle",
+"clade": "Poodle",
+"weakClade": false
+},
+{
+"code": "BICH",
+"name": "Bichon Frise",
+"clade": "Poodle",
+"weakClade": false
+},
+{
+"code": "HAVA",
+"name": "Havanese",
+"clade": "Poodle",
+"weakClade": false
+},
+{
+"code": "MALT",
+"name": "Maltese",
+"clade": "Poodle",
+"weakClade": false
+},
+{
+"code": "RATT",
+"name": "Rat Terrier",
+"clade": "AmericanTerrier",
+"weakClade": false
+},
+{
+"code": "TYFX",
+"name": "Toy Fox Terrier",
+"clade": "AmericanTerrier",
+"weakClade": false
+},
+{
+"code": "AHRT",
+"name": "American Hairless Terrier",
+"clade": "AmericanTerrier",
+"weakClade": false
+},
+{
+"code": "CRES",
+"name": "Chinese Crested",
+"clade": "AmericanToy",
+"weakClade": false
+},
+{
+"code": "CHIH",
+"name": "Chihuahua",
+"clade": "AmericanToy",
+"weakClade": false
+},
+{
+"code": "MNTY",
+"name": "Toy Manchester Terrier",
+"clade": "Pinscher",
+"weakClade": false
+},
+{
+"code": "MPIN",
+"name": "Miniature Pinscher",
+"clade": "Pinscher",
+"weakClade": false
+},
+{
+"code": "AIRT",
+"name": "Airedale Terrier",
+"clade": "Terrier",
+"weakClade": false
+},
+{
+"code": "KERY",
+"name": "Kerry Blue Terrier",
+"clade": "Terrier",
+"weakClade": false
+},
+{
+"code": "GLEN",
+"name": "Glen of Imaal Terrier",
+"clade": "Terrier",
+"weakClade": false
+},
+{
+"code": "SCWT",
+"name": "Soft Coated Wheaten Terrier",
+"clade": "Terrier",
+"weakClade": false
+},
+{
+"code": "IRIT",
+"name": "Irish Terrier",
+"clade": "Terrier",
+"weakClade": false
+},
+{
+"code": "BEDT",
+"name": "Bedlington Terrier",
+"clade": "Terrier",
+"weakClade": false
+},
+{
+"code": "BORT",
+"name": "Border Terrier",
+"clade": "Terrier",
+"weakClade": false
+},
+{
+"code": "PARS",
+"name": "Parson Russell Terrier",
+"clade": "Terrier",
+"weakClade": false
+},
+{
+"code": "JACK",
+"name": "Jack Russell terrier",
+"clade": "Terrier",
+"weakClade": false
+},
+{
+"code": "WFOX",
+"name": "Wire Fox Terrier",
+"clade": "Terrier",
+"weakClade": false
+},
+{
+"code": "AUST",
+"name": "Australian Terrier",
+"clade": "Terrier",
+"weakClade": false
+},
+{
+"code": "SILK",
+"name": "Silky Terrier",
+"clade": "Terrier",
+"weakClade": false
+},
+{
+"code": "YORK",
+"name": "Yorkshire Terrier",
+"clade": "Terrier",
+"weakClade": false
+},
+{
+"code": "NOWT",
+"name": "Norwich Terrier",
+"clade": "Terrier",
+"weakClade": false
+},
+{
+"code": "NORF",
+"name": "Norfolk Terrier",
+"clade": "Terrier",
+"weakClade": false
+},
+{
+"code": "SCOT",
+"name": "Scottish Terrier",
+"clade": "Terrier",
+"weakClade": false
+},
+{
+"code": "CAIR",
+"name": "Cairn Terrier",
+"clade": "Terrier",
+"weakClade": false
+},
+{
+"code": "WHWT",
+"name": "West Highland White Terrier",
+"clade": "Terrier",
+"weakClade": false
+},
+{
+"code": "MXOL",
+"name": "Miniature Xoloitzcuintli",
+"clade": "NewWorld",
+"weakClade": true
+},
+{
+"code": "XOLO",
+"name": "Xoloitzcuintli",
+"clade": "NewWorld",
+"weakClade": true
+},
+{
+"code": "INCA",
+"name": "Peruvian Hairless Dog",
+"clade": "NewWorld",
+"weakClade": true
+},
+{
+"code": "COOK",
+"name": "Chinook",
+"clade": "NewWorld",
+"weakClade": false
+},
+{
+"code": "BPIC",
+"name": "Berger Picard",
+"clade": "NewWorld",
+"weakClade": false
+},
+{
+"code": "CPAT",
+"name": "Cane Paratore",
+"clade": "NewWorld",
+"weakClade": false
+},
+{
+"code": "GSD",
+"name": "German Shepherd Dog",
+"clade": "NewWorld",
+"weakClade": false
+},
+{
+"code": "GPYR",
+"name": "Great Pyrenees",
+"clade": "Mediterranean",
+"weakClade": false
+},
+{
+"code": "PHAR",
+"name": "Pharaoh Hound",
+"clade": "Mediterranean",
+"weakClade": false
+},
+{
+"code": "CIRN",
+"name": "Cirneco dell'Etna",
+"clade": "Mediterranean",
+"weakClade": false
+},
+{
+"code": "IBIZ",
+"name": "Ibizan Hound",
+"clade": "Mediterranean",
+"weakClade": false
+},
+{
+"code": "KOMO",
+"name": "Komondor",
+"clade": "Mediterranean",
+"weakClade": false
+},
+{
+"code": "KUVZ",
+"name": "Kuvasz",
+"clade": "Mediterranean",
+"weakClade": false
+},
+{
+"code": "MAAB",
+"name": "Mastino Abruzzese",
+"clade": "Mediterranean",
+"weakClade": false
+},
+{
+"code": "SLOU",
+"name": "Sloughi",
+"clade": "Mediterranean",
+"weakClade": false
+},
+{
+"code": "LVMD",
+"name": "Levriero Meridionale",
+"clade": "Mediterranean",
+"weakClade": false
+},
+{
+"code": "AZWK",
+"name": "Azawakh",
+"clade": "Mediterranean",
+"weakClade": false
+},
+{
+"code": "ANAT",
+"name": "Anatolian Shepherd",
+"clade": "Mediterranean",
+"weakClade": false
+},
+{
+"code": "AFGH",
+"name": "Afghan Hound",
+"clade": "Mediterranean",
+"weakClade": false
+},
+{
+"code": "COOS",
+"name": "Saluki - COO",
+"clade": "Mediterranean",
+"weakClade": false
+},
+{
+"code": "SALU",
+"name": "Saluki - USA",
+"clade": "Mediterranean",
+"weakClade": false
+},
+{
+"code": "DACH",
+"name": "Dachshund",
+"clade": "ScentHound",
+"weakClade": false
+},
+{
+"code": "PBGV",
+"name": "Petit Basset Griffon Vendeen",
+"clade": "ScentHound",
+"weakClade": false
+},
+{
+"code": "BASS",
+"name": "Basset Hound",
+"clade": "ScentHound",
+"weakClade": false
+},
+{
+"code": "REDB",
+"name": "Redbone Coonhound",
+"clade": "ScentHound",
+"weakClade": false
+},
+{
+"code": "BEAG",
+"name": "Beagle",
+"clade": "ScentHound",
+"weakClade": false
+},
+{
+"code": "FOXH",
+"name": "Foxhound",
+"clade": "ScentHound",
+"weakClade": false
+},
+{
+"code": "OTTR",
+"name": "Otterhound",
+"clade": "ScentHound",
+"weakClade": false
+},
+{
+"code": "BLDH",
+"name": "Bloodhound",
+"clade": "ScentHound",
+"weakClade": false
+},
+{
+"code": "ESSP",
+"name": "English Springer Spaniel",
+"clade": "Spaniel",
+"weakClade": false
+},
+{
+"code": "CKCS",
+"name": "Cavalier King Charles Spaniel",
+"clade": "Spaniel",
+"weakClade": false
+},
+{
+"code": "ACKR",
+"name": "American Cocker Spaniel",
+"clade": "Spaniel",
+"weakClade": false
+},
+{
+"code": "FIEL",
+"name": "Field Spaniel",
+"clade": "Spaniel",
+"weakClade": false
+},
+{
+"code": "ECKR",
+"name": "English Cocker Spaniel",
+"clade": "Spaniel",
+"weakClade": false
+},
+{
+"code": "NSDT",
+"name": "Nova Scotia Duck Tolling Retriever",
+"clade": "Retriever",
+"weakClade": true
+},
+{
+"code": "CCRT",
+"name": "Curly-coated Retriever",
+"clade": "Retriever",
+"weakClade": false
+},
+{
+"code": "IWSP",
+"name": "Irish Water Spaniel",
+"clade": "Retriever",
+"weakClade": false
+},
+{
+"code": "NEWF",
+"name": "Newfoundland",
+"clade": "Retriever",
+"weakClade": false
+},
+{
+"code": "LAB",
+"name": "Labrador Retriever",
+"clade": "Retriever",
+"weakClade": false
+},
+{
+"code": "GOLD",
+"name": "Golden Retriever",
+"clade": "Retriever",
+"weakClade": false
+},
+{
+"code": "FCR",
+"name": "Flat-coated Retriever",
+"clade": "Retriever",
+"weakClade": false
+},
+{
+"code": "DALM",
+"name": "Dalmatian",
+"clade": "PointerSetter",
+"weakClade": true
+},
+{
+"code": "WEIM",
+"name": "Weimaraner",
+"clade": "PointerSetter",
+"weakClade": false
+},
+{
+"code": "LMUN",
+"name": "Large Munsterlander",
+"clade": "PointerSetter",
+"weakClade": false
+},
+{
+"code": "VIZS",
+"name": "Vizsla",
+"clade": "PointerSetter",
+"weakClade": false
+},
+{
+"code": "WHPG",
+"name": "Wirehaired Pointing Griffon",
+"clade": "PointerSetter",
+"weakClade": false
+},
+{
+"code": "GWHP",
+"name": "German Wirehaired Pointer",
+"clade": "PointerSetter",
+"weakClade": false
+},
+{
+"code": "GSHP",
+"name": "German Shorthaired Pointer",
+"clade": "PointerSetter",
+"weakClade": false
+},
+{
+"code": "SPIN",
+"name": "Spinone Italiano",
+"clade": "PointerSetter",
+"weakClade": false
+},
+{
+"code": "BRIT",
+"name": "Brittany",
+"clade": "PointerSetter",
+"weakClade": false
+},
+{
+"code": "ISET",
+"name": "Irish Setter",
+"clade": "PointerSetter",
+"weakClade": false
+},
+{
+"code": "ESET",
+"name": "English Setter",
+"clade": "PointerSetter",
+"weakClade": false
+},
+{
+"code": "GORD",
+"name": "Gordon Setter",
+"clade": "PointerSetter",
+"weakClade": false
+},
+{
+"code": "BRIA",
+"name": "Briard",
+"clade": "ContinentalHerder",
+"weakClade": false
+},
+{
+"code": "BOUV",
+"name": "Bouvier des Flandres",
+"clade": "ContinentalHerder",
+"weakClade": false
+},
+{
+"code": "BMAL",
+"name": "Belgian Malinois",
+"clade": "ContinentalHerder",
+"weakClade": false
+},
+{
+"code": "TURV",
+"name": "Belgian Tervuren",
+"clade": "ContinentalHerder",
+"weakClade": false
+},
+{
+"code": "BELS",
+"name": "Belgian Sheepdog",
+"clade": "ContinentalHerder",
+"weakClade": false
+},
+{
+"code": "ITGY",
+"name": "Italian Greyhound",
+"clade": "UKRural",
+"weakClade": false
+},
+{
+"code": "BORZ",
+"name": "Borzoi",
+"clade": "UKRural",
+"weakClade": false
+},
+{
+"code": "IWOF",
+"name": "Irish Wolfhound",
+"clade": "UKRural",
+"weakClade": false
+},
+{
+"code": "DEER",
+"name": "Scottish Deerhound",
+"clade": "UKRural",
+"weakClade": false
+},
+{
+"code": "WHIP",
+"name": "Whippet",
+"clade": "UKRural",
+"weakClade": false
+},
+{
+"code": "GREY",
+"name": "Greyhound",
+"clade": "UKRural",
+"weakClade": false
+},
+{
+"code": "OES",
+"name": "Old English Sheepdog",
+"clade": "UKRural",
+"weakClade": false
+},
+{
+"code": "AUCD",
+"name": "Australian Cattle Dog",
+"clade": "UKRural",
+"weakClade": false
+},
+{
+"code": "BERD",
+"name": "Bearded Collie",
+"clade": "UKRural",
+"weakClade": false
+},
+{
+"code": "KELP",
+"name": "Kelpie",
+"clade": "UKRural",
+"weakClade": false
+},
+{
+"code": "BORD",
+"name": "Border Collie",
+"clade": "UKRural",
+"weakClade": false
+},
+{
+"code": "PEMB",
+"name": "Pembroke Welsh Corgi",
+"clade": "UKRural",
+"weakClade": false
+},
+{
+"code": "CARD",
+"name": "Cardigan Welsh Corgi",
+"clade": "UKRural",
+"weakClade": false
+},
+{
+"code": "AUSS",
+"name": "Australian Shepherd",
+"clade": "UKRural",
+"weakClade": false
+},
+{
+"code": "COLL",
+"name": "Collie",
+"clade": "UKRural",
+"weakClade": false
+},
+{
+"code": "SSHP",
+"name": "Shetland Sheepdog",
+"clade": "UKRural",
+"weakClade": false
+},
+{
+"code": "DOBP",
+"name": "Doberman Pinscher",
+"clade": "Drover",
+"weakClade": false
+},
+{
+"code": "GSNZ",
+"name": "Giant Schnauzer",
+"clade": "Drover",
+"weakClade": false
+},
+{
+"code": "BRTR",
+"name": "Black Russian Terrier",
+"clade": "Drover",
+"weakClade": false
+},
+{
+"code": "ROTT",
+"name": "Rottweiler",
+"clade": "Drover",
+"weakClade": false
+},
+{
+"code": "GSMD",
+"name": "Greater Swiss Mountain Dog",
+"clade": "Alpine",
+"weakClade": false
+},
+{
+"code": "BMD",
+"name": "Bernese Mountain Dog",
+"clade": "Alpine",
+"weakClade": false
+},
+{
+"code": "LEON",
+"name": "Leonberger",
+"clade": "Alpine",
+"weakClade": false
+},
+{
+"code": "STBD",
+"name": "Saint Bernard",
+"clade": "Alpine",
+"weakClade": false
+},
+{
+"code": "RHOD",
+"name": "Rhodesian Ridgeback",
+"clade": "EuropeanMastiff",
+"weakClade": false
+},
+{
+"code": "DANE",
+"name": "Great Dane",
+"clade": "EuropeanMastiff",
+"weakClade": false
+},
+{
+"code": "ITCC",
+"name": "Cane Corso - COO",
+"clade": "EuropeanMastiff",
+"weakClade": false
+},
+{
+"code": "CANE",
+"name": "Cane Corso - USA",
+"clade": "EuropeanMastiff",
+"weakClade": false
+},
+{
+"code": "NEAP",
+"name": "Neapolitan Mastiff",
+"clade": "EuropeanMastiff",
+"weakClade": false
+},
+{
+"code": "BOER",
+"name": "Boerboel",
+"clade": "EuropeanMastiff",
+"weakClade": false
+},
+{
+"code": "BULM",
+"name": "Bullmastiff",
+"clade": "EuropeanMastiff",
+"weakClade": false
+},
+{
+"code": "MAST",
+"name": "English Mastiff",
+"clade": "EuropeanMastiff",
+"weakClade": false
+},
+{
+"code": "AMST",
+"name": "American Staffordshire Terrier",
+"clade": "EuropeanMastiff",
+"weakClade": false
+},
+{
+"code": "STAF",
+"name": "Staffordshire Bull Terrier",
+"clade": "EuropeanMastiff",
+"weakClade": false
+},
+{
+"code": "MBLT",
+"name": "Miniature Bull Terrier",
+"clade": "EuropeanMastiff",
+"weakClade": false
+},
+{
+"code": "BULT",
+"name": "Bull Terrier",
+"clade": "EuropeanMastiff",
+"weakClade": false
+},
+{
+"code": "FBUL",
+"name": "French Bulldog",
+"clade": "EuropeanMastiff",
+"weakClade": false
+},
+{
+"code": "BOST",
+"name": "Boston Terrier",
+"clade": "EuropeanMastiff",
+"weakClade": false
+},
+{
+"code": "DDBX",
+"name": "Dogue de Bordeaux",
+"clade": "EuropeanMastiff",
+"weakClade": false
+},
+{
+"code": "BULD",
+"name": "Bulldog",
+"clade": "EuropeanMastiff",
+"weakClade": false
+},
+{
+"code": "BOX",
+"name": "Boxer",
+"clade": "EuropeanMastiff",
+"weakClade": false
+}
+],
+"sharing": [
+[
+"BSJI",
+"RATT",
+24646769
+],
+[
+"BSJI",
+"AZWK",
+12474508
+],
+[
+"CHTM",
+"TIBM",
+17486957
+],
+[
+"TIBM",
+"CHTM",
+17486957
+],
+[
+"HUSK",
+"GREE",
+116287890
+],
+[
+"HUSK",
+"AMAL",
+99279236
+],
+[
+"HUSK",
+"SAMO",
+12318598
+],
+[
+"HUSK",
+"COOK",
+13796914
+],
+[
+"GREE",
+"HUSK",
+116287890
+],
+[
+"GREE",
+"AMAL",
+282701817
+],
+[
+"GREE",
+"SAMO",
+14733738
+],
+[
+"GREE",
+"COOK",
+73991631
+],
+[
+"AMAL",
+"HUSK",
+99279236
+],
+[
+"AMAL",
+"GREE",
+282701817
+],
+[
+"AMAL",
+"COOK",
+41036934
+],
+[
+"SHIB",
+"AKIT",
+13127242
+],
+[
+"SHIB",
+"CHIN",
+17139847
+],
+[
+"AKIT",
+"SHIB",
+13127242
+],
+[
+"AKIT",
+"CHIN",
+13932005
+],
+[
+"SHAR",
+"CHOW",
+14833454
+],
+[
+"SHAR",
+"BOX",
+22515421
+],
+[
+"CHOW",
+"SHAR",
+14833454
+],
+[
+"CHOW",
+"EURA",
+178562836
+],
+[
+"EURA",
+"CHOW",
+178562836
+],
+[
+"EURA",
+"SAMO",
+58478336
+],
+[
+"EURA",
+"KEES",
+36699570
+],
+[
+"SAMO",
+"HUSK",
+12318598
+],
+[
+"SAMO",
+"GREE",
+14733738
+],
+[
+"SAMO",
+"EURA",
+58478336
+],
+[
+"SAMO",
+"AESK",
+14446128
+],
+[
+"CHIN",
+"SHIB",
+17139847
+],
+[
+"CHIN",
+"AKIT",
+13932005
+],
+[
+"CHIN",
+"TIBS",
+15189208
+],
+[
+"CHIN",
+"PEKE",
+28728370
+],
+[
+"CHIN",
+"LHSA",
+21208456
+],
+[
+"CHIN",
+"SHIH",
+18155498
+],
+[
+"TIBS",
+"CHIN",
+15189208
+],
+[
+"TIBS",
+"PEKE",
+128224531
+],
+[
+"TIBS",
+"LHSA",
+55076548
+],
+[
+"TIBS",
+"SHIH",
+80443458
+],
+[
+"TIBS",
+"TIBT",
+15956670
+],
+[
+"PEKE",
+"CHIN",
+28728370
+],
+[
+"PEKE",
+"TIBS",
+128224531
+],
+[
+"PEKE",
+"LHSA",
+110577441
+],
+[
+"PEKE",
+"SHIH",
+155354320
+],
+[
+"PEKE",
+"TIBT",
+16571312
+],
+[
+"PEKE",
+"PUG",
+12826098
+],
+[
+"PEKE",
+"CRES",
+16155682
+],
+[
+"PEKE",
+"MXOL",
+10386437
+],
+[
+"LHSA",
+"CHIN",
+21208456
+],
+[
+"LHSA",
+"TIBS",
+55076548
+],
+[
+"LHSA",
+"PEKE",
+110577441
+],
+[
+"LHSA",
+"SHIH",
+142069738
+],
+[
+"LHSA",
+"TIBT",
+17304595
+],
+[
+"LHSA",
+"PUG",
+9852027
+],
+[
+"SHIH",
+"CHIN",
+18155498
+],
+[
+"SHIH",
+"TIBS",
+80443458
+],
+[
+"SHIH",
+"PEKE",
+155354320
+],
+[
+"SHIH",
+"LHSA",
+142069738
+],
+[
+"SHIH",
+"TIBT",
+14739258
+],
+[
+"SHIH",
+"PUG",
+12179436
+],
+[
+"TIBT",
+"TIBS",
+15956670
+],
+[
+"TIBT",
+"PEKE",
+16571312
+],
+[
+"TIBT",
+"LHSA",
+17304595
+],
+[
+"TIBT",
+"SHIH",
+14739258
+],
+[
+"TIBT",
+"PUG",
+13713794
+],
+[
+"TIBT",
+"WFOX",
+13030532
+],
+[
+"SVAL",
+"ICES",
+13834141
+],
+[
+"SVAL",
+"KEES",
+16036964
+],
+[
+"ICES",
+"SVAL",
+13834141
+],
+[
+"ICES",
+"KEES",
+12354893
+],
+[
+"ICES",
+"AESK",
+14627453
+],
+[
+"ICES",
+"MNTY",
+12346119
+],
+[
+"KEES",
+"EURA",
+36699570
+],
+[
+"KEES",
+"SVAL",
+16036964
+],
+[
+"KEES",
+"ICES",
+12354893
+],
+[
+"KEES",
+"SSNZ",
+10477796
+],
+[
+"KEES",
+"MSNZ",
+10232861
+],
+[
+"KEES",
+"AESK",
+10381171
+],
+[
+"KEES",
+"POM",
+15072311
+],
+[
+"KEES",
+"SKIP",
+10516003
+],
+[
+"SSNZ",
+"KEES",
+10477796
+],
+[
+"SSNZ",
+"MSNZ",
+28346819
+],
+[
+"SSNZ",
+"POM",
+12934787
+],
+[
+"SSNZ",
+"PUG",
+10476134
+],
+[
+"SSNZ",
+"GSNZ",
+24196453
+],
+[
+"MSNZ",
+"KEES",
+10232861
+],
+[
+"MSNZ",
+"SSNZ",
+28346819
+],
+[
+"MSNZ",
+"PUG",
+17725560
+],
+[
+"AESK",
+"SAMO",
+14446128
+],
+[
+"AESK",
+"ICES",
+14627453
+],
+[
+"AESK",
+"KEES",
+10381171
+],
+[
+"AESK",
+"POM",
+12699833
+],
+[
+"AESK",
+"SKIP",
+10014647
+],
+[
+"AESK",
+"PUG",
+12120706
+],
+[
+"AESK",
+"AHRT",
+10516235
+],
+[
+"AESK",
+"CRES",
+10652440
+],
+[
+"VPIN",
+"POM",
+28695972
+],
+[
+"POM",
+"KEES",
+15072311
+],
+[
+"POM",
+"SSNZ",
+12925238
+],
+[
+"POM",
+"AESK",
+12699833
+],
+[
+"POM",
+"VPIN",
+28695972
+],
+[
+"POM",
+"SKIP",
+10240580
+],
+[
+"POM",
+"PUG",
+10264844
+],
+[
+"POM",
+"MPIN",
+12650680
+],
+[
+"SKIP",
+"KEES",
+10516003
+],
+[
+"SKIP",
+"AESK",
+10014647
+],
+[
+"SKIP",
+"POM",
+10240580
+],
+[
+"SKIP",
+"BRUS",
+15158336
+],
+[
+"SKIP",
+"PUG",
+16345904
+],
+[
+"PAPI",
+"BRUS",
+12618631
+],
+[
+"PAPI",
+"PUG",
+12859671
+],
+[
+"BRUS",
+"SKIP",
+15158336
+],
+[
+"BRUS",
+"PAPI",
+12618631
+],
+[
+"BRUS",
+"PUG",
+59567054
+],
+[
+"BRUS",
+"CKCS",
+27887666
+],
+[
+"PUG",
+"PEKE",
+12826098
+],
+[
+"PUG",
+"LHSA",
+9852027
+],
+[
+"PUG",
+"SHIH",
+12179436
+],
+[
+"PUG",
+"TIBT",
+13713794
+],
+[
+"PUG",
+"SSNZ",
+10476134
+],
+[
+"PUG",
+"MSNZ",
+17725560
+],
+[
+"PUG",
+"AESK",
+12120706
+],
+[
+"PUG",
+"POM",
+10264844
+],
+[
+"PUG",
+"SKIP",
+16345904
+],
+[
+"PUG",
+"PAPI",
+12859671
+],
+[
+"PUG",
+"BRUS",
+59567054
+],
+[
+"PUG",
+"PULI",
+9865584
+],
+[
+"PUG",
+"COTO",
+18768248
+],
+[
+"PUG",
+"BICH",
+10992635
+],
+[
+"PUG",
+"RATT",
+10449796
+],
+[
+"PUG",
+"CRES",
+12018565
+],
+[
+"PUG",
+"BORT",
+10250539
+],
+[
+"PUG",
+"NSDT",
+14612352
+],
+[
+"PULI",
+"PUG",
+9865584
+],
+[
+"PULI",
+"PUMI",
+28409335
+],
+[
+"PUMI",
+"PULI",
+28409335
+],
+[
+"PUMI",
+"GSD",
+10571528
+],
+[
+"PUMI",
+"DOBP",
+9837430
+],
+[
+"COTO",
+"PUG",
+18768248
+],
+[
+"COTO",
+"MALT",
+16098142
+],
+[
+"COTO",
+"BPIC",
+14418520
+],
+[
+"COTO",
+"ECKR",
+11943054
+],
+[
+"PTWD",
+"SPOO",
+12930318
+],
+[
+"PTWD",
+"MPOO",
+11935341
+],
+[
+"PTWD",
+"BPIC",
+17783608
+],
+[
+"PTWD",
+"GSD",
+28709762
+],
+[
+"SPOO",
+"PTWD",
+12930318
+],
+[
+"SPOO",
+"TPOO",
+26439726
+],
+[
+"SPOO",
+"MPOO",
+37163060
+],
+[
+"TPOO",
+"SPOO",
+26439726
+],
+[
+"TPOO",
+"MPOO",
+148334993
+],
+[
+"TPOO",
+"BICH",
+12945384
+],
+[
+"TPOO",
+"HAVA",
+17597637
+],
+[
+"TPOO",
+"MALT",
+10718733
+],
+[
+"MPOO",
+"PTWD",
+11935341
+],
+[
+"MPOO",
+"SPOO",
+37163060
+],
+[
+"MPOO",
+"TPOO",
+148334993
+],
+[
+"MPOO",
+"BICH",
+10232534
+],
+[
+"MPOO",
+"HAVA",
+15685208
+],
+[
+"BICH",
+"PUG",
+10992635
+],
+[
+"BICH",
+"TPOO",
+12945384
+],
+[
+"BICH",
+"MPOO",
+10232534
+],
+[
+"BICH",
+"HAVA",
+28956799
+],
+[
+"BICH",
+"MALT",
+15284612
+],
+[
+"HAVA",
+"TPOO",
+17597637
+],
+[
+"HAVA",
+"MPOO",
+15685208
+],
+[
+"HAVA",
+"BICH",
+28956799
+],
+[
+"HAVA",
+"MALT",
+125891752
+],
+[
+"MALT",
+"COTO",
+16098142
+],
+[
+"MALT",
+"TPOO",
+10704042
+],
+[
+"MALT",
+"BICH",
+15284612
+],
+[
+"MALT",
+"HAVA",
+125891752
+],
+[
+"RATT",
+"BSJI",
+24646769
+],
+[
+"RATT",
+"PUG",
+10140493
+],
+[
+"RATT",
+"TYFX",
+20463662
+],
+[
+"RATT",
+"AHRT",
+14184832
+],
+[
+"RATT",
+"PARS",
+13248938
+],
+[
+"RATT",
+"JACK",
+12485176
+],
+[
+"RATT",
+"WFOX",
+21129950
+],
+[
+"RATT",
+"ACKR",
+11453650
+],
+[
+"TYFX",
+"RATT",
+20463662
+],
+[
+"TYFX",
+"AHRT",
+14696586
+],
+[
+"TYFX",
+"MNTY",
+12305156
+],
+[
+"TYFX",
+"SCWT",
+10253826
+],
+[
+"TYFX",
+"PARS",
+11976100
+],
+[
+"TYFX",
+"JACK",
+13011632
+],
+[
+"TYFX",
+"WFOX",
+25920250
+],
+[
+"AHRT",
+"AESK",
+10516235
+],
+[
+"AHRT",
+"RATT",
+14184832
+],
+[
+"AHRT",
+"TYFX",
+14696586
+],
+[
+"AHRT",
+"CHIH",
+10542286
+],
+[
+"AHRT",
+"MNTY",
+14393513
+],
+[
+"AHRT",
+"PARS",
+10562772
+],
+[
+"AHRT",
+"JACK",
+11803011
+],
+[
+"AHRT",
+"WFOX",
+20670315
+],
+[
+"CRES",
+"PEKE",
+16155682
+],
+[
+"CRES",
+"AESK",
+10678992
+],
+[
+"CRES",
+"PUG",
+12018565
+],
+[
+"CRES",
+"CHIH",
+23675138
+],
+[
+"CRES",
+"MNTY",
+10285540
+],
+[
+"CRES",
+"MXOL",
+13055485
+],
+[
+"CHIH",
+"AHRT",
+10542286
+],
+[
+"CHIH",
+"CRES",
+23675138
+],
+[
+"MNTY",
+"ICES",
+12346119
+],
+[
+"MNTY",
+"TYFX",
+10198568
+],
+[
+"MNTY",
+"AHRT",
+13450974
+],
+[
+"MNTY",
+"CRES",
+10285540
+],
+[
+"MNTY",
+"MPIN",
+21117658
+],
+[
+"MNTY",
+"AIRT",
+11968360
+],
+[
+"MNTY",
+"KERY",
+11103326
+],
+[
+"MNTY",
+"IRIT",
+13485737
+],
+[
+"MNTY",
+"BEDT",
+10701254
+],
+[
+"MNTY",
+"BORT",
+19298776
+],
+[
+"MNTY",
+"PARS",
+15719250
+],
+[
+"MNTY",
+"JACK",
+12896107
+],
+[
+"MNTY",
+"WFOX",
+18825000
+],
+[
+"MNTY",
+"AUST",
+12289046
+],
+[
+"MNTY",
+"MXOL",
+14213622
+],
+[
+"MNTY",
+"REDB",
+10931052
+],
+[
+"MNTY",
+"CKCS",
+12232649
+],
+[
+"MNTY",
+"ITGY",
+10685530
+],
+[
+"MNTY",
+"WHIP",
+10121958
+],
+[
+"MNTY",
+"DOBP",
+24074180
+],
+[
+"MNTY",
+"BULT",
+9801981
+],
+[
+"MPIN",
+"POM",
+12650680
+],
+[
+"MPIN",
+"MNTY",
+21117658
+],
+[
+"MPIN",
+"IRIT",
+9907398
+],
+[
+"MPIN",
+"CKCS",
+12012133
+],
+[
+"AIRT",
+"MNTY",
+11968360
+],
+[
+"AIRT",
+"GLEN",
+11958961
+],
+[
+"AIRT",
+"IRIT",
+20580226
+],
+[
+"AIRT",
+"YORK",
+20335154
+],
+[
+"AIRT",
+"WHWT",
+12727450
+],
+[
+"AIRT",
+"OTTR",
+11654633
+],
+[
+"AIRT",
+"NSDT",
+13167206
+],
+[
+"AIRT",
+"GOLD",
+11016301
+],
+[
+"AIRT",
+"KELP",
+10946768
+],
+[
+"AIRT",
+"AUSS",
+10296622
+],
+[
+"AIRT",
+"SSHP",
+11034657
+],
+[
+"AIRT",
+"GSNZ",
+24632272
+],
+[
+"AIRT",
+"BRTR",
+38187285
+],
+[
+"AIRT",
+"RHOD",
+12191958
+],
+[
+"KERY",
+"MNTY",
+11103326
+],
+[
+"KERY",
+"GLEN",
+17503420
+],
+[
+"KERY",
+"SCWT",
+58013757
+],
+[
+"KERY",
+"IRIT",
+18921610
+],
+[
+"KERY",
+"BEDT",
+13420029
+],
+[
+"KERY",
+"AMST",
+10687932
+],
+[
+"KERY",
+"FBUL",
+10198334
+],
+[
+"KERY",
+"BOST",
+11620680
+],
+[
+"KERY",
+"DDBX",
+11353574
+],
+[
+"KERY",
+"BOX",
+11028778
+],
+[
+"GLEN",
+"AIRT",
+11958961
+],
+[
+"GLEN",
+"KERY",
+17503420
+],
+[
+"GLEN",
+"SCWT",
+41861594
+],
+[
+"GLEN",
+"IRIT",
+19146223
+],
+[
+"GLEN",
+"BEDT",
+10592221
+],
+[
+"GLEN",
+"BORT",
+9761348
+],
+[
+"GLEN",
+"WFOX",
+10508473
+],
+[
+"GLEN",
+"AMST",
+11657958
+],
+[
+"GLEN",
+"STAF",
+30566575
+],
+[
+"GLEN",
+"MBLT",
+17624496
+],
+[
+"GLEN",
+"BULT",
+13168402
+],
+[
+"GLEN",
+"FBUL",
+10836989
+],
+[
+"GLEN",
+"BULD",
+14488016
+],
+[
+"GLEN",
+"BOX",
+11684681
+],
+[
+"SCWT",
+"TYFX",
+10253826
+],
+[
+"SCWT",
+"KERY",
+58013757
+],
+[
+"SCWT",
+"GLEN",
+41861594
+],
+[
+"SCWT",
+"IRIT",
+98716048
+],
+[
+"SCWT",
+"BEDT",
+11944866
+],
+[
+"SCWT",
+"BORT",
+12688093
+],
+[
+"SCWT",
+"JACK",
+10580135
+],
+[
+"SCWT",
+"WFOX",
+25291092
+],
+[
+"SCWT",
+"AMST",
+11235480
+],
+[
+"SCWT",
+"STAF",
+9810240
+],
+[
+"SCWT",
+"FBUL",
+11742190
+],
+[
+"SCWT",
+"BULD",
+10735837
+],
+[
+"IRIT",
+"MNTY",
+13485737
+],
+[
+"IRIT",
+"AIRT",
+20580226
+],
+[
+"IRIT",
+"KERY",
+18921610
+],
+[
+"IRIT",
+"GLEN",
+19146223
+],
+[
+"IRIT",
+"SCWT",
+98716048
+],
+[
+"IRIT",
+"BEDT",
+13329252
+],
+[
+"IRIT",
+"BORT",
+10543676
+],
+[
+"IRIT",
+"JACK",
+10915888
+],
+[
+"IRIT",
+"AUST",
+13673248
+],
+[
+"IRIT",
+"SILK",
+11053086
+],
+[
+"IRIT",
+"YORK",
+12698846
+],
+[
+"IRIT",
+"NOWT",
+11707654
+],
+[
+"IRIT",
+"NORF",
+17391352
+],
+[
+"IRIT",
+"BOX",
+9887866
+],
+[
+"BEDT",
+"MNTY",
+10701254
+],
+[
+"BEDT",
+"KERY",
+13420029
+],
+[
+"BEDT",
+"GLEN",
+10592221
+],
+[
+"BEDT",
+"SCWT",
+11944866
+],
+[
+"BEDT",
+"IRIT",
+13329252
+],
+[
+"BEDT",
+"BORT",
+44666888
+],
+[
+"BEDT",
+"PARS",
+22918566
+],
+[
+"BEDT",
+"JACK",
+14555584
+],
+[
+"BEDT",
+"NOWT",
+13446480
+],
+[
+"BEDT",
+"NORF",
+11454409
+],
+[
+"BEDT",
+"FOXH",
+9958495
+],
+[
+"BEDT",
+"ESSP",
+10228568
+],
+[
+"BEDT",
+"FIEL",
+12563133
+],
+[
+"BEDT",
+"WHIP",
+11037378
+],
+[
+"BORT",
+"PUG",
+10227690
+],
+[
+"BORT",
+"MNTY",
+19298776
+],
+[
+"BORT",
+"SCWT",
+12688093
+],
+[
+"BORT",
+"IRIT",
+10543676
+],
+[
+"BORT",
+"BEDT",
+44666888
+],
+[
+"BORT",
+"PARS",
+55529610
+],
+[
+"BORT",
+"JACK",
+29731677
+],
+[
+"BORT",
+"WFOX",
+10522871
+],
+[
+"BORT",
+"OTTR",
+9749873
+],
+[
+"PARS",
+"RATT",
+13248938
+],
+[
+"PARS",
+"TYFX",
+11976100
+],
+[
+"PARS",
+"AHRT",
+10562772
+],
+[
+"PARS",
+"MNTY",
+15719250
+],
+[
+"PARS",
+"BEDT",
+22918566
+],
+[
+"PARS",
+"BORT",
+55529610
+],
+[
+"PARS",
+"JACK",
+55447201
+],
+[
+"PARS",
+"WFOX",
+74318935
+],
+[
+"PARS",
+"STAF",
+11737054
+],
+[
+"JACK",
+"RATT",
+12485176
+],
+[
+"JACK",
+"TYFX",
+13011632
+],
+[
+"JACK",
+"AHRT",
+11803011
+],
+[
+"JACK",
+"MNTY",
+12896107
+],
+[
+"JACK",
+"SCWT",
+10580135
+],
+[
+"JACK",
+"IRIT",
+10915888
+],
+[
+"JACK",
+"BEDT",
+14555584
+],
+[
+"JACK",
+"BORT",
+29731677
+],
+[
+"JACK",
+"PARS",
+55447201
+],
+[
+"JACK",
+"WFOX",
+84506325
+],
+[
+"WFOX",
+"TIBT",
+13030532
+],
+[
+"WFOX",
+"RATT",
+21129950
+],
+[
+"WFOX",
+"TYFX",
+25920250
+],
+[
+"WFOX",
+"AHRT",
+20670315
+],
+[
+"WFOX",
+"MNTY",
+18825000
+],
+[
+"WFOX",
+"GLEN",
+10508473
+],
+[
+"WFOX",
+"SCWT",
+25291092
+],
+[
+"WFOX",
+"BORT",
+10501239
+],
+[
+"WFOX",
+"PARS",
+74318935
+],
+[
+"WFOX",
+"JACK",
+84506325
+],
+[
+"WFOX",
+"NOWT",
+11967904
+],
+[
+"WFOX",
+"NORF",
+11968464
+],
+[
+"WFOX",
+"PEMB",
+12830432
+],
+[
+"AUST",
+"MNTY",
+12289046
+],
+[
+"AUST",
+"IRIT",
+13673248
+],
+[
+"AUST",
+"SILK",
+67563463
+],
+[
+"AUST",
+"YORK",
+29512873
+],
+[
+"AUST",
+"NOWT",
+12093765
+],
+[
+"SILK",
+"IRIT",
+11053086
+],
+[
+"SILK",
+"AUST",
+67563463
+],
+[
+"SILK",
+"YORK",
+62405202
+],
+[
+"SILK",
+"NOWT",
+13140640
+],
+[
+"SILK",
+"NORF",
+16476636
+],
+[
+"YORK",
+"AIRT",
+20335154
+],
+[
+"YORK",
+"IRIT",
+12698846
+],
+[
+"YORK",
+"AUST",
+29512873
+],
+[
+"YORK",
+"SILK",
+62405202
+],
+[
+"YORK",
+"NOWT",
+23627170
+],
+[
+"YORK",
+"NORF",
+30059566
+],
+[
+"NOWT",
+"IRIT",
+11707654
+],
+[
+"NOWT",
+"BEDT",
+13446480
+],
+[
+"NOWT",
+"WFOX",
+11967904
+],
+[
+"NOWT",
+"AUST",
+12093765
+],
+[
+"NOWT",
+"SILK",
+13140640
+],
+[
+"NOWT",
+"YORK",
+23627170
+],
+[
+"NOWT",
+"NORF",
+211750504
+],
+[
+"NOWT",
+"SCOT",
+46649270
+],
+[
+"NOWT",
+"CAIR",
+31303900
+],
+[
+"NOWT",
+"WHWT",
+42074378
+],
+[
+"NORF",
+"IRIT",
+17391352
+],
+[
+"NORF",
+"BEDT",
+11454409
+],
+[
+"NORF",
+"WFOX",
+11968464
+],
+[
+"NORF",
+"SILK",
+16392774
+],
+[
+"NORF",
+"YORK",
+30059566
+],
+[
+"NORF",
+"NOWT",
+211750504
+],
+[
+"NORF",
+"SCOT",
+25577978
+],
+[
+"NORF",
+"CAIR",
+23057828
+],
+[
+"NORF",
+"WHWT",
+29624687
+],
+[
+"SCOT",
+"NOWT",
+46649270
+],
+[
+"SCOT",
+"NORF",
+25577978
+],
+[
+"SCOT",
+"CAIR",
+87033415
+],
+[
+"SCOT",
+"WHWT",
+134552529
+],
+[
+"CAIR",
+"NOWT",
+31303900
+],
+[
+"CAIR",
+"NORF",
+23057828
+],
+[
+"CAIR",
+"SCOT",
+87033415
+],
+[
+"CAIR",
+"WHWT",
+156744042
+],
+[
+"WHWT",
+"AIRT",
+12727450
+],
+[
+"WHWT",
+"NOWT",
+42074378
+],
+[
+"WHWT",
+"NORF",
+29624687
+],
+[
+"WHWT",
+"SCOT",
+134552529
+],
+[
+"WHWT",
+"CAIR",
+156744042
+],
+[
+"MXOL",
+"PEKE",
+10260738
+],
+[
+"MXOL",
+"CRES",
+13055485
+],
+[
+"MXOL",
+"MNTY",
+14213622
+],
+[
+"MXOL",
+"XOLO",
+12596727
+],
+[
+"MXOL",
+"COOK",
+11376104
+],
+[
+"XOLO",
+"MXOL",
+12596727
+],
+[
+"XOLO",
+"COOK",
+18546850
+],
+[
+"XOLO",
+"BPIC",
+20751269
+],
+[
+"XOLO",
+"CPAT",
+12143380
+],
+[
+"XOLO",
+"GSD",
+64169666
+],
+[
+"XOLO",
+"BMAL",
+9800916
+],
+[
+"XOLO",
+"COLL",
+10084036
+],
+[
+"XOLO",
+"DOBP",
+18752854
+],
+[
+"INCA",
+"COOK",
+11676145
+],
+[
+"INCA",
+"BPIC",
+10708762
+],
+[
+"INCA",
+"CPAT",
+11869204
+],
+[
+"INCA",
+"GSD",
+35569116
+],
+[
+"INCA",
+"DOBP",
+11510704
+],
+[
+"COOK",
+"HUSK",
+13796914
+],
+[
+"COOK",
+"GREE",
+73991631
+],
+[
+"COOK",
+"AMAL",
+41036934
+],
+[
+"COOK",
+"MXOL",
+11058102
+],
+[
+"COOK",
+"XOLO",
+18546850
+],
+[
+"COOK",
+"INCA",
+11393048
+],
+[
+"COOK",
+"BPIC",
+47395991
+],
+[
+"COOK",
+"CPAT",
+36635638
+],
+[
+"COOK",
+"GSD",
+122244313
+],
+[
+"COOK",
+"BMAL",
+15331749
+],
+[
+"COOK",
+"BERD",
+10690378
+],
+[
+"COOK",
+"AUSS",
+16649770
+],
+[
+"COOK",
+"COLL",
+30414484
+],
+[
+"COOK",
+"SSHP",
+15373677
+],
+[
+"COOK",
+"LEON",
+14825331
+],
+[
+"COOK",
+"ITCC",
+10509217
+],
+[
+"BPIC",
+"COTO",
+14418520
+],
+[
+"BPIC",
+"PTWD",
+17783608
+],
+[
+"BPIC",
+"XOLO",
+20751269
+],
+[
+"BPIC",
+"INCA",
+10708762
+],
+[
+"BPIC",
+"COOK",
+47395991
+],
+[
+"BPIC",
+"CPAT",
+46424034
+],
+[
+"BPIC",
+"GSD",
+123855029
+],
+[
+"BPIC",
+"BOUV",
+77578770
+],
+[
+"BPIC",
+"BMAL",
+29983100
+],
+[
+"BPIC",
+"TURV",
+26196084
+],
+[
+"BPIC",
+"BELS",
+18391105
+],
+[
+"BPIC",
+"DOBP",
+10790609
+],
+[
+"BPIC",
+"GSMD",
+17202820
+],
+[
+"BPIC",
+"LEON",
+19750965
+],
+[
+"CPAT",
+"XOLO",
+12143380
+],
+[
+"CPAT",
+"INCA",
+11869204
+],
+[
+"CPAT",
+"COOK",
+36635638
+],
+[
+"CPAT",
+"BPIC",
+46424034
+],
+[
+"CPAT",
+"GSD",
+124159673
+],
+[
+"CPAT",
+"BMAL",
+11352213
+],
+[
+"CPAT",
+"BOX",
+10232096
+],
+[
+"GSD",
+"PUMI",
+10571528
+],
+[
+"GSD",
+"PTWD",
+28709762
+],
+[
+"GSD",
+"XOLO",
+64169666
+],
+[
+"GSD",
+"INCA",
+35569116
+],
+[
+"GSD",
+"COOK",
+122244313
+],
+[
+"GSD",
+"BPIC",
+123855029
+],
+[
+"GSD",
+"CPAT",
+124159673
+],
+[
+"GSD",
+"MAAB",
+18857836
+],
+[
+"GSD",
+"BMAL",
+42637010
+],
+[
+"GSD",
+"AUSS",
+14801507
+],
+[
+"GSD",
+"DOBP",
+14780340
+],
+[
+"GSD",
+"GSMD",
+13529884
+],
+[
+"GSD",
+"LEON",
+26443088
+],
+[
+"GSD",
+"ITCC",
+17690919
+],
+[
+"PHAR",
+"CIRN",
+142654186
+],
+[
+"PHAR",
+"IBIZ",
+92039650
+],
+[
+"PHAR",
+"WHIP",
+13071986
+],
+[
+"CIRN",
+"PHAR",
+142654186
+],
+[
+"CIRN",
+"IBIZ",
+36996302
+],
+[
+"IBIZ",
+"PHAR",
+92039650
+],
+[
+"IBIZ",
+"CIRN",
+36996302
+],
+[
+"MAAB",
+"GSD",
+18857836
+],
+[
+"SLOU",
+"LVMD",
+37193250
+],
+[
+"SLOU",
+"AZWK",
+17877064
+],
+[
+"SLOU",
+"SALU",
+12000270
+],
+[
+"LVMD",
+"SLOU",
+37193250
+],
+[
+"LVMD",
+"AZWK",
+22265678
+],
+[
+"AZWK",
+"BSJI",
+12474508
+],
+[
+"AZWK",
+"SLOU",
+17877064
+],
+[
+"AZWK",
+"LVMD",
+22265678
+],
+[
+"ANAT",
+"SALU",
+9783984
+],
+[
+"AFGH",
+"COOS",
+17598624
+],
+[
+"AFGH",
+"SALU",
+27830962
+],
+[
+"COOS",
+"AFGH",
+17598624
+],
+[
+"COOS",
+"SALU",
+41803092
+],
+[
+"SALU",
+"SLOU",
+12000270
+],
+[
+"SALU",
+"ANAT",
+9783984
+],
+[
+"SALU",
+"AFGH",
+27830962
+],
+[
+"SALU",
+"COOS",
+41803092
+],
+[
+"PBGV",
+"REDB",
+11995049
+],
+[
+"PBGV",
+"BEAG",
+14678549
+],
+[
+"PBGV",
+"FOXH",
+20999674
+],
+[
+"PBGV",
+"OTTR",
+20394603
+],
+[
+"PBGV",
+"BLDH",
+15399350
+],
+[
+"BASS",
+"REDB",
+18673263
+],
+[
+"BASS",
+"BEAG",
+18888768
+],
+[
+"BASS",
+"FOXH",
+18405750
+],
+[
+"BASS",
+"OTTR",
+18517446
+],
+[
+"BASS",
+"BLDH",
+27071246
+],
+[
+"REDB",
+"MNTY",
+10931052
+],
+[
+"REDB",
+"BASS",
+11995049
+],
+[
+"REDB",
+"BEAG",
+56315784
+],
+[
+"REDB",
+"FOXH",
+44437958
+],
+[
+"REDB",
+"OTTR",
+39853260
+],
+[
+"REDB",
+"BLDH",
+37764866
+],
+[
+"BEAG",
+"BASS",
+14678549
+],
+[
+"BEAG",
+"REDB",
+56315784
+],
+[
+"BEAG",
+"FOXH",
+61014616
+],
+[
+"BEAG",
+"OTTR",
+44755076
+],
+[
+"BEAG",
+"BLDH",
+50048221
+],
+[
+"FOXH",
+"BEDT",
+9958495
+],
+[
+"FOXH",
+"BASS",
+20999674
+],
+[
+"FOXH",
+"REDB",
+44437958
+],
+[
+"FOXH",
+"BEAG",
+61014616
+],
+[
+"FOXH",
+"OTTR",
+86296562
+],
+[
+"FOXH",
+"BLDH",
+58197571
+],
+[
+"OTTR",
+"AIRT",
+11654633
+],
+[
+"OTTR",
+"BORT",
+9749873
+],
+[
+"OTTR",
+"BASS",
+20394603
+],
+[
+"OTTR",
+"REDB",
+39853260
+],
+[
+"OTTR",
+"BEAG",
+44755076
+],
+[
+"OTTR",
+"FOXH",
+86296562
+],
+[
+"OTTR",
+"BLDH",
+108242803
+],
+[
+"BLDH",
+"BASS",
+15399350
+],
+[
+"BLDH",
+"REDB",
+37764866
+],
+[
+"BLDH",
+"BEAG",
+50048221
+],
+[
+"BLDH",
+"FOXH",
+58197571
+],
+[
+"BLDH",
+"OTTR",
+108242803
+],
+[
+"ESSP",
+"BEDT",
+10228568
+],
+[
+"ESSP",
+"CKCS",
+15498514
+],
+[
+"ESSP",
+"ACKR",
+20908428
+],
+[
+"ESSP",
+"FIEL",
+44716682
+],
+[
+"ESSP",
+"ECKR",
+39981518
+],
+[
+"CKCS",
+"BRUS",
+27887666
+],
+[
+"CKCS",
+"MNTY",
+12232649
+],
+[
+"CKCS",
+"MPIN",
+12084977
+],
+[
+"CKCS",
+"ESSP",
+15498514
+],
+[
+"CKCS",
+"ACKR",
+14833062
+],
+[
+"CKCS",
+"FIEL",
+19572618
+],
+[
+"CKCS",
+"ECKR",
+21123080
+],
+[
+"ACKR",
+"RATT",
+11453650
+],
+[
+"ACKR",
+"ESSP",
+20908428
+],
+[
+"ACKR",
+"CKCS",
+14833062
+],
+[
+"ACKR",
+"FIEL",
+40383914
+],
+[
+"ACKR",
+"ECKR",
+60059714
+],
+[
+"ACKR",
+"NSDT",
+19916784
+],
+[
+"ACKR",
+"IWSP",
+11259908
+],
+[
+"FIEL",
+"BEDT",
+12563133
+],
+[
+"FIEL",
+"ESSP",
+44716682
+],
+[
+"FIEL",
+"CKCS",
+19572618
+],
+[
+"FIEL",
+"ACKR",
+40383914
+],
+[
+"FIEL",
+"ECKR",
+137726126
+],
+[
+"FIEL",
+"SPIN",
+10083641
+],
+[
+"ECKR",
+"COTO",
+11943054
+],
+[
+"ECKR",
+"ESSP",
+39981518
+],
+[
+"ECKR",
+"CKCS",
+21123080
+],
+[
+"ECKR",
+"ACKR",
+60059714
+],
+[
+"ECKR",
+"FIEL",
+137726126
+],
+[
+"NSDT",
+"PUG",
+14612352
+],
+[
+"NSDT",
+"AIRT",
+13167206
+],
+[
+"NSDT",
+"ACKR",
+19916784
+],
+[
+"NSDT",
+"LAB",
+13082062
+],
+[
+"NSDT",
+"FCR",
+11221816
+],
+[
+"NSDT",
+"BERD",
+10467140
+],
+[
+"NSDT",
+"COLL",
+28666204
+],
+[
+"NSDT",
+"SSHP",
+20934422
+],
+[
+"CCRT",
+"IWSP",
+15491078
+],
+[
+"CCRT",
+"NEWF",
+10290085
+],
+[
+"CCRT",
+"LAB",
+10672618
+],
+[
+"CCRT",
+"GOLD",
+15901339
+],
+[
+"CCRT",
+"FCR",
+10760382
+],
+[
+"CCRT",
+"ISET",
+10159728
+],
+[
+"IWSP",
+"ACKR",
+11259908
+],
+[
+"IWSP",
+"CCRT",
+15491078
+],
+[
+"IWSP",
+"GOLD",
+11387450
+],
+[
+"IWSP",
+"FCR",
+11089812
+],
+[
+"IWSP",
+"ISET",
+11737678
+],
+[
+"NEWF",
+"CCRT",
+10290085
+],
+[
+"NEWF",
+"LAB",
+17832278
+],
+[
+"NEWF",
+"GOLD",
+19455284
+],
+[
+"NEWF",
+"FCR",
+17594460
+],
+[
+"NEWF",
+"BRTR",
+18954486
+],
+[
+"NEWF",
+"STBD",
+12260099
+],
+[
+"NEWF",
+"MAST",
+12057132
+],
+[
+"LAB",
+"NSDT",
+13082062
+],
+[
+"LAB",
+"CCRT",
+10672618
+],
+[
+"LAB",
+"NEWF",
+17832278
+],
+[
+"LAB",
+"GOLD",
+35116147
+],
+[
+"LAB",
+"FCR",
+57025134
+],
+[
+"GOLD",
+"AIRT",
+11091507
+],
+[
+"GOLD",
+"CCRT",
+15901339
+],
+[
+"GOLD",
+"IWSP",
+11375254
+],
+[
+"GOLD",
+"NEWF",
+19455284
+],
+[
+"GOLD",
+"LAB",
+35116147
+],
+[
+"GOLD",
+"FCR",
+66993738
+],
+[
+"GOLD",
+"ISET",
+15351200
+],
+[
+"GOLD",
+"ESET",
+11192868
+],
+[
+"FCR",
+"NSDT",
+11221816
+],
+[
+"FCR",
+"CCRT",
+10760382
+],
+[
+"FCR",
+"IWSP",
+11089812
+],
+[
+"FCR",
+"NEWF",
+17594460
+],
+[
+"FCR",
+"LAB",
+57025134
+],
+[
+"FCR",
+"GOLD",
+66993738
+],
+[
+"FCR",
+"ESET",
+11675077
+],
+[
+"WEIM",
+"KMUN",
+11895748
+],
+[
+"WEIM",
+"WHPG",
+11916994
+],
+[
+"WEIM",
+"GWHP",
+15607184
+],
+[
+"WEIM",
+"GSHP",
+18741235
+],
+[
+"LMUN",
+"WEIM",
+11895748
+],
+[
+"LMUN",
+"VIZS",
+12523407
+],
+[
+"LMUN",
+"WHPG",
+12332946
+],
+[
+"LMUN",
+"GWHP",
+18048048
+],
+[
+"LMUN",
+"GSHP",
+20328822
+],
+[
+"LMUN",
+"GORD",
+10050811
+],
+[
+"VIZS",
+"KMUN",
+12523407
+],
+[
+"VIZS",
+"WHPG",
+13677150
+],
+[
+"VIZS",
+"GWHP",
+21470561
+],
+[
+"VIZS",
+"GSHP",
+20880604
+],
+[
+"VIZS",
+"BRIT",
+10042294
+],
+[
+"VIZS",
+"ISET",
+12536859
+],
+[
+"VIZS",
+"ESET",
+13902178
+],
+[
+"VIZS",
+"GORD",
+16576454
+],
+[
+"WHPG",
+"WEIM",
+11916994
+],
+[
+"WHPG",
+"KMUN",
+12332946
+],
+[
+"WHPG",
+"VIZS",
+13677150
+],
+[
+"WHPG",
+"GWHP",
+43038250
+],
+[
+"WHPG",
+"GSHP",
+23098860
+],
+[
+"WHPG",
+"SPIN",
+17999114
+],
+[
+"WHPG",
+"BRIT",
+12151536
+],
+[
+"WHPG",
+"ESET",
+13865884
+],
+[
+"WHPG",
+"GORD",
+12548378
+],
+[
+"GWHP",
+"WEIM",
+15607184
+],
+[
+"GWHP",
+"KMUN",
+18048048
+],
+[
+"GWHP",
+"VIZS",
+21470561
+],
+[
+"GWHP",
+"WHPG",
+43038250
+],
+[
+"GWHP",
+"GSHP",
+46285089
+],
+[
+"GWHP",
+"SPIN",
+10951264
+],
+[
+"GWHP",
+"BRIT",
+9869390
+],
+[
+"GWHP",
+"ISET",
+15556022
+],
+[
+"GWHP",
+"ESET",
+14518682
+],
+[
+"GWHP",
+"GORD",
+11399780
+],
+[
+"GSHP",
+"WEIM",
+18741235
+],
+[
+"GSHP",
+"KMUN",
+20328822
+],
+[
+"GSHP",
+"VIZS",
+20880604
+],
+[
+"GSHP",
+"WHPG",
+23098860
+],
+[
+"GSHP",
+"GWHP",
+46285089
+],
+[
+"GSHP",
+"SPIN",
+17304730
+],
+[
+"GSHP",
+"ESET",
+13799180
+],
+[
+"GSHP",
+"GORD",
+12154365
+],
+[
+"SPIN",
+"FIEL",
+10083641
+],
+[
+"SPIN",
+"WHPG",
+17999114
+],
+[
+"SPIN",
+"GWHP",
+10951264
+],
+[
+"SPIN",
+"GSHP",
+17304730
+],
+[
+"SPIN",
+"BRIT",
+19245093
+],
+[
+"SPIN",
+"ISET",
+10328394
+],
+[
+"SPIN",
+"ESET",
+10692824
+],
+[
+"SPIN",
+"GORD",
+13464605
+],
+[
+"BRIT",
+"VIZS",
+10042294
+],
+[
+"BRIT",
+"WHPG",
+12151536
+],
+[
+"BRIT",
+"GWHP",
+9869390
+],
+[
+"BRIT",
+"SPIN",
+19245093
+],
+[
+"BRIT",
+"ISET",
+15821900
+],
+[
+"BRIT",
+"ESET",
+37256465
+],
+[
+"BRIT",
+"GORD",
+19080664
+],
+[
+"ISET",
+"CCRT",
+10159728
+],
+[
+"ISET",
+"IWSP",
+11737678
+],
+[
+"ISET",
+"GOLD",
+15351200
+],
+[
+"ISET",
+"VIZS",
+12536859
+],
+[
+"ISET",
+"GWHP",
+15556022
+],
+[
+"ISET",
+"SPIN",
+10328394
+],
+[
+"ISET",
+"BRIT",
+15821900
+],
+[
+"ISET",
+"ESET",
+24517294
+],
+[
+"ISET",
+"GORD",
+36751221
+],
+[
+"ESET",
+"GOLD",
+11192868
+],
+[
+"ESET",
+"FCR",
+11675077
+],
+[
+"ESET",
+"VIZS",
+13902178
+],
+[
+"ESET",
+"WHPG",
+13865884
+],
+[
+"ESET",
+"GWHP",
+14518682
+],
+[
+"ESET",
+"GSHP",
+13799180
+],
+[
+"ESET",
+"SPIN",
+10692824
+],
+[
+"ESET",
+"BRIT",
+37256465
+],
+[
+"ESET",
+"ISET",
+24517294
+],
+[
+"ESET",
+"GORD",
+50094100
+],
+[
+"GORD",
+"KMUN",
+10050811
+],
+[
+"GORD",
+"VIZS",
+16576454
+],
+[
+"GORD",
+"WHPG",
+12548378
+],
+[
+"GORD",
+"GWHP",
+11399780
+],
+[
+"GORD",
+"GSHP",
+12154365
+],
+[
+"GORD",
+"SPIN",
+13464605
+],
+[
+"GORD",
+"BRIT",
+19080664
+],
+[
+"GORD",
+"ISET",
+36751221
+],
+[
+"GORD",
+"ESET",
+50094100
+],
+[
+"BRIA",
+"TURV",
+10540722
+],
+[
+"BRIA",
+"BELS",
+11814069
+],
+[
+"BOUV",
+"BPIC",
+77578770
+],
+[
+"BOUV",
+"BMAL",
+15487173
+],
+[
+"BOUV",
+"TURV",
+21446638
+],
+[
+"BOUV",
+"BELS",
+17684617
+],
+[
+"BMAL",
+"COOK",
+15331749
+],
+[
+"BMAL",
+"BPIC",
+29983100
+],
+[
+"BMAL",
+"CPAT",
+11352213
+],
+[
+"BMAL",
+"GSD",
+42637010
+],
+[
+"BMAL",
+"BOUV",
+15487173
+],
+[
+"BMAL",
+"TURV",
+88360061
+],
+[
+"BMAL",
+"BELS",
+76335058
+],
+[
+"TURV",
+"BPIC",
+26196084
+],
+[
+"TURV",
+"BRIA",
+10540722
+],
+[
+"TURV",
+"BOUV",
+21446638
+],
+[
+"TURV",
+"BMAL",
+88360661
+],
+[
+"TURV",
+"BELS",
+278221682
+],
+[
+"BELS",
+"BPIC",
+18391105
+],
+[
+"BELS",
+"BRIA",
+11814069
+],
+[
+"BELS",
+"BOUV",
+17684617
+],
+[
+"BELS",
+"BMAL",
+76335058
+],
+[
+"BELS",
+"TURV",
+278221682
+],
+[
+"ITGY",
+"MNTY",
+10685530
+],
+[
+"ITGY",
+"WHIP",
+27095446
+],
+[
+"ITGY",
+"GREY",
+16544240
+],
+[
+"BORZ",
+"DEER",
+10034408
+],
+[
+"IWOF",
+"DEER",
+121952556
+],
+[
+"IWOF",
+"WHIP",
+9796306
+],
+[
+"IWOF",
+"GREY",
+19294283
+],
+[
+"IWOF",
+"DANE",
+38445892
+],
+[
+"DEER",
+"BORZ",
+10034408
+],
+[
+"DEER",
+"IWOF",
+121952556
+],
+[
+"DEER",
+"WHIP",
+24174209
+],
+[
+"DEER",
+"GREY",
+37620130
+],
+[
+"WHIP",
+"MNTY",
+10121958
+],
+[
+"WHIP",
+"BEDT",
+11118338
+],
+[
+"WHIP",
+"PHAR",
+13071986
+],
+[
+"WHIP",
+"ITGY",
+28095446
+],
+[
+"WHIP",
+"IWOF",
+9796306
+],
+[
+"WHIP",
+"DEER",
+24174209
+],
+[
+"WHIP",
+"GREY",
+61714854
+],
+[
+"GREY",
+"ITGY",
+16544240
+],
+[
+"GREY",
+"IWOF",
+19294283
+],
+[
+"GREY",
+"DEER",
+37620130
+],
+[
+"GREY",
+"WHIP",
+61714854
+],
+[
+"GREY",
+"RHOD",
+11933662
+],
+[
+"OES",
+"BERD",
+20798068
+],
+[
+"OES",
+"KELP",
+17945038
+],
+[
+"OES",
+"BORD",
+19168267
+],
+[
+"OES",
+"PEMB",
+12388608
+],
+[
+"OES",
+"AUSS",
+11729279
+],
+[
+"OES",
+"COLL",
+16507326
+],
+[
+"OES",
+"SSHP",
+14690078
+],
+[
+"AUCD",
+"BERD",
+16229333
+],
+[
+"AUCD",
+"KELP",
+22369358
+],
+[
+"AUCD",
+"BORD",
+17817030
+],
+[
+"AUCD",
+"COLL",
+14318496
+],
+[
+"AUCD",
+"SSHP",
+11276616
+],
+[
+"BERD",
+"COOK",
+10690378
+],
+[
+"BERD",
+"NSDT",
+10467140
+],
+[
+"BERD",
+"OES",
+20798068
+],
+[
+"BERD",
+"AUCD",
+16229333
+],
+[
+"BERD",
+"KELP",
+41790248
+],
+[
+"BERD",
+"BORD",
+77836548
+],
+[
+"BERD",
+"PEMB",
+23328050
+],
+[
+"BERD",
+"CARD",
+22569002
+],
+[
+"BERD",
+"AUSS",
+19062726
+],
+[
+"BERD",
+"COLL",
+63118472
+],
+[
+"BERD",
+"SSHP",
+30645512
+],
+[
+"KELP",
+"AIRT",
+10946768
+],
+[
+"KELP",
+"OES",
+17945038
+],
+[
+"KELP",
+"AUCD",
+22369358
+],
+[
+"KELP",
+"BERD",
+41790248
+],
+[
+"KELP",
+"BORD",
+62630356
+],
+[
+"KELP",
+"PEMB",
+18217997
+],
+[
+"KELP",
+"CARD",
+23022674
+],
+[
+"KELP",
+"AUSS",
+15424222
+],
+[
+"KELP",
+"COLL",
+17876629
+],
+[
+"KELP",
+"SSHP",
+20198950
+],
+[
+"KELP",
+"BULD",
+11105890
+],
+[
+"BORD",
+"OES",
+19168267
+],
+[
+"BORD",
+"AUCD",
+17817030
+],
+[
+"BORD",
+"BERD",
+77836548
+],
+[
+"BORD",
+"KELP",
+62630356
+],
+[
+"BORD",
+"PEMB",
+19140476
+],
+[
+"BORD",
+"CARD",
+23755814
+],
+[
+"BORD",
+"AUSS",
+19970365
+],
+[
+"BORD",
+"COLL",
+36160617
+],
+[
+"BORD",
+"SSHP",
+27943496
+],
+[
+"PEMB",
+"WFOX",
+12830432
+],
+[
+"PEMB",
+"OES",
+12388608
+],
+[
+"PEMB",
+"BERD",
+23328050
+],
+[
+"PEMB",
+"KELP",
+1821997
+],
+[
+"PEMB",
+"BORD",
+19140476
+],
+[
+"PEMB",
+"CARD",
+73907979
+],
+[
+"PEMB",
+"AUSS",
+13066578
+],
+[
+"PEMB",
+"COLL",
+44060659
+],
+[
+"PEMB",
+"SSHP",
+31318657
+],
+[
+"CARD",
+"BERD",
+22569002
+],
+[
+"CARD",
+"KELP",
+23022674
+],
+[
+"CARD",
+"BORD",
+23755814
+],
+[
+"CARD",
+"PEMB",
+73907979
+],
+[
+"CARD",
+"AUSS",
+14732524
+],
+[
+"CARD",
+"COLL",
+40297680
+],
+[
+"CARD",
+"SSHP",
+29458490
+],
+[
+"AUSS",
+"AIRT",
+10296622
+],
+[
+"AUSS",
+"COOK",
+16649770
+],
+[
+"AUSS",
+"GSD",
+14801507
+],
+[
+"AUSS",
+"OES",
+11729279
+],
+[
+"AUSS",
+"BERD",
+19062726
+],
+[
+"AUSS",
+"KELP",
+15424222
+],
+[
+"AUSS",
+"BORD",
+19970365
+],
+[
+"AUSS",
+"PEMB",
+13066578
+],
+[
+"AUSS",
+"CARD",
+14732524
+],
+[
+"AUSS",
+"COLL",
+61750910
+],
+[
+"AUSS",
+"SSHP",
+33550508
+],
+[
+"COLL",
+"XOLO",
+10084036
+],
+[
+"COLL",
+"COOK",
+30414484
+],
+[
+"COLL",
+"NSDT",
+28666204
+],
+[
+"COLL",
+"OES",
+16507326
+],
+[
+"COLL",
+"AUCD",
+14318496
+],
+[
+"COLL",
+"BERD",
+63118472
+],
+[
+"COLL",
+"KELP",
+17876629
+],
+[
+"COLL",
+"BORD",
+36160617
+],
+[
+"COLL",
+"PEMB",
+44060659
+],
+[
+"COLL",
+"CARD",
+40297680
+],
+[
+"COLL",
+"AUSS",
+61750910
+],
+[
+"COLL",
+"SSHP",
+252255695
+],
+[
+"SSHP",
+"AIRT",
+11034657
+],
+[
+"SSHP",
+"COOK",
+15373677
+],
+[
+"SSHP",
+"NSDT",
+20934422
+],
+[
+"SSHP",
+"OES",
+14690078
+],
+[
+"SSHP",
+"AUCD",
+11722778
+],
+[
+"SSHP",
+"BERD",
+30645512
+],
+[
+"SSHP",
+"KELP",
+20198950
+],
+[
+"SSHP",
+"BORD",
+27943496
+],
+[
+"SSHP",
+"PEMB",
+31318657
+],
+[
+"SSHP",
+"CARD",
+29458490
+],
+[
+"SSHP",
+"AUSS",
+33550508
+],
+[
+"SSHP",
+"COLL",
+252255695
+],
+[
+"DOBP",
+"PUMI",
+9839591
+],
+[
+"DOBP",
+"MNTY",
+24074180
+],
+[
+"DOBP",
+"XOLO",
+19134312
+],
+[
+"DOBP",
+"INCA",
+11510704
+],
+[
+"DOBP",
+"BPIC",
+11960527
+],
+[
+"DOBP",
+"GSD",
+14780340
+],
+[
+"DOBP",
+"GSNZ",
+25105813
+],
+[
+"DOBP",
+"BRTR",
+9766786
+],
+[
+"GSNZ",
+"SSNZ",
+24196453
+],
+[
+"GSNZ",
+"AIRT",
+24632272
+],
+[
+"GSNZ",
+"DOBP",
+25105813
+],
+[
+"GSNZ",
+"BRTR",
+88333458
+],
+[
+"BRTR",
+"AIRT",
+38187285
+],
+[
+"BRTR",
+"NEWF",
+18954486
+],
+[
+"BRTR",
+"DOBP",
+9766786
+],
+[
+"BRTR",
+"GSNZ",
+88333458
+],
+[
+"BRTR",
+"ROTT",
+180249610
+],
+[
+"BRTR",
+"GSMD",
+11654607
+],
+[
+"BRTR",
+"BMD",
+11104145
+],
+[
+"BRTR",
+"LEON",
+15864698
+],
+[
+"BRTR",
+"DANE",
+13131064
+],
+[
+"ROTT",
+"BRTR",
+180249610
+],
+[
+"ROTT",
+"GSMD",
+18445392
+],
+[
+"ROTT",
+"LEON",
+26906164
+],
+[
+"ROTT",
+"STBD",
+12943329
+],
+[
+"ROTT",
+"DANE",
+24142676
+],
+[
+"ROTT",
+"CANE",
+15018322
+],
+[
+"ROTT",
+"BOER",
+10608300
+],
+[
+"GSMD",
+"BPIC",
+17202820
+],
+[
+"GSMD",
+"GSD",
+13529884
+],
+[
+"GSMD",
+"BRTR",
+11654607
+],
+[
+"GSMD",
+"ROTT",
+18445392
+],
+[
+"GSMD",
+"BMD",
+91668418
+],
+[
+"GSMD",
+"LEON",
+16969777
+],
+[
+"GSMD",
+"STBD",
+57485142
+],
+[
+"BMD",
+"BRTR",
+11104145
+],
+[
+"BMD",
+"GSMD",
+91668418
+],
+[
+"BMD",
+"LEON",
+16617056
+],
+[
+"BMD",
+"STBD",
+34721330
+],
+[
+"BMD",
+"DANE",
+11363990
+],
+[
+"LEON",
+"COOK",
+14825331
+],
+[
+"LEON",
+"BPIC",
+19750965
+],
+[
+"LEON",
+"GSD",
+26443088
+],
+[
+"LEON",
+"BRTR",
+15864698
+],
+[
+"LEON",
+"ROTT",
+26906164
+],
+[
+"LEON",
+"GSMD",
+16969777
+],
+[
+"LEON",
+"BMD",
+16617056
+],
+[
+"LEON",
+"STBD",
+44714096
+],
+[
+"LEON",
+"DANE",
+19773686
+],
+[
+"LEON",
+"MAST",
+11330397
+],
+[
+"STBD",
+"NEWF",
+12260099
+],
+[
+"STBD",
+"ROTT",
+12943329
+],
+[
+"STBD",
+"GSMD",
+57485142
+],
+[
+"STBD",
+"BMD",
+34721330
+],
+[
+"STBD",
+"LEON",
+44714096
+],
+[
+"STBD",
+"DANE",
+19281656
+],
+[
+"STBD",
+"ITCC",
+9746124
+],
+[
+"STBD",
+"CANE",
+13069198
+],
+[
+"STBD",
+"BULM",
+10144082
+],
+[
+"STBD",
+"MAST",
+37137750
+],
+[
+"STBD",
+"DDBX",
+18018511
+],
+[
+"RHOD",
+"AIRT",
+12191958
+],
+[
+"RHOD",
+"GREY",
+11733662
+],
+[
+"RHOD",
+"DANE",
+20664136
+],
+[
+"RHOD",
+"BOER",
+13064995
+],
+[
+"DANE",
+"IWOF",
+38445892
+],
+[
+"DANE",
+"BRTR",
+13131064
+],
+[
+"DANE",
+"ROTT",
+24142676
+],
+[
+"DANE",
+"BMD",
+11363990
+],
+[
+"DANE",
+"LEON",
+19773686
+],
+[
+"DANE",
+"STBD",
+19281656
+],
+[
+"DANE",
+"RHOD",
+20664136
+],
+[
+"DANE",
+"BOER",
+16167088
+],
+[
+"DANE",
+"MAST",
+12316287
+],
+[
+"ITCC",
+"COOK",
+10980886
+],
+[
+"ITCC",
+"GSD",
+17690919
+],
+[
+"ITCC",
+"STBD",
+9746124
+],
+[
+"ITCC",
+"CANE",
+83222516
+],
+[
+"ITCC",
+"NEAP",
+137961694
+],
+[
+"ITCC",
+"BULM",
+13203916
+],
+[
+"ITCC",
+"MAST",
+13950320
+],
+[
+"ITCC",
+"DDBX",
+10847492
+],
+[
+"ITCC",
+"BOX",
+33887133
+],
+[
+"CANE",
+"ROTT",
+15018322
+],
+[
+"CANE",
+"STBD",
+13069198
+],
+[
+"CANE",
+"ITCC",
+83222516
+],
+[
+"CANE",
+"NEAP",
+189821417
+],
+[
+"CANE",
+"BOER",
+16746076
+],
+[
+"CANE",
+"BULM",
+44316529
+],
+[
+"CANE",
+"MAST",
+26389056
+],
+[
+"CANE",
+"DDBX",
+17187764
+],
+[
+"CANE",
+"BULD",
+13332949
+],
+[
+"CANE",
+"BOX",
+62958638
+],
+[
+"NEAP",
+"ITCC",
+137961694
+],
+[
+"NEAP",
+"CANE",
+189821417
+],
+[
+"BOER",
+"ROTT",
+10608300
+],
+[
+"BOER",
+"RHOD",
+13064995
+],
+[
+"BOER",
+"DANE",
+16167088
+],
+[
+"BOER",
+"CANE",
+16746076
+],
+[
+"BOER",
+"BULM",
+83376444
+],
+[
+"BOER",
+"MAST",
+41763970
+],
+[
+"BOER",
+"FBUL",
+11204880
+],
+[
+"BOER",
+"BOST",
+9851626
+],
+[
+"BOER",
+"DDBX",
+11603131
+],
+[
+"BOER",
+"BULD",
+44729452
+],
+[
+"BOER",
+"BOX",
+31821716
+],
+[
+"BULM",
+"STBD",
+10144082
+],
+[
+"BULM",
+"ITCC",
+13203916
+],
+[
+"BULM",
+"CANE",
+44316529
+],
+[
+"BULM",
+"BOER",
+83376444
+],
+[
+"BULM",
+"MAST",
+143857208
+],
+[
+"BULM",
+"AMST",
+11297363
+],
+[
+"BULM",
+"BOST",
+12439400
+],
+[
+"BULM",
+"DDBX",
+17966120
+],
+[
+"BULM",
+"BULD",
+42755534
+],
+[
+"BULM",
+"BOX",
+10264818
+],
+[
+"MAST",
+"NEWF",
+12057132
+],
+[
+"MAST",
+"LEON",
+11330397
+],
+[
+"MAST",
+"STBD",
+37137750
+],
+[
+"MAST",
+"DANE",
+12316287
+],
+[
+"MAST",
+"ITCC",
+13950320
+],
+[
+"MAST",
+"CANE",
+26389056
+],
+[
+"MAST",
+"BOER",
+41763970
+],
+[
+"MAST",
+"BULM",
+143857208
+],
+[
+"MAST",
+"DDBX",
+26224667
+],
+[
+"MAST",
+"BULD",
+16292836
+],
+[
+"MAST",
+"BOX",
+11113087
+],
+[
+"AMST",
+"KERY",
+10687932
+],
+[
+"AMST",
+"GLEN",
+11657958
+],
+[
+"AMST",
+"SCWT",
+11235480
+],
+[
+"AMST",
+"BULM",
+11297363
+],
+[
+"AMST",
+"STAF",
+25534557
+],
+[
+"AMST",
+"MBLT",
+25270074
+],
+[
+"AMST",
+"BULT",
+28941476
+],
+[
+"AMST",
+"FBUL",
+16048059
+],
+[
+"AMST",
+"BOST",
+21843606
+],
+[
+"AMST",
+"DDBX",
+11151008
+],
+[
+"AMST",
+"BULD",
+18884416
+],
+[
+"AMST",
+"BOX",
+14776226
+],
+[
+"STAF",
+"GLEN",
+30566575
+],
+[
+"STAF",
+"SCWT",
+9810240
+],
+[
+"STAF",
+"PARS",
+11737054
+],
+[
+"STAF",
+"AMST",
+25534557
+],
+[
+"STAF",
+"MBLT",
+46175422
+],
+[
+"STAF",
+"BULT",
+39577765
+],
+[
+"STAF",
+"FBUL",
+19575505
+],
+[
+"STAF",
+"BOST",
+19786860
+],
+[
+"STAF",
+"DDBX",
+11299107
+],
+[
+"STAF",
+"BULD",
+19086962
+],
+[
+"STAF",
+"BOX",
+11117569
+],
+[
+"MBLT",
+"MNTY",
+10024711
+],
+[
+"MBLT",
+"GLEN",
+17624496
+],
+[
+"MBLT",
+"AMST",
+24270074
+],
+[
+"MBLT",
+"STAF",
+46175422
+],
+[
+"MBLT",
+"BULT",
+412093726
+],
+[
+"MBLT",
+"BOST",
+12997359
+],
+[
+"BULT",
+"MNTY",
+9801981
+],
+[
+"BULT",
+"GLEN",
+13168402
+],
+[
+"BULT",
+"AMST",
+28961476
+],
+[
+"BULT",
+"STAF",
+39577765
+],
+[
+"BULT",
+"MBLT",
+412093726
+],
+[
+"BULT",
+"BOST",
+11245228
+],
+[
+"BULT",
+"BULD",
+12485244
+],
+[
+"FBUL",
+"KERY",
+10198334
+],
+[
+"FBUL",
+"GLEN",
+10836989
+],
+[
+"FBUL",
+"SCWT",
+11742190
+],
+[
+"FBUL",
+"BOER",
+11204880
+],
+[
+"FBUL",
+"AMST",
+16048059
+],
+[
+"FBUL",
+"STAF",
+19575505
+],
+[
+"FBUL",
+"BOST",
+24113370
+],
+[
+"FBUL",
+"DDBX",
+15074396
+],
+[
+"FBUL",
+"BULD",
+27828491
+],
+[
+"FBUL",
+"BOX",
+17768758
+],
+[
+"BOST",
+"KERY",
+11620680
+],
+[
+"BOST",
+"BOER",
+9851626
+],
+[
+"BOST",
+"BULM",
+12439400
+],
+[
+"BOST",
+"AMST",
+21843606
+],
+[
+"BOST",
+"STAF",
+19786860
+],
+[
+"BOST",
+"MBLT",
+12997359
+],
+[
+"BOST",
+"BULT",
+11245228
+],
+[
+"BOST",
+"FBUL",
+24113370
+],
+[
+"BOST",
+"DDBX",
+10715614
+],
+[
+"BOST",
+"BULD",
+21077885
+],
+[
+"BOST",
+"BOX",
+13943000
+],
+[
+"DDBX",
+"KERY",
+11353574
+],
+[
+"DDBX",
+"STBD",
+18018511
+],
+[
+"DDBX",
+"ITCC",
+10847492
+],
+[
+"DDBX",
+"CANE",
+17187764
+],
+[
+"DDBX",
+"BOER",
+11603131
+],
+[
+"DDBX",
+"BULM",
+17966120
+],
+[
+"DDBX",
+"AMST",
+11151008
+],
+[
+"DDBX",
+"STAF",
+11299107
+],
+[
+"DDBX",
+"FBUL",
+15074396
+],
+[
+"DDBX",
+"BOST",
+10715614
+],
+[
+"DDBX",
+"BULD",
+21793909
+],
+[
+"DDBX",
+"BOX",
+50499236
+],
+[
+"BULD",
+"KERY",
+11105890
+],
+[
+"BULD",
+"GLEN",
+14488016
+],
+[
+"BULD",
+"SCWT",
+10735837
+],
+[
+"BULD",
+"CANE",
+13332949
+],
+[
+"BULD",
+"BOER",
+44729452
+],
+[
+"BULD",
+"BULM",
+42755534
+],
+[
+"BULD",
+"MAST",
+16292836
+],
+[
+"BULD",
+"AMST",
+18884416
+],
+[
+"BULD",
+"STAF",
+19086962
+],
+[
+"BULD",
+"BULT",
+12485244
+],
+[
+"BULD",
+"FBUL",
+27828491
+],
+[
+"BULD",
+"BOST",
+21077885
+],
+[
+"BULD",
+"DDBX",
+21793909
+],
+[
+"BULD",
+"BOX",
+34424332
+],
+[
+"BOX",
+"SHAR",
+22515421
+],
+[
+"BOX",
+"KERY",
+11028778
+],
+[
+"BOX",
+"GLEN",
+11684681
+],
+[
+"BOX",
+"IRIT",
+10689443
+],
+[
+"BOX",
+"CPAT",
+10232096
+],
+[
+"BOX",
+"ITCC",
+33887133
+],
+[
+"BOX",
+"CANE",
+62958638
+],
+[
+"BOX",
+"BOER",
+31821716
+],
+[
+"BOX",
+"BULM",
+10264818
+],
+[
+"BOX",
+"MAST",
+11317998
+],
+[
+"BOX",
+"AMST",
+14776226
+],
+[
+"BOX",
+"STAF",
+11117569
+],
+[
+"BOX",
+"FBUL",
+17768758
+],
+[
+"BOX",
+"BOST",
+13943000
+],
+[
+"BOX",
+"DDBX",
+50499236
+],
+[
+"BOX",
+"BULD",
+34424332
+]
+]
+}
