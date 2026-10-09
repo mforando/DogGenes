@@ -64,6 +64,7 @@ const PAGES = [
   { href: "/geography", label: "Where they came from" },
   { href: "/explorer", label: "Breed Explorer" },
   { href: "/health", label: "Health & heredity" },
+  { href: "/names", label: "NYC dog names" },
 ];
 
 export function SiteNav() {

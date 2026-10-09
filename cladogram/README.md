@@ -53,6 +53,7 @@ overwrite any root file it didn't create (your PDFs and spreadsheet are never to
 | `src/data/cladogram.json` | `npm run data` – parses the tree, maps sample IDs to breeds, collapses single-breed subtrees into wedges |
 | `src/data/circos.json` | `npm run data` – Figure 4 blocks (spreadsheet row order = the paper's circos order) and cross-clade ribbons |
 | `public/explorer/sheet-*.jpg`, `src/data/explorer.json` | `python scripts/build-explorer.py` (needs Pillow) – every Dog CEO photo as 48 px thumbnails packed into sprite sheets for the Breed Explorer; downloads are cached in `.cache/explorer/` |
+| `src/data/nycnames.json` | `python scripts/build-nyc-names.py` (needs pandas, scikit-learn) – reads the [NYC Dog Licensing Dataset](https://data.cityofnewyork.us/Health/NYC-Dog-Licensing-Dataset/nu7n-tubp) CSV saved to `.cache/nyc/dogs.csv`, plus `.cache/nyc/meta.json` (breed families/jobs/regions exported from `src/lib`) |
 | `src/data/photos.json` | `npm run photos` – photo URLs from the [Dog CEO API](https://dog.ceo/dog-api/) for the 117 study breeds it covers |
 
 ## Code map

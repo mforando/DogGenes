@@ -989,3 +989,56 @@ body::before {
 .bg-prev:hover, .bg-next:hover { color: var(--gold); background: rgba(10, 13, 12, 0.85); }
 .bg-prev:focus-visible, .bg-next:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
 .bg-count { font-family: var(--font-label); font-size: 0.75rem; color: var(--ink-3); margin: 0.35rem 0 0; }
+
+/* ---------- NYC dog names ---------- */
+.nm-top { font-family: var(--font-label); font-size: 0.9rem; color: var(--ink-3); margin: 0; }
+.nm-top strong { color: var(--ink); font-weight: 500; }
+.nm-acc svg { max-width: 900px; }
+.nm-detective { display: grid; grid-template-columns: minmax(14rem, 18rem) minmax(0, 1fr); gap: 1.5rem; align-items: start; background: var(--bg-raise); border: 1px solid var(--rule); border-top: 2px solid var(--gold); padding: 1.2rem; }
+.nm-input { display: grid; gap: 0.4rem; font-family: var(--font-label); }
+.nm-input span { font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); }
+.nm-input input { font: inherit; font-size: 1.3rem; font-family: var(--font-display); color: var(--ink); background: var(--bg); border: 1px solid var(--gold-dim); padding: 0.5rem 0.7rem; }
+.nm-rhead { margin: 0 0 0.6rem; color: var(--ink-2); }
+.nm-rhead strong { color: var(--ink); }
+.nm-guess { margin: 0 0 1rem; padding: 0; list-style: none; display: grid; gap: 0.3rem; counter-reset: g; }
+.nm-guess li { counter-increment: g; display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.3rem 0.7rem; font-family: var(--font-label); }
+.nm-guess li::before { content: counter(g); color: var(--gold); font-family: var(--font-display); font-size: 1.2rem; width: 1rem; }
+.nm-gname { font-family: var(--font-display); font-size: 1.2rem; color: var(--ink); }
+.nm-gmeta { color: var(--ink-3); font-size: 0.85rem; }
+.nm-miss { color: var(--ink-3); margin: 0.4rem 0 0; }
+.nm-size svg, .nm-lifts svg { display: block; width: 100%; height: auto; }
+.nm-size { max-width: 460px; }
+.nm-name { font-family: var(--font-label); font-size: 12.5px; fill: var(--ink); }
+.nm-lift { font-family: var(--font-label); font-size: 11px; fill: var(--ink-3); font-variant-numeric: tabular-nums; }
+.nm-tied { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); gap: 0.6rem; }
+.nm-tied li { background: var(--bg-raise); border: 1px solid var(--rule); padding: 0.7rem 0.85rem; display: grid; gap: 0.1rem; }
+.nm-tname { font-family: var(--font-display); font-size: 1.35rem; color: var(--gold); }
+.nm-tbreed { font-family: var(--font-label); color: var(--ink); font-size: 0.92rem; }
+.nm-tmeta { font-family: var(--font-label); color: var(--ink-3); font-size: 0.78rem; }
+.nm-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(19rem, 1fr)); gap: 0.9rem; }
+.nm-card { background: var(--bg-raise); border: 1px solid var(--rule); padding: 0.9rem 0.95rem 0.6rem; }
+.nm-card h3 { font-family: var(--font-display); font-weight: 500; font-size: 1.2rem; margin: 0; color: var(--ink); }
+.nm-cmeta { font-family: var(--font-label); font-size: 0.76rem; color: var(--ink-3); margin: 0.2rem 0 0.5rem; }
+.nm-takeaways li { line-height: 1.55; }
+@media (max-width: 760px) { .nm-detective { grid-template-columns: 1fr; } }
+.nm-chead { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.2rem; }
+.nm-chead > div { min-width: 0; }
+.nm-photo { width: 56px; height: 56px; flex: none; object-fit: cover; border-radius: 4px; border: 1px solid var(--rule); background: #1a211e; }
+.nm-nophoto { display: grid; place-items: center; font-family: var(--font-display); font-size: 1.3rem; color: var(--ink-3); border-style: dashed; }
+/* Breed cards: photo + title form their own header band, flush with the card's top-left corner. */
+.nm-card.has-photo .nm-chead {
+  margin: -0.9rem -0.95rem 0.6rem; /* cancel the card's padding so the band reaches its edges */
+  padding: 0; gap: 0; align-items: stretch;
+  background: #121816; border-bottom: 1px solid var(--rule);
+}
+.nm-card.has-photo .nm-photo { position: relative; overflow: hidden; width: 68px; height: auto; min-height: 68px; align-self: stretch; border: 0; border-radius: 0; border-right: 1px solid var(--rule); }
+.nm-card.has-photo .nm-chead > div { padding: 0.65rem 0.85rem; display: flex; flex-direction: column; justify-content: center; }
+.nm-card.has-photo .nm-cmeta { margin-bottom: 0; }
+/* The photo fills its column of the header band, whatever the band's height. */
+.nm-card.has-photo .nm-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+/* Give-away cards: breed photo in a full-height column on the left. */
+.nm-tied li { display: flex; padding: 0; align-items: stretch; min-height: 84px; }
+.nm-tphoto { position: relative; flex: none; width: 84px; overflow: hidden; background: #1a211e; border-right: 1px solid var(--rule); }
+.nm-tphoto img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.nm-tnone { position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--font-display); font-size: 1.3rem; color: var(--ink-3); }
+.nm-ttext { display: grid; gap: 0.1rem; align-content: center; padding: 0.6rem 0.85rem; min-width: 0; }
