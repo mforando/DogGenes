@@ -62,6 +62,7 @@ const PAGES = [
   { href: "/pairs", label: "Breed pairs" },
   { href: "/purpose", label: "Built for purpose" },
   { href: "/geography", label: "Where they came from" },
+  { href: "/explorer", label: "Breed Explorer" },
 ];
 
 export function SiteNav() {

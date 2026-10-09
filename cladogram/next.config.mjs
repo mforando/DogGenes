@@ -15,6 +15,8 @@ export default function config(phase) {
     // Emit folder/index.html for every route so /circos/ works on a static host.
     trailingSlash: true,
     basePath,
+    // Static files (the Breed Explorer sprite sheets) need the prefix at runtime too.
+    env: { NEXT_PUBLIC_BASE_PATH: basePath },
     images: { unoptimized: true },
   };
 }
