@@ -63,6 +63,7 @@ const PAGES = [
   { href: "/purpose", label: "Built for purpose" },
   { href: "/geography", label: "Where they came from" },
   { href: "/explorer", label: "Breed Explorer" },
+  { href: "/health", label: "Health & heredity" },
 ];
 
 export function SiteNav() {

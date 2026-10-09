@@ -5,6 +5,7 @@ import * as d3 from "d3";
 import { data } from "@/lib/tree";
 import { cladeColor } from "@/lib/palette";
 import { familyTree, lineage, type FamilyNode } from "@/lib/relatives";
+import { photoOf } from "@/lib/photos";
 
 const INK = "#e9e2d0";
 const MUTED = "#8a8a7f";
@@ -12,7 +13,9 @@ const GOLD = "#e8b74a";
 const BG = "#0d1110";
 const DX = 30; // spacing between neighbouring tips
 const DY = 34; // spacing between ancestor levels
-const LABEL_SPACE = 190; // room above the tips for their (vertical) names
+const PHOTO = 26; // breed photo between the tip dot and its name
+const PHOTO_GAP = 10; // space between the tip dot and the photo
+const LABEL_SPACE = 190 + PHOTO + 6; // room above the tips for photos and (vertical) names
 
 const nameOf = (c: string) => (c === "WOLF" ? "Grey wolf" : data.breeds[c].name);
 const clip = (s: string, n = 26) => (s.length > n ? `${s.slice(0, n - 1)}…` : s);
@@ -56,6 +59,9 @@ export default function LineageTree({ code, onSelect }: { code: string; onSelect
     const svg = d3.select(el).append("svg").attr("width", W).attr("height", H)
       .attr("role", "img")
       .attr("aria-label", `Family tree of the ${nameOf(code)} and its cousins, back to the split from the grey wolf.`);
+    // One rounded-square clip, shared by every tip photo (they all sit at the same local spot).
+    svg.append("defs").append("clipPath").attr("id", "lt-photo-clip")
+      .append("rect").attr("x", -PHOTO / 2).attr("y", -PHOTO_GAP - PHOTO).attr("width", PHOTO).attr("height", PHOTO).attr("rx", 3);
     const g = svg.append("g");
     const content = g.append("g").attr("transform", `translate(${pad.l - x0},${pad.t})`);
 
@@ -144,7 +150,23 @@ export default function LineageTree({ code, onSelect }: { code: string; onSelect
         .attr("fill", self ? GOLD : cladeColor(data.breeds[c]?.clade ?? null, c))
         .attr("stroke", BG).attr("stroke-width", 1.5);
       if (self) t.append("circle").attr("r", 12).attr("class", "lt-pulse");
-      const label = t.append("text").attr("transform", `translate(0,${self ? -14 : -10}) rotate(-90)`)
+      // A small photo of the breed, just above its tip.
+      const url = c === "WOLF" ? undefined : photoOf(c);
+      const py = -PHOTO_GAP - PHOTO;
+      const ph = t.append("g").attr("class", "lt-photo");
+      if (url) {
+        ph.append("image").attr("href", url).attr("x", -PHOTO / 2).attr("y", py).attr("width", PHOTO).attr("height", PHOTO)
+          .attr("preserveAspectRatio", "xMidYMid slice").attr("clip-path", "url(#lt-photo-clip)")
+          .attr("referrerpolicy", "no-referrer");
+      }
+      ph.append("rect").attr("x", -PHOTO / 2).attr("y", py).attr("width", PHOTO).attr("height", PHOTO).attr("rx", 3)
+        .attr("fill", "none")
+        .attr("stroke", self ? GOLD : url ? "rgba(233,226,208,0.35)" : cladeColor(data.breeds[c]?.clade ?? null, c))
+        .attr("stroke-width", self ? 2 : 1)
+        .attr("stroke-dasharray", url ? null : "3 2");
+      ph.append("title").text(nameOf(c));
+      if (!self && c !== "WOLF") ph.style("cursor", "pointer").on("click", () => onSelectRef.current(c));
+      const label = t.append("text").attr("transform", `translate(0,${py - (self ? 8 : 5)}) rotate(-90)`)
         .attr("dy", "0.35em")
         .attr("class", self ? "lt-self-tip" : `lt-name${c === "WOLF" ? " wolf" : ""}${sameBreed ? " same" : ""}`)
         .text(clip(nameOf(c)) + (sameBreed ? " (other dogs)" : ""));
