@@ -91,3 +91,18 @@ export const lineagePairs: PairRow[] = LINEAGES.flatMap(([parent, child, note]) 
   const v = sharedBp(parent, child);
   return v ? [row(parent, child, v, note)] : [];
 }).sort((x, y) => y.mb - x.mb);
+
+/** Breeds documented as developed from `code`, directly or through a chain (e.g. Standard → Miniature → Toy Poodle). */
+export function descendantsOf(code: string): string[] {
+  const out = new Set<string>();
+  const walk = (c: string) => {
+    for (const [parent, child] of LINEAGES) {
+      if (parent === c && !out.has(child) && child !== code) {
+        out.add(child);
+        walk(child);
+      }
+    }
+  };
+  walk(code);
+  return [...out];
+}

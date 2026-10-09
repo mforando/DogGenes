@@ -1,4 +1,4 @@
-:HL["/DogGenes/_next/static/chunks/0ukkr49_eu0p1.css","style"]
+:HL["/DogGenes/_next/static/chunks/2ixscxz06-xz9.css","style"]
 :HL["/DogGenes/_next/static/media/4e8cb63bdfc89443-s.p.0-zxmgh6g2ro_.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
 :HL["/DogGenes/_next/static/media/52b5d5098cb87ddd-s.p.3r2y_bth_sjsm.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
 :HL["/DogGenes/_next/static/media/9346dec8b3acbbe6-s.p.28g3plnrcjyh3.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
@@ -13,4 +13,4 @@
 3:[["children",{"s":"__PAGE__","h":160}]]
 2:[["children",{"s":"guide","h":96,"c":"$Q3"}]]
 1:[["children",{"s":"circos","h":96,"c":"$Q2"}]]
-0:{"b":"ZvMKyZnXgWOSSPF8SfFiz","t":{"t":{"s":"","h":80,"c":"$Q1"}}}
+0:{"b":"DKv6qjVKgEW05BOeo-aeO","t":{"t":{"s":"","h":80,"c":"$Q1"}}}

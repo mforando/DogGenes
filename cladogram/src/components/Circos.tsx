@@ -4,6 +4,8 @@ import { useEffect, useRef } from "react";
 import * as d3 from "d3";
 import { CGEOM, circosData, cladeArcs, layoutLinks, links, nodeByCode, nodes, partnersOf, rawLinkByKey, type CEnd, type CLink, type CNode } from "@/lib/circos";
 import { photoOf } from "@/lib/photos";
+import { circosTree, elbow, treeCodeOf, type CTNode } from "@/lib/circosTree";
+import { descendantsOf } from "@/lib/pairs";
 
 /** What the circos figure should emphasise. */
 export type CircosView = {
@@ -21,9 +23,17 @@ export type CircosView = {
   interactive?: boolean;
   /** Mark where the ring starts and which way it runs. */
   start?: boolean;
+  /** Draw the family tree inside the ring; hovering traces paths through it. */
+  tree?: boolean;
+  /** Breed whose path back to the grey wolf is traced when nothing is hovered. */
+  treePath?: string | null;
+  /** A selection is locked in: hovering no longer changes the chart or the details. */
+  frozen?: boolean;
 };
 
 const INK = "#e9e2d0";
+/** Sister groups up to this many breeds get white lines all the way to their blocks. */
+const RELATIVE_LIMIT = 6;
 const DIM = "#2c3430";
 const W = CGEOM.size;
 const mb = (v: number) => `${(v / 1e6).toFixed(1)} Mb`;
@@ -34,7 +44,31 @@ function cladeLabel(n: CNode) {
   return n.clade ? circosData.clades[n.clade] : "Loner (no clear family)";
 }
 
-export default function Circos({ view, ariaLabel }: { view: CircosView; ariaLabel?: string }) {
+/** What the pointer (or keyboard focus) is on, for pages that show details outside the chart. */
+export type CircosHover = { kind: "breed"; code: string } | { kind: "ribbon"; key: string } | null;
+
+export default function Circos({
+  view,
+  ariaLabel,
+  onHover,
+  onBreedClick,
+  onBackgroundClick,
+}: {
+  view: CircosView;
+  ariaLabel?: string;
+  /** When given, hover details go to the page instead of a floating tooltip. */
+  onHover?: (h: CircosHover) => void;
+  /** Clicking (or pressing Enter on) a breed's block. */
+  onBreedClick?: (code: string) => void;
+  /** Clicking anywhere else on the chart. */
+  onBackgroundClick?: () => void;
+}) {
+  const onBreedClickRef = useRef(onBreedClick);
+  onBreedClickRef.current = onBreedClick;
+  const onBgClickRef = useRef(onBackgroundClick);
+  onBgClickRef.current = onBackgroundClick;
+  const onHoverRef = useRef(onHover);
+  onHoverRef.current = onHover;
   const host = useRef<HTMLDivElement>(null);
   const api = useRef<{ update: (v: CircosView) => void } | null>(null);
 
@@ -54,7 +88,15 @@ export default function Circos({ view, ariaLabel }: { view: CircosView; ariaLabe
     halo.append("stop").attr("offset", "100%").attr("stop-color", "#0d1110").attr("stop-opacity", 0);
     svg.append("circle").attr("r", CGEOM.rOut + 20).attr("fill", "url(#c-halo)");
 
+    // Family tree (under the ribbons) and its highlighted paths (over them).
+    const gTree = svg.append("g").attr("class", "ctree").attr("fill", "none").attr("opacity", 0);
+    gTree.selectAll("path")
+      .data(circosTree.nodes.filter((n) => n.parent))
+      .join("path")
+      .attr("d", (n) => elbow((n.parent as CTNode).a, (n.parent as CTNode).r, n.a, n.r))
+      .attr("stroke", INK).attr("stroke-opacity", 0.22).attr("stroke-width", 0.7);
     const gRibbons = svg.append("g").attr("class", "ribbons");
+    const gTreeHi = svg.append("g").attr("class", "ctree-hi").attr("fill", "none").attr("pointer-events", "none");
     const gSegs = svg.append("g").attr("class", "segs");
     const gLabels = svg.append("g").attr("class", "codes");
     const gClade = svg.append("g").attr("class", "clade-ring").attr("opacity", 0);
@@ -145,6 +187,88 @@ export default function Circos({ view, ariaLabel }: { view: CircosView; ariaLabe
     // ---------- state ----------
     let current: CircosView = { ribbons: "none" };
     let hover: string | null = null;
+    let hoverRibbon: CLink | null = null;
+
+    /** Trace tree paths: a breed back to the grey wolf, or two breeds to their meeting point. */
+    function drawTreePaths(v: CircosView) {
+      type Seg = { key: string; n: CTNode; color: string; w: number; stub?: boolean };
+      const segs: Seg[] = [];
+      const marks: { key: string; n: CTNode; label: string }[] = [];
+      const leafOf = (c: string) => circosTree.mainLeaf.get(treeCodeOf(c));
+      const trace = (a: CTNode, b: CTNode, colA: string, colB: string, label: string) => {
+        const path = a.path(b) as CTNode[];
+        const top = path.reduce((x, y) => (y.depth < x.depth ? y : x));
+        const iTop = path.indexOf(top);
+        path.forEach((n, i) => {
+          if (n === top) return;
+          segs.push({ key: `${n.data.id}`, n, color: i < iTop ? colA : colB, w: i < iTop ? 2.6 : 1.8 });
+        });
+        marks.push({ key: `m${top.data.id}`, n: top, label });
+      };
+      if (v.tree) {
+        const breed = (v.interactive && hover) || (!hoverRibbon && v.treePath) || null;
+        if (hoverRibbon) {
+          const a = leafOf(hoverRibbon.a), b = leafOf(hoverRibbon.b);
+          if (a && b) trace(a, b, "#e8b74a", "#e8b74a", "lines meet");
+        } else if (breed && breed !== "WOLF") {
+          const a = leafOf(breed), w = circosTree.mainLeaf.get("WOLF");
+          if (a && w) {
+            trace(a, w, "#e8b74a", INK, "split from wolves");
+            // Branches out to the relatives that split off along the breed's line.
+            const self = treeCodeOf(breed);
+            const skip = new Set([self, ...descendantsOf(self)]);
+            const top = (a.path(w) as CTNode[]).reduce((x, y) => (y.depth < x.depth ? y : x));
+            const onPath = new Set(a.ancestors());
+            const codesOf = (n: CTNode) => [...new Set(n.leaves().map((l) => (l.data as { code: string }).code))];
+            for (const anc of a.ancestors().slice(1) as CTNode[]) {
+              for (const sis of (anc.children as CTNode[]).filter((c) => !onPath.has(c))) {
+                if (sis.leaves().some((l) => (l.data as { code: string }).code === "WOLF")) continue; // drawn by trace
+                const kin = codesOf(sis).filter((c) => !skip.has(c));
+                if (!kin.length) continue;
+                if (kin.length > RELATIVE_LIMIT) {
+                  // A whole swathe of the tree: a short stub to where it branches off.
+                  segs.push({ key: `w${sis.data.id}`, n: sis, color: INK, w: 1, stub: true });
+                  continue;
+                }
+                for (const n of sis.descendants() as CTNode[]) {
+                  if (codesOf(n).every((c) => skip.has(c))) continue;
+                  segs.push({ key: `w${n.data.id}`, n, color: INK, w: 1 });
+                }
+              }
+              if (anc === top) break;
+            }
+          }
+        }
+      }
+      gTreeHi.selectAll<SVGPathElement, Seg>("path")
+        .data(segs, (d) => d.key)
+        .join("path")
+        .sort((x, y) => (x.color === "#e8b74a" ? 1 : 0) - (y.color === "#e8b74a" ? 1 : 0))
+        .attr("d", (d) => {
+          const p = d.n.parent as CTNode;
+          // Stubs stop a little way out so they read as "a big group branches off here".
+          return elbow(p.a, p.r, d.n.a, d.stub ? p.r + Math.min(18, (d.n.r - p.r) * 0.6) : d.n.r);
+        })
+        .attr("stroke-dasharray", (d) => (d.stub ? "2 3" : null))
+        .attr("stroke", (d) => d.color)
+        .attr("stroke-width", (d) => d.w)
+        .attr("stroke-linecap", "round")
+        // Relatives keep the tree's own line colour, just firmer than the faint background tree.
+        .attr("stroke-opacity", (d) => (d.color === INK ? 0.6 : 0.95));
+      // While a path is traced, hide the rest of the tree so only the relatives remain.
+      gTree.classed("traced", segs.length > 0);
+      const m = gTreeHi.selectAll<SVGGElement, (typeof marks)[number]>("g.ct-mark")
+        .data(marks, (d) => d.key)
+        .join((enter) => {
+          const g = enter.append("g").attr("class", "ct-mark");
+          g.append("circle").attr("r", 9).attr("class", "ct-pulse");
+          g.append("circle").attr("r", 4.5).attr("fill", "#e8b74a").attr("stroke", "#0d1110").attr("stroke-width", 1.5);
+          g.append("text").attr("class", "ct-label").attr("dy", "-0.9em").attr("text-anchor", "middle");
+          return g;
+        })
+        .attr("transform", (d) => `translate(${pol(d.n.a, d.n.r).join(",")})`);
+      m.select("text").text((d) => d.label);
+    }
 
     function visibleLinks(v: CircosView): CLink[] {
       const r = v.ribbons;
@@ -185,6 +309,8 @@ export default function Circos({ view, ariaLabel }: { view: CircosView; ariaLabe
         .transition(T)
         .attr("fill", (d) => (on(d) ? (hasFocus ? "#fffaf0" : "#b9b3a3") : "#4a524c"));
       gClade.transition(T).attr("opacity", v.cladeRing ? 1 : 0);
+      gTree.transition(T).attr("opacity", v.tree ? 1 : 0);
+      drawTreePaths(v);
       gStart.transition(T).attr("opacity", v.start ? 1 : 0);
 
       const many = shown.length > 40;
@@ -204,8 +330,23 @@ export default function Circos({ view, ariaLabel }: { view: CircosView; ariaLabe
         .attr("fill", (d) => d.color)
         .attr("stroke", (d) => d.color)
         .attr("stroke-width", 0.4)
+        .on("pointerenter", (_, d) => {
+          if (current.frozen) return;
+          onHoverRef.current?.({ kind: "ribbon", key: d.key });
+          hoverRibbon = d;
+          // Fade the other ribbons so the hovered one and its tree path stand out.
+          gRibbons.classed("dim", true).selectAll<SVGPathElement, CLink>("path").classed("hot", (x) => x.key === d.key);
+          drawTreePaths(current);
+        })
         .on("pointermove", (ev: PointerEvent, d) => showRibbonTip(ev, d))
-        .on("pointerleave", () => tip.classed("on", false))
+        .on("pointerleave", () => {
+          tip.classed("on", false);
+          if (current.frozen) return;
+          onHoverRef.current?.(null);
+          hoverRibbon = null;
+          gRibbons.classed("dim", false).selectAll("path").classed("hot", false);
+          drawTreePaths(current);
+        })
         .transition(T)
         .delay((_, i) => (hoverOn || !many ? i * 30 : Math.min(i * 3, 500)))
         .attr("fill-opacity", baseOpacity)
@@ -236,6 +377,7 @@ export default function Circos({ view, ariaLabel }: { view: CircosView; ariaLabe
         .style("top", `${Math.min(Math.max(8, y + 14), box.height - t.offsetHeight - 8)}px`);
     }
     function showSegTip(ev: PointerEvent | FocusEvent, d: CNode) {
+      if (onHoverRef.current) return;
       const ps = partnersOf(d.code);
       const photo = photoOf(d.code === "CHTM" ? "TIBM" : d.code === "COOS" ? "SALU" : d.code === "ITCC" ? "CANE" : d.code);
       tip.html(
@@ -251,6 +393,7 @@ export default function Circos({ view, ariaLabel }: { view: CircosView; ariaLabe
       place(ev);
     }
     function showRibbonTip(ev: PointerEvent, d: CLink) {
+      if (onHoverRef.current) return;
       const a = nodeByCode.get(d.a)!, b = nodeByCode.get(d.b)!;
       tip.html(
         `<div class="tip-name">${a.name} ↔ ${b.name}</div>
@@ -262,7 +405,9 @@ export default function Circos({ view, ariaLabel }: { view: CircosView; ariaLabe
 
     segSel
       .on("pointerenter focus", (ev, d) => {
+        if (current.frozen) return;
         showSegTip(ev, d);
+        onHoverRef.current?.({ kind: "breed", code: d.code });
         if (current.interactive) {
           hover = d.code;
           render();
@@ -271,16 +416,36 @@ export default function Circos({ view, ariaLabel }: { view: CircosView; ariaLabe
       .on("pointermove", (ev, d) => showSegTip(ev, d))
       .on("pointerleave blur", () => {
         tip.classed("on", false);
+        if (current.frozen) return;
+        onHoverRef.current?.(null);
         if (current.interactive && hover) {
           hover = null;
           render();
         }
       });
 
+    // Click a block to lock onto it; click again (anywhere on the chart) to go back.
+    segSel
+      .on("click", (ev: MouseEvent, d) => {
+        if (!onBreedClickRef.current) return;
+        ev.stopPropagation();
+        onBreedClickRef.current(d.code);
+      })
+      .on("keydown", (ev: KeyboardEvent, d) => {
+        if ((ev.key === "Enter" || ev.key === " ") && onBreedClickRef.current) {
+          ev.preventDefault();
+          onBreedClickRef.current(d.code);
+        }
+      });
+    svg.on("click", () => onBgClickRef.current?.());
+
     api.current = {
       update(v) {
         current = v;
         hover = null;
+        hoverRibbon = null;
+        gRibbons.classed("dim", false).selectAll("path").classed("hot", false);
+        svg.classed("frozen", !!v.frozen);
         render();
       },
     };

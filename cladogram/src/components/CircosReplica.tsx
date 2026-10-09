@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import Circos, { type CircosView } from "./Circos";
+import Circos, { type CircosHover, type CircosView } from "./Circos";
+import CircosDetails from "./CircosDetails";
 import { SiteNav } from "./shared";
 import Primer from "./Primer";
 import { circosData, cladeArcs, links, nodeByCode, nodes } from "@/lib/circos";
@@ -13,14 +14,16 @@ const options = [...nodes].sort((a, b) => a.name.localeCompare(b.name));
 export default function CircosReplica() {
   const [pick, setPick] = useState<string | null>(null);
   const [names, setNames] = useState(true);
+  const [showTree, setShowTree] = useState(true);
   const [sortBy, setSortBy] = useState<"value" | "pair">("value");
+  const [hover, setHover] = useState<CircosHover>(null);
 
   const view = useMemo<CircosView>(
     () =>
       pick
-        ? { ribbons: { codes: [pick] }, focus: [pick, ...links.filter((l) => l.a === pick || l.b === pick).map((l) => (l.a === pick ? l.b : l.a))], cladeRing: names }
-        : { ribbons: "all", cladeRing: names, interactive: true },
-    [pick, names],
+        ? { ribbons: { codes: [pick] }, focus: [pick, ...links.filter((l) => l.a === pick || l.b === pick).map((l) => (l.a === pick ? l.b : l.a))], cladeRing: names, tree: showTree, treePath: pick, frozen: true }
+        : { ribbons: "all", cladeRing: names, interactive: true, tree: showTree },
+    [pick, names, showTree],
   );
 
   const rows = useMemo(() => {
@@ -61,7 +64,7 @@ export default function CircosReplica() {
             <div className="control">
               <label htmlFor="circos-pick">Show one breed</label>
               <select id="circos-pick" value={pick ?? ""} onChange={(e) => setPick(e.target.value || null)}>
-                <option value="">All breeds (or hover over one)</option>
+                <option value="">All breeds (hover, or click one to lock it)</option>
                 {options.map((n) => (
                   <option key={n.code} value={n.code}>
                     {n.name} ({n.code}) · {n.degree} ribbon{n.degree === 1 ? "" : "s"}
@@ -71,6 +74,10 @@ export default function CircosReplica() {
               <label className="check">
                 <input type="checkbox" checked={names} onChange={(e) => setNames(e.target.checked)} /> Show clade
                 names
+              </label>
+              <label className="check">
+                <input type="checkbox" checked={showTree} onChange={(e) => setShowTree(e.target.checked)} /> Show the
+                family tree inside the circle
               </label>
             </div>
 
@@ -93,8 +100,24 @@ export default function CircosReplica() {
             </ul>
           </aside>
           <div className="replica-figure">
-            <Circos view={view} ariaLabel="Replica of Figure 4: circos plot of cross-clade haplotype sharing among 168 dog breed populations." />
+            <Circos
+              view={view}
+              onHover={setHover}
+              // First click locks onto a breed; a second click returns to the default view.
+              onBreedClick={(code) => {
+                setHover(null);
+                setPick((p) => (p ? null : code));
+              }}
+              onBackgroundClick={() => {
+                setHover(null);
+                setPick(null);
+              }}
+              ariaLabel="Replica of Figure 4: circos plot of cross-clade haplotype sharing among 168 dog breed populations."
+            />
           </div>
+          <aside className="replica-details" aria-label="Details for the hovered breed or ribbon">
+            <CircosDetails hover={pick ? null : hover} pinned={pick} onClear={() => setPick(null)} />
+          </aside>
         </div>
 
         <details className="replica-primer">
