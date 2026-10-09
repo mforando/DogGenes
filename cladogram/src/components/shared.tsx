@@ -61,6 +61,7 @@ const PAGES = [
   { href: "/circos", label: "The full circle chart" },
   { href: "/pairs", label: "Breed pairs" },
   { href: "/purpose", label: "Built for purpose" },
+  { href: "/geography", label: "Where they came from" },
 ];
 
 export function SiteNav() {

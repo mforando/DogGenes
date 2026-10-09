@@ -10,7 +10,6 @@
 :HL["/DogGenes/_next/static/media/c77846bcb3371a93-s.p.17l2q2xazf7qv.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
 :HL["/DogGenes/_next/static/media/d273130dc90e6d8b-s.p.2f8v_r0u-86a-.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
 :HL["/DogGenes/_next/static/media/f577e48814abc562-s.p.32qtc5gvtu4f4.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
-3:[["children",{"s":"__PAGE__","h":160}]]
-2:[["children",{"s":"guide","h":96,"c":"$Q3"}]]
-1:[["children",{"s":"circos","h":96,"c":"$Q2"}]]
+2:[["children",{"s":"__PAGE__","h":160}]]
+1:[["children",{"s":"geography","h":96,"c":"$Q2"}]]
 0:{"b":"ZvMKyZnXgWOSSPF8SfFiz","t":{"t":{"s":"","h":80,"c":"$Q1"}}}
