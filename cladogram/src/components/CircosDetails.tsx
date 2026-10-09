@@ -6,6 +6,7 @@ import type { CircosHover } from "./Circos";
 import { lineage } from "@/lib/relatives";
 import { descendantsOf, stepsApart } from "@/lib/pairs";
 import MiniLineage from "./MiniLineage";
+import BreedGallery from "./BreedGallery";
 import { data } from "@/lib/tree";
 
 const mb = (v: number) => `${(v / 1e6).toFixed(1)} Mb`;
@@ -16,11 +17,13 @@ const familyLabel = (n: CNode) =>
   n.code === "WOLF" ? "Wild relative" : n.clade ? circosData.clades[n.clade] : "Loner (no clear family)";
 const maxValue = Math.max(...links.map((l) => l.value));
 
-function BreedHeader({ n, small = false }: { n: CNode; small?: boolean }) {
+function BreedHeader({ n, small = false, gallery = false }: { n: CNode; small?: boolean; gallery?: boolean }) {
   const photo = photoOf(photoCode(n.code));
   return (
     <div className={`cd-breed${small ? " small" : ""}`}>
-      {photo ? (
+      {gallery && photo ? (
+        <BreedGallery code={photoCode(n.code)} name={n.name} fallback={photo} />
+      ) : photo ? (
         <img src={photo} alt={n.name} referrerPolicy="no-referrer" />
       ) : (
         <span className="cd-noimg" style={{ borderColor: n.color }} aria-hidden>
@@ -124,7 +127,8 @@ export default function CircosDetails({
           <p className="cd-clickhint">Click to lock this breed and scroll its details.</p>
         </>
       )}
-      <BreedHeader n={n} />
+      {/* A locked breed gets arrows to page through all of its photos. */}
+      <BreedHeader n={n} gallery={pinned === n.code && !hover} />
       {ps.length ? (
         <>
           <p className="cd-sub">

@@ -974,3 +974,18 @@ body::before {
 .hl-sname { font-family: var(--font-display); font-size: 1.1rem; color: var(--gold); text-decoration: none; }
 .hl-sources p { color: var(--ink-2); font-size: 0.92rem; line-height: 1.5; margin: 0.5rem 0; }
 .hl-extra { font-family: var(--font-label); font-size: 0.82rem; color: var(--gold); }
+.lineage-svg svg.panning { cursor: grabbing; }
+/* Photo pager for a locked breed (circle chart panel) */
+.bg-frame { position: relative; aspect-ratio: 4 / 3; background: #1a211e; overflow: hidden; display: grid; place-items: center; }
+.bg-frame img { width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .2s ease; }
+.bg-frame.loaded img { opacity: 1; }
+.bg-frame::after { content: "Loading…"; position: absolute; font-family: var(--font-label); font-size: 0.78rem; color: var(--ink-3); }
+.bg-frame.loaded::after { content: none; }
+.bg-prev, .bg-next {
+  position: absolute; top: 50%; transform: translateY(-50%); z-index: 1; width: 34px; height: 50px;
+  font-size: 1.7rem; line-height: 1; color: var(--ink); background: rgba(10, 13, 12, 0.6); border: 0; cursor: pointer;
+}
+.bg-prev { left: 0; } .bg-next { right: 0; }
+.bg-prev:hover, .bg-next:hover { color: var(--gold); background: rgba(10, 13, 12, 0.85); }
+.bg-prev:focus-visible, .bg-next:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
+.bg-count { font-family: var(--font-label); font-size: 0.75rem; color: var(--ink-3); margin: 0.35rem 0 0; }

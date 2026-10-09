@@ -202,18 +202,15 @@ export default function LineageTree({ code, onSelect }: { code: string; onSelect
     const zoom = d3.zoom<SVGSVGElement, unknown>()
       .scaleExtent([0.25, 2.5])
       .translateExtent([[-150, -150], [innerW + 150, innerH + 150]])
-      // Plain wheel pans; pinch / ctrl+wheel zooms.
-      .filter((ev: Event) => (ev.type === "wheel" ? (ev as WheelEvent).ctrlKey : !(ev as MouseEvent).button))
-      .on("zoom", (ev) => g.attr("transform", ev.transform.toString()));
+      // The scroll wheel (or a pinch) zooms toward the pointer; only click-and-drag pans.
+      .filter((ev: Event) => ev.type === "wheel" || !(ev as MouseEvent).button)
+      .wheelDelta((ev: WheelEvent) => -ev.deltaY * (ev.deltaMode === 1 ? 0.05 : ev.deltaMode ? 1 : 0.002))
+      .on("start", () => svg.classed("panning", true))
+      .on("zoom", (ev) => g.attr("transform", ev.transform.toString()))
+      .on("end", () => svg.classed("panning", false));
     svg.call(zoom).call(zoom.transform, start).on("dblclick.zoom", null);
-    svg.on("wheel.pan", (ev: WheelEvent) => {
-      if (ev.ctrlKey) return;
-      ev.preventDefault();
-      const k = d3.zoomTransform(svg.node()!).k;
-      const dx = ev.shiftKey ? ev.deltaY : ev.deltaX;
-      const dy = ev.shiftKey ? 0 : ev.deltaY;
-      zoom.translateBy(svg, -dx / k, -dy / k);
-    });
+    // Keep the wheel on the diagram from ever scrolling the page underneath.
+    svg.on("wheel.block", (ev: WheelEvent) => ev.preventDefault(), { passive: false } as unknown as boolean);
     zoomApi.current = {
       by: (k) => svg.transition().duration(300).call(zoom.scaleBy, k),
       reset: () => svg.transition().duration(400).call(zoom.transform, fit),
@@ -236,8 +233,8 @@ export default function LineageTree({ code, onSelect }: { code: string; onSelect
           Today&rsquo;s breeds line up along the top, with the {nameOf(code)} first and its
           closest cousins beside it. Follow any two breeds down until their lines join: the
           higher the join, the closer the relatives. The gold line runs {forks} forks back to
-          the split from the grey wolf. Scroll or drag to move around and pinch (or
-          Ctrl + scroll) to zoom. Triangles are big groups of breeds folded together.
+          the split from the grey wolf. Scroll to zoom in and out, and click and drag to move
+          around. Triangles are big groups of breeds folded together.
         </p>
       </div>
       <div className="lineage-wrap">
