@@ -5,6 +5,7 @@
   "scripts": {
     "data": "node scripts/build-data.mjs",
     "photos": "node scripts/fetch-dog-photos.mjs",
+    "commons": "node scripts/fetch-commons-photos.mjs",
     "dev": "next dev",
     "build": "next build",
     "postbuild": "node scripts/publish.mjs",

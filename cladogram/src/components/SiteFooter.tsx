@@ -16,6 +16,11 @@ const C = {
     url: "https://dog.ceo/dog-api/",
     license: "non-commercial research & education",
   },
+  commons: {
+    text: "More breed photos: Wikimedia Commons contributors; photographer and license for each in SOURCES.md",
+    url: "https://github.com/mforando/DogGenes/blob/main/SOURCES.md#wikimedia-commons-photo-credits",
+    license: "CC BY / CC BY-SA / CC0 / public domain",
+  },
   breedHistories: {
     text: "Breed founding dates, origins and original jobs: standard breed-club histories (e.g. American Kennel Club)",
     url: "https://www.akc.org/dog-breeds/",
@@ -64,6 +69,21 @@ const C = {
     url: "https://data.cityofnewyork.us/Health/NYC-Dog-Licensing-Dataset/nu7n-tubp",
     license: "NYC Open Data Terms of Use",
   },
+  toronto: {
+    text: "Licensed Dog and Cat Names; Licensed Dogs and Cats Reports; Licensed Dogs and Cats. City of Toronto Open Data (dogs only). Contains information licensed under the Open Government Licence – Toronto",
+    url: "https://open.toronto.ca/dataset/licensed-dog-and-cat-names/",
+    license: "Open Government Licence – Toronto",
+  },
+  torontoCensus: {
+    text: "Statistics Canada, 2021 Census (custom tabulation): ethnic or cultural origin, via City of Toronto Ward Profiles (25-Ward Model). Contains information licensed under the Open Government Licence – Toronto",
+    url: "https://open.toronto.ca/dataset/ward-profiles-25-ward-model/",
+    license: "Open Government Licence – Toronto",
+  },
+  acsAncestry: {
+    text: "U.S. Census Bureau, American Community Survey 2020–2024 5-year estimates, table B04006 (people reporting ancestry), New York city, via Census Reporter",
+    url: "https://censusreporter.org/tables/B04006/",
+    license: "public domain (U.S. government work)",
+  },
   monroe: {
     text: "Monroe B.L., Colaresi M.P., Quinn K.M. (2008). Fightin' Words. Political Analysis 16(4):372–403 (method)",
     url: "https://doi.org/10.1093/pan/mpn018",
@@ -73,15 +93,15 @@ const C = {
 
 /** Sources cited on each page (keyed by route, without the base path). */
 const BY_PAGE: Record<string, Cite[]> = {
-  "/history": [C.wikiDomestication, C.wikiGlacial, C.wikiBonn, C.wikiPaleo, C.wikiBreeds, C.breedHistories, C.parker, C.parker2004, C.rosenberg, C.boyko, C.yengo, C.dogceo, C.naturalEarth],
-  "/": [C.parker, C.dogceo],
-  "/pairs": [C.parker, C.breedHistories, C.dogceo],
-  "/purpose": [C.parker, C.breedHistories, C.dogceo],
-  "/geography": [C.breedHistories, C.parker, C.naturalEarth, C.dogceo],
-  "/explorer": [C.dogceo, C.parker, C.breedHistories, C.naturalEarth, C.pudding],
-  "/health": [C.parker, C.omia, C.donner, C.brown, C.marchant, C.karmi, C.dogwellnet, C.dap, C.dogceo],
-  "/names": [C.nyc, C.monroe, C.parker, C.dogceo],
-  "/popularity": [C.akc, C.tidytuesday, C.wikiTopBreeds, C.parker, C.dogceo],
+  "/history": [C.wikiDomestication, C.wikiGlacial, C.wikiBonn, C.wikiPaleo, C.wikiBreeds, C.breedHistories, C.parker, C.parker2004, C.rosenberg, C.boyko, C.yengo, C.dogceo, C.commons, C.naturalEarth],
+  "/": [C.parker, C.dogceo, C.commons],
+  "/pairs": [C.parker, C.breedHistories, C.dogceo, C.commons],
+  "/purpose": [C.parker, C.breedHistories, C.dogceo, C.commons],
+  "/geography": [C.breedHistories, C.parker, C.naturalEarth, C.dogceo, C.commons],
+  "/explorer": [C.dogceo, C.commons, C.parker, C.breedHistories, C.naturalEarth, C.pudding],
+  "/health": [C.parker, C.omia, C.donner, C.brown, C.marchant, C.karmi, C.dogwellnet, C.dap, C.dogceo, C.commons],
+  "/names": [C.nyc, C.toronto, C.torontoCensus, C.acsAncestry, C.monroe, C.parker, C.dogceo, C.commons],
+  "/popularity": [C.akc, C.tidytuesday, C.wikiTopBreeds, C.parker, C.dogceo, C.commons],
 };
 
 const SOURCES_URL = "https://github.com/mforando/DogGenes/blob/main/SOURCES.md";

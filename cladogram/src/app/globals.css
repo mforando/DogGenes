@@ -990,7 +990,7 @@ body::before {
 .bg-prev:focus-visible, .bg-next:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
 .bg-count { font-family: var(--font-label); font-size: 0.75rem; color: var(--ink-3); margin: 0.35rem 0 0; }
 
-/* ---------- NYC dog names ---------- */
+/* ---------- how we name our dogs (NYC and Toronto) ---------- */
 .nm-top { font-family: var(--font-label); font-size: 0.9rem; color: var(--ink-3); margin: 0; }
 .nm-top strong { color: var(--ink); font-weight: 500; }
 .nm-acc svg { max-width: 900px; }
@@ -1273,3 +1273,23 @@ body::before {
 .pop-lname { font-family: var(--font-display); font-size: 1.35rem; color: var(--ink); margin: 0; }
 .pop-lmeta { margin: 0.15rem 0 0; flex-wrap: wrap; font-family: var(--font-label); }
 .popularity .hl-reasons a { color: var(--gold); }
+.cc-top { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; counter-reset: cc; font-family: var(--font-label); }
+.cc-top li { counter-increment: cc; display: flex; align-items: baseline; gap: 0.6rem; padding: 0.15rem 0; }
+.cc-top li::before { content: counter(cc); width: 1.4rem; text-align: right; color: var(--ink-3); font-size: 0.8rem; font-variant-numeric: tabular-nums; }
+.cc-name { flex: 1; font-family: var(--font-display); font-size: 1.05rem; color: var(--ink-2); }
+.cc-share { font-size: 0.8rem; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.cc-top li.only .cc-name { color: var(--gold); }
+.cc-tops { margin-bottom: 1.4rem; }
+.cc-notes { margin-top: 1.6rem; }
+.cc-h { font-family: var(--font-display); font-weight: 500; font-size: 1.25rem; color: var(--ink); margin: 2.4rem 0 0.4rem; }
+.cc-p { color: var(--ink-2); max-width: 52rem; margin: 0 0 1.2rem; }
+.cc-legend { list-style: none; margin: 0.6rem 0 0; padding: 0; display: flex; gap: 1rem; font-size: 0.85rem; color: var(--ink-2); letter-spacing: 0; text-transform: none; }
+.cc-legend li { display: flex; align-items: center; gap: 0.4rem; }
+.cc-legend i { width: 14px; height: 3px; border-radius: 2px; display: inline-block; }
+.cc-endlab { font-family: var(--font-label); font-size: 12px; font-weight: 600; }
+.cc-split { display: block; width: 100%; max-width: 340px; height: auto; margin: 0.9rem 0 0.3rem; }
+.cc-sh { font-family: var(--font-label); font-size: 11px; font-weight: 600; }
+.cc-so { font-family: var(--font-label); font-size: 11.5px; fill: var(--ink); }
+.cc-sv { font-family: var(--font-label); font-size: 11px; fill: var(--ink-2); font-variant-numeric: tabular-nums; }
+.cc-sn { font-family: var(--font-label); font-size: 10px; fill: var(--ink-3); }
+.cc-src { display: block; font-family: var(--font-label); font-size: 0.72rem; line-height: 1.4; color: var(--ink-3); }

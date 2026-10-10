@@ -306,10 +306,14 @@ def main():
               "Cockapoo": "cockapoo", "Puggle": "puggle", "Plott Hound": "hound/plott", "Coonhound": "coonhound",
               "Affenpinscher": "affenpinscher", "Japanese Spitz": "spitz/japanese"}
     code_of = {row[0]: row[2] for row in B}
+    # Wikimedia Commons photos (scripts/fetch-commons-photos.mjs) for breeds Dog CEO lacks.
+    commons = json.load(open(os.path.join(ROOT, "src", "data", "commons.json"), encoding="utf8"))
 
     def photo_for(breed):
         code = code_of.get(breed)
         url = photos.get(code, {}).get("urls", [None])[0] if code else None
+        if not url:
+            url = (commons.get(f"code:{code}") or commons.get(f"name:{breed}") or {}).get("url")
         if not url and breed in DOGCEO:
             files = explorer.get(DOGCEO[breed])
             if files:

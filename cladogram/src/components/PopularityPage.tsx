@@ -6,7 +6,7 @@ import * as d3 from "d3";
 import raw from "@/data/akc.json";
 import { data } from "@/lib/tree";
 import { cladeColor } from "@/lib/palette";
-import { photoOf } from "@/lib/photos";
+import { photoOf, photoOfAkc } from "@/lib/photos";
 import { SiteNav } from "./shared";
 
 type Breed = { slug: string; name: string; code: string | null; r: (number | null)[] };
@@ -29,8 +29,8 @@ const initials = (name: string) =>
     .map((w) => w[0])
     .join("");
 
-function Photo({ b, size }: { b: { code: string | null; name: string }; size: number }) {
-  const url = b.code ? photoOf(b.code) : undefined;
+function Photo({ b, size }: { b: Breed; size: number }) {
+  const url = photoOfAkc(b.code, b.slug);
   return url ? (
     <img className="pop-photo" src={url} alt={b.name} width={size} height={size} loading="lazy" referrerPolicy="no-referrer" />
   ) : (
@@ -47,7 +47,7 @@ const NO_REFERRER = { referrerPolicy: "no-referrer" } as object;
 function Disc({ b, x, y, r }: { b: Breed | Era; x: number; y: number; r: number }) {
   const code = b.code;
   const name = "name" in b ? b.name : b.breed;
-  const url = code ? photoOf(code) : undefined;
+  const url = "slug" in b ? photoOfAkc(code, b.slug) : code ? photoOf(code) : undefined;
   const id = `pop-clip-${code ?? name.replace(/\W/g, "")}-${r}`;
   return (
     <g transform={`translate(${x},${y})`}>

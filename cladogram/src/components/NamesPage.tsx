@@ -5,6 +5,7 @@ import * as d3 from "d3";
 import raw from "@/data/nycnames.json";
 import { AccuracyChart, LiftBars, SizeCompare } from "./NameCharts";
 import { SiteNav } from "./shared";
+import CityCompare from "./CityCompare";
 
 type Item = { name: string; n: number; lift: number };
 type Group = { group: string; dogs: number; distinctive: Item[]; popular: { name: string; n: number }[]; photo?: string | null };
@@ -237,6 +238,8 @@ export default function NamesPage() {
           </ul>
         </section>
 
+        <CityCompare />
+
         <footer className="pairs-foot">
           <p>
             Data: <a href="https://data.cityofnewyork.us/Health/NYC-Dog-Licensing-Dataset/nu7n-tubp">NYC Dog Licensing Dataset</a>{" "}
@@ -249,6 +252,21 @@ export default function NamesPage() {
             are as reported by owners; sizes are typical adult weights for the breed. Distinctive
             names use a log-odds ratio with an informative Dirichlet prior (Monroe et al. 2008).
             The model is a logistic regression on letter patterns, scored on a held-out 20% of dogs.
+          </p>
+          <p>
+            Toronto:{" "}
+            <a href="https://open.toronto.ca/dataset/licensed-dog-and-cat-names/">Licensed Dog and Cat Names</a>{" "}
+            (City of Toronto Open Data), dogs only: complete name lists for dogs licensed in
+            2012–2019, and the top 200 names for 2020–2025. For those years the lookup divides by
+            the city&rsquo;s official count of licensed dogs, from{" "}
+            <a href="https://open.toronto.ca/dataset/licensed-dogs-and-cats-reports/">Licensed Dogs and Cats Reports</a>{" "}
+            (2020–2022) and{" "}
+            <a href="https://open.toronto.ca/dataset/licensed-dogs-and-cats/">Licensed Dogs and Cats</a>{" "}
+            (2023–2025). Toronto doesn&rsquo;t publish breeds with names, so only names are
+            compared. The head-to-head uses dogs licensed in 2019 in both cities; the name lookup
+            uses New York dogs by license issue year, 2015–2025, each year de-duplicated and
+            cleaned the same way. Contains information licensed under the Open
+            Government Licence – Toronto.
           </p>
         </footer>
       </main>
