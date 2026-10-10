@@ -279,7 +279,7 @@ def main():
         out.sort(reverse=True)
         return [{"name": n.title(), "n": int(c), "lift": round(l, 1)} for z, n, c, l in out[:k]]
 
-    def groups(col, order=None, min_dogs=1500):
+    def groups(col, order=None, min_dogs=1500, min_n=12):
         vc = known[col].value_counts()
         keys = [k for k in (order or vc.index) if k in vc and vc[k] >= min_dogs]
         res = []
@@ -288,7 +288,7 @@ def main():
             top = Counter(names[mask]).most_common(5)
             res.append({
                 "group": SIZE_NAMES.get(key, key), "dogs": int(mask.sum()),
-                "distinctive": distinctive(mask),
+                "distinctive": distinctive(mask, min_n=min_n),
                 "popular": [{"name": n.title(), "n": int(c)} for n, c in top],
             })
         return res
@@ -299,6 +299,14 @@ def main():
     by_region = groups("region")
     top_breeds = known["breed"].value_counts()
     by_breed = groups("breed", list(top_breeds.index[:24]), min_dogs=800)
+    # Every other breed, for the search under the breed cards. A breed is analyzed only if
+    # it has at least MORE_MIN_DOGS dogs and at least 3 names that pass the test (a name
+    # needs 5 dogs of the breed, not 12, since these breeds are smaller). Everything else
+    # is listed with its dog count and no names, so the page can say there isn't enough data.
+    MORE_MIN_DOGS = 200
+    rest = list(top_breeds.index[24:])
+    analyzed = {g["group"]: g for g in groups("breed", rest, min_dogs=MORE_MIN_DOGS, min_n=5) if len(g["distinctive"]) >= 3}
+    more_breeds = [analyzed.get(b) or {"group": b, "dogs": int(top_breeds[b]), "distinctive": None, "popular": []} for b in rest]
     # A photo for each breed card: the site's photo for study breeds, else a Dog CEO folder.
     photos = json.load(open(os.path.join(ROOT, "src", "data", "photos.json"), encoding="utf8"))
     explorer = {b["path"]: b["files"] for b in json.load(open(os.path.join(ROOT, "src", "data", "explorer.json"), encoding="utf8"))["breeds"]}
@@ -320,9 +328,10 @@ def main():
                 url = f"https://images.dog.ceo/breeds/{DOGCEO[breed].replace('/', '-')}/{files[0]}"
         return url
 
-    for g in by_breed:
+    for g in by_breed + more_breeds:
         g["photo"] = photo_for(g["group"])
-    print("groups:", len(by_size), len(by_family), len(by_job), len(by_region), len(by_breed))
+    print("groups:", len(by_size), len(by_family), len(by_job), len(by_region), len(by_breed),
+          f"more breeds: {len(more_breeds)} ({len(analyzed)} with enough data)")
 
     # ---------- can a name predict the breed? ----------
     def evaluate(target, top_k_classes=None, min_class=1500):
@@ -419,6 +428,8 @@ def main():
         "base_size": [round(float(base_size.get(s, 0)), 4) for s in SIZES],
         "breeds": breed_index,
         "groups": {"size": by_size, "family": by_family, "job": by_job, "region": by_region, "breed": by_breed},
+        "more_breeds": more_breeds,
+        "more_min_dogs": MORE_MIN_DOGS,
         "model": model,
         "tied": tied[:24],
         "lookup": lookup,

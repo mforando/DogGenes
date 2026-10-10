@@ -1293,3 +1293,17 @@ body::before {
 .cc-sv { font-family: var(--font-label); font-size: 11px; fill: var(--ink-2); font-variant-numeric: tabular-nums; }
 .cc-sn { font-family: var(--font-label); font-size: 10px; fill: var(--ink-3); }
 .cc-src { display: block; font-family: var(--font-label); font-size: 0.72rem; line-height: 1.4; color: var(--ink-3); }
+
+.nm-guesswrap { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1.6rem; margin-bottom: 1rem; }
+.nm-guesswrap .nm-guess { margin: 0; flex: 1 1 16rem; }
+.nm-gdot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 0.45rem; vertical-align: 0.1em; }
+.nm-pie { margin: 0; display: grid; justify-items: center; gap: 0.35rem; font-family: var(--font-label); }
+.nm-pie svg { width: 140px; height: 140px; display: block; }
+.nm-pie figcaption { display: flex; align-items: center; gap: 0.35rem; font-size: 0.76rem; color: var(--ink-3); }
+.nm-pie figcaption i { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.nm-other { margin-top: 1.4rem; display: grid; gap: 0.6rem; max-width: 40rem; }
+.nm-other .hl-small { margin: 0; }
+.nm-other-input { max-width: 22rem; }
+.nm-other-card { max-width: 26rem; }
+.nm-other-miss { background: var(--bg-raise); border: 1px solid var(--rule); border-left: 2px solid var(--ink-3); padding: 0.7rem 0.9rem; max-width: 34rem; line-height: 1.5; }
+.nm-other-miss strong { color: var(--ink); }

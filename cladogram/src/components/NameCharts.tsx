@@ -4,54 +4,7 @@ import { useEffect, useRef } from "react";
 import * as d3 from "d3";
 
 const INK = "#e9e2d0";
-const MUTED = "#8a8a7f";
 const GOLD = "#e8b74a";
-const GRID = "#1c2420";
-
-type ModelRow = { label: string; accuracy: number; baseline: number; top3: number; baseline_top3: number; classes: number };
-
-/** Dumbbell chart: model accuracy vs. always guessing the most common answer. */
-export function AccuracyChart({ rows }: { rows: ModelRow[] }) {
-  const host = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const el = host.current!;
-    const left = 230, right = 60, rowH = 54, top = 36;
-    const W = 860, H = top + rows.length * rowH + 30;
-    const x = d3.scaleLinear().domain([0, 0.6]).range([left, W - right - 90]);
-    const svg = d3.select(el).append("svg").attr("viewBox", `0 0 ${W} ${H}`).attr("role", "img")
-      .attr("aria-label", "How often a name-based guess is right, compared with always guessing the most common answer");
-    for (const t of x.ticks(5)) {
-      svg.append("line").attr("x1", x(t)).attr("x2", x(t)).attr("y1", top - 10).attr("y2", H - 24).attr("stroke", GRID);
-      svg.append("text").attr("x", x(t)).attr("y", H - 8).attr("text-anchor", "middle").attr("class", "mb-tick").text(`${Math.round(t * 100)}%`);
-    }
-    // Legend
-    const lg = svg.append("g").attr("transform", `translate(${left},12)`);
-    lg.append("circle").attr("r", 5).attr("fill", "none").attr("stroke", MUTED).attr("stroke-width", 2);
-    lg.append("text").attr("x", 10).attr("dy", "0.35em").attr("class", "mb-axis").text("always guess the most common answer");
-    lg.append("circle").attr("cx", 270).attr("r", 5.5).attr("fill", GOLD);
-    lg.append("text").attr("x", 280).attr("dy", "0.35em").attr("class", "mb-axis").text("guess from the dog's name");
-
-    const row = svg.selectAll("g.ac").data(rows).join("g").attr("transform", (_, i) => `translate(0,${top + i * rowH + rowH / 2})`);
-    row.append("text").attr("x", left - 14).attr("dy", "-0.1em").attr("text-anchor", "end").attr("class", "mb-name").attr("fill", INK).text((d) => d.label);
-    row.append("text").attr("x", left - 14).attr("dy", "1.2em").attr("text-anchor", "end").attr("class", "mb-tick").text((d) => `${d.classes} possible answers`);
-    row.append("line").attr("x1", (d) => x(Math.min(d.accuracy, d.baseline))).attr("x2", (d) => x(Math.min(d.accuracy, d.baseline)))
-      .attr("stroke", (d) => (d.accuracy > d.baseline ? GOLD : MUTED)).attr("stroke-width", 3).attr("stroke-opacity", 0.6)
-      .transition().duration(900).attr("x2", (d) => x(Math.max(d.accuracy, d.baseline)));
-    row.append("circle").attr("cx", (d) => x(d.baseline)).attr("r", 6).attr("fill", "#0d1110").attr("stroke", MUTED).attr("stroke-width", 2);
-    row.append("circle").attr("cx", (d) => x(d.baseline)).attr("r", 7).attr("fill", GOLD)
-      .transition().duration(900).attr("cx", (d) => x(d.accuracy));
-    row.append("text").attr("class", "mb-val").attr("fill", INK).attr("dy", "0.35em")
-      .attr("x", (d) => x(Math.max(d.accuracy, d.baseline)) + 14)
-      .text((d) => {
-        const diff = d.accuracy - d.baseline;
-        return `${Math.round(d.accuracy * 100)}% vs ${Math.round(d.baseline * 100)}%${Math.abs(diff) < 0.02 ? " · no real help" : ""}`;
-      });
-    return () => {
-      d3.select(el).selectAll("*").remove();
-    };
-  }, [rows]);
-  return <div ref={host} className="mixing-bars nm-acc" />;
-}
 
 /** Horizontal bars for "N× more likely" lifts within one group. */
 export function LiftBars({ items: raw, max }: { items: { name: string; n: number; lift: number }[]; max: number }) {

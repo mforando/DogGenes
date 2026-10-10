@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import * as d3 from "d3";
 import raw from "@/data/nycnames.json";
-import { AccuracyChart, LiftBars, SizeCompare } from "./NameCharts";
+import { LiftBars, SizeCompare } from "./NameCharts";
 import { SiteNav } from "./shared";
 import CityCompare from "./CityCompare";
 
@@ -16,6 +16,9 @@ const D = raw as unknown as {
   base_size: number[];
   breeds: string[];
   groups: Record<"size" | "family" | "job" | "region" | "breed", Group[]>;
+  /** Every breed outside the top 24; `distinctive` is null when there isn't enough data. */
+  more_breeds: (Omit<Group, "distinctive"> & { distinctive: Item[] | null })[];
+  more_min_dogs: number;
   model: { label: string; test_dogs: number; accuracy: number; baseline: number; top3: number; baseline_top3: number; classes: number; balanced: number; chance: number }[];
   tied: { name: string; breed: string; share: number; lift: number; n: number; photo?: string | null }[];
   lookup: Record<string, { n: number; b: [number, number, number][]; s: number[] }>;
@@ -30,6 +33,90 @@ const TABS: { id: keyof typeof D.groups; label: string; blurb: string }[] = [
   { id: "region", label: "Region of origin", blurb: "Where each breed was developed (from the Where they came from tab)." },
 ];
 const NAMES = Object.keys(D.lookup).sort();
+const MORE = [...D.more_breeds].sort((a, b) => a.group.localeCompare(b.group));
+
+/** Search for any breed outside the top 24, with an honest "not enough data" when needed. */
+function OtherBreed({ maxLift }: { maxLift: number }) {
+  const [q, setQ] = useState("");
+  const g = MORE.find((b) => b.group.toLowerCase() === q.trim().toLowerCase()) ?? null;
+  const analyzed = MORE.filter((b) => b.distinctive).length;
+  return (
+    <div className="nm-other">
+      <label className="nm-input nm-other-input">
+        <span>Another breed</span>
+        <input type="search" list="nm-more-breeds" value={q} onChange={(e) => setQ(e.target.value)} placeholder="e.g. Pug, Jindo, Great Dane" />
+        <datalist id="nm-more-breeds">
+          {MORE.map((b) => (
+            <option key={b.group} value={b.group} />
+          ))}
+        </datalist>
+      </label>
+      <p className="hl-small">
+        Any of the {MORE.length} other breeds in the data. {analyzed} have enough dogs to analyze; these are
+        smaller groups, so a name only needs 5 dogs of the breed to count (instead of 12), and results are rougher.
+      </p>
+      {g &&
+        (g.distinctive ? (
+          <article className="nm-card has-photo nm-other-card">
+            <div className="nm-chead">
+              {g.photo ? (
+                <span className="nm-photo">
+                  <img src={g.photo} alt={g.group} loading="lazy" referrerPolicy="no-referrer" />
+                </span>
+              ) : (
+                <span className="nm-photo nm-nophoto" aria-hidden>
+                  {g.group.split(/\s+/).slice(0, 2).map((w) => w[0]).join("")}
+                </span>
+              )}
+              <div>
+                <h3>{g.group}</h3>
+                <p className="nm-cmeta">
+                  {fmt(g.dogs)} dogs · most popular: {g.popular.slice(0, 3).map((p) => p.name).join(", ")}
+                </p>
+              </div>
+            </div>
+            <LiftBars items={g.distinctive.slice(0, 8)} max={maxLift} />
+          </article>
+        ) : (
+          <p className="nm-miss nm-other-miss">
+            <strong>Not enough data for {g.group}.</strong>{" "}
+            {g.dogs < D.more_min_dogs
+              ? `Only ${fmt(g.dogs)} NYC dogs are recorded as ${g.group}s; we need at least ${fmt(D.more_min_dogs)} to tell which names are distinctive rather than chance.`
+              : `There are ${fmt(g.dogs)} of them, but too few share the same names (at least 5 dogs each, for 3 names or more) to tell which are distinctive rather than chance.`}
+          </p>
+        ))}
+      {q.trim() && !g && <p className="nm-miss">Pick a breed from the list.</p>}
+    </div>
+  );
+}
+// The four listed breeds, in list order (validated as a set on the dark surface), then the rest.
+const GUESS_COLORS = ["#2d88e2", "#d35e2c", "#199e6e", "#b75fb8"];
+const OTHER_COLOR = "#4a5450";
+
+/** Pie: what share of dogs with this name are each listed breed, and everything else. */
+function BreedPie({ name, total, rows }: { name: string; total: number; rows: [number, number, number][] }) {
+  const R = 64;
+  const slices = [
+    ...rows.map(([bi, c], i) => ({ label: D.breeds[bi], n: c, color: GUESS_COLORS[i] })),
+    { label: "All other breeds", n: total - d3.sum(rows, (r) => r[1]), color: OTHER_COLOR },
+  ];
+  const arcs = d3.pie<(typeof slices)[number]>().sort(null).value((d) => d.n)(slices);
+  const arc = d3.arc<d3.PieArcDatum<(typeof slices)[number]>>().innerRadius(0).outerRadius(R);
+  return (
+    <figure className="nm-pie">
+      <svg viewBox={`${-R - 2} ${-R - 2} ${2 * R + 4} ${2 * R + 4}`} role="img" aria-label={`Dogs named ${name}: ${slices.map((s) => `${s.label} ${Math.round((s.n / total) * 100)}%`).join(", ")}`}>
+        {arcs.map((a) => (
+          <path key={a.data.label} d={arc(a)!} fill={a.data.color} stroke="#141a18" strokeWidth={2}>
+            <title>{`${a.data.label}: ${fmt(a.data.n)} of ${fmt(total)} (${Math.round((a.data.n / total) * 100)}%)`}</title>
+          </path>
+        ))}
+      </svg>
+      <figcaption>
+        <i style={{ background: OTHER_COLOR }} /> All other breeds {Math.round((slices[slices.length - 1].n / total) * 100)}%
+      </figcaption>
+    </figure>
+  );
+}
 
 function NameDetective() {
   const [q, setQ] = useState("Kuma");
@@ -55,16 +142,22 @@ function NameDetective() {
             <strong>{fmt(hit.n)}</strong> NYC dogs are named <strong>{key}</strong>. Compared with all
             NYC dogs, a {key} is most likely to be a:
           </p>
+          <div className="nm-guesswrap">
           <ol className="nm-guess">
-            {hit.b.map(([bi, c, lift]) => (
+            {hit.b.map(([bi, c, lift], i) => (
               <li key={bi}>
-                <span className="nm-gname">{D.breeds[bi]}</span>
+                <span className="nm-gname">
+                  <i className="nm-gdot" style={{ background: GUESS_COLORS[i] }} aria-hidden />
+                  {D.breeds[bi]}
+                </span>
                 <span className="nm-gmeta">
                   {Math.round((c / hit.n) * 100)}% of {key}s · {lift}× the NYC average
                 </span>
               </li>
             ))}
           </ol>
+          <BreedPie name={key} total={hit.n} rows={hit.b} />
+          </div>
           <p className="side-h">Size of dogs named {key}</p>
           <SizeCompare sizes={D.size_order} counts={hit.s} base={D.base_size} />
         </div>
@@ -83,7 +176,6 @@ export default function NamesPage() {
   const [tab, setTab] = useState<keyof typeof D.groups>("breed");
   const groups = D.groups[tab];
   const maxLift = useMemo(() => d3.max(groups.flatMap((g) => g.distinctive.slice(0, 8).map((d) => d.lift))) ?? 10, [groups]);
-  const breedModel = D.model[0];
   const t = TABS.find((x) => x.id === tab)!;
 
   return (
@@ -95,9 +187,8 @@ export default function NamesPage() {
           <h1>{fmt(D.source.used)} New York City dogs and their names</h1>
           <p className="pairs-lede">
             Every dog in New York City needs a license, and the city publishes them. We cleaned up
-            the records and asked two questions: <strong>can you guess a dog&rsquo;s breed from its
-            name?</strong> And which names are most characteristic of tiny dogs, giant dogs, sled
-            dogs, or herders?
+            the records to see how New Yorkers name their dogs, and which names are most
+            characteristic of tiny dogs, giant dogs, sled dogs, or herders.
           </p>
           <p className="nm-top">
             Most popular names:{" "}
@@ -108,28 +199,6 @@ export default function NamesPage() {
             ))}
           </p>
         </header>
-
-        <section className="pairs-section" aria-labelledby="pred-h">
-          <h2 id="pred-h">Can a name predict the breed? Mostly no.</h2>
-          <p>
-            We trained a model to guess a dog&rsquo;s breed using only its name, from the
-            spelling down to fragments like &ldquo;-ki&rdquo; or &ldquo;Chi-&rdquo;, and tested it
-            on {fmt(breedModel.test_dogs)} dogs it had never seen. It
-            picks the right breed out of the 20 most common{" "}
-            <strong>{Math.round(breedModel.accuracy * 100)}% of the time</strong>, compared with{" "}
-            {Math.round(breedModel.baseline * 100)}% if you always guessed the most common breed.
-            That&rsquo;s about {(breedModel.accuracy / breedModel.baseline).toFixed(1)}× better
-            than guessing, but still wrong more than four times in five. For size and original job,
-            the name tells you almost nothing.
-          </p>
-          <AccuracyChart rows={D.model} />
-          <p>
-            Why so weak? The most popular names, like Bella, Luna, Max and Charlie, are used for
-            every kind of dog, and they cover most of the city. The signal lives in rarer names:
-            a dog called <strong>Kitsune</strong> or <strong>Hachi</strong> is very likely a Shiba
-            Inu, but only a few hundred dogs carry names like that.
-          </p>
-        </section>
 
         <section className="pairs-section" aria-labelledby="det-h">
           <h2 id="det-h">Name detective</h2>
@@ -213,6 +282,7 @@ export default function NamesPage() {
               </article>
             ))}
           </div>
+          {tab === "breed" && <OtherBreed maxLift={maxLift} />}
         </section>
 
         <section className="pairs-section" aria-labelledby="see-h">
@@ -251,7 +321,6 @@ export default function NamesPage() {
             could match, {fmt(D.source.used)} in all. Mixes count under their main breed. Breeds
             are as reported by owners; sizes are typical adult weights for the breed. Distinctive
             names use a log-odds ratio with an informative Dirichlet prior (Monroe et al. 2008).
-            The model is a logistic regression on letter patterns, scored on a held-out 20% of dogs.
           </p>
           <p>
             Toronto:{" "}
