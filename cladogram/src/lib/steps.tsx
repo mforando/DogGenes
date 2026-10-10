@@ -1,6 +1,11 @@
 import type { ReactNode } from "react";
 import { data } from "./tree";
 import type { TimelineView } from "@/components/Timeline";
+import type { CircosView } from "@/components/Circos";
+import { CIRCOS_STEPS } from "./circosSteps";
+import { MODERN_BREEDS } from "./history";
+import AncientBreeds from "@/components/AncientBreeds";
+import DigSites from "@/components/DigSites";
 
 /** Declarative description of what the cladogram should show for a scroll step. */
 export type View = {
@@ -40,44 +45,87 @@ export type Step = {
   photos?: string[];
   /** Prologue steps show the deep-history timeline instead of the cladogram. */
   timeline?: TimelineView;
+  /** "DNA web" steps show the chord (circos) diagram instead of the cladogram. */
+  circos?: CircosView;
 };
 
 const dogs = data.stats.dogs.toLocaleString("en-US");
 
 const T_ALL = ["farming", "breeds", "split", "lgm", "eastasia", "europe", "siberia", "goyet", "altai", "erralla", "bonn", "skull", "lineages"];
 
-/** Deep history before the breeds (facts from Wikipedia's "Domestication of the dog"). */
-const PROLOGUE: Step[] = [
+/** The history of dogs tab (facts from Wikipedia's "Domestication of the dog"). */
+const DATED = MODERN_BREEDS.length;
+const STUDY_BREEDS = 161;
+
+export const HISTORY_STEPS: Step[] = [
+  {
+    id: "modern",
+    kicker: "The last 200 years",
+    title: "Most breeds are younger than you think",
+    body: (
+      <>
+        <p>
+          Start close to home. In the 1800s, dog breeding became a hobby and a business.
+          The first dog show was held in Newcastle, England in 1859, the Kennel Club followed
+          in 1873, and the American Kennel Club in 1884. Breeders wrote standards, kept
+          pedigrees, and closed each breed&rsquo;s family book. The study behind this site calls
+          it the Victorian-era breed explosion.
+        </p>
+        <p>
+          The timeline shows breeds from the study with a known founding date, from the Jack
+          Russell terrier (1819) to the American hairless terrier (1972). Hover over a photo to
+          read its story.
+        </p>
+        <div className="hx-stats">
+          <div>
+            <span className="hx-num">{DATED}</span>
+            <span>breeds with a known or approximate founding date</span>
+          </div>
+          <div>
+            <span className="hx-num muted">{STUDY_BREEDS - DATED}</span>
+            <span>
+              of the study&rsquo;s {STUDY_BREEDS} breeds have <strong>no recorded starting point</strong>.
+              They grew slowly out of older local dogs, long before anyone kept records.
+            </span>
+          </div>
+        </div>
+      </>
+    ),
+    view: { color: "ink" },
+    timeline: { show: [], mode: "modern" },
+  },
   {
     id: "first",
-    kicker: "Prologue · Before there were breeds",
+    kicker: "Before there were breeds",
     title: "Dogs came first",
     body: (
       <>
         <p>
-          Long before cows, sheep, or wheat, there were dogs. Dogs were the{" "}
-          <strong>first animal people ever domesticated</strong>, and the only one tamed
-          during the last Ice Age, thousands of years before anyone planted a crop.
+          Now zoom out about 60 times, back to the start of farming 11,400 years ago. Those
+          two centuries of breeds shrink to a sliver at the far right. Dogs were the{" "}
+          <strong>first animal people ever domesticated</strong>, long before cows, sheep or
+          wheat, and they were already living alongside people when farming began.
         </p>
         <p>
-          Farming starts about 11,400 years ago, and dogs were old news by then. Notice that
-          sliver at the far right: almost every breed in our chart was created in the last
-          couple of centuries. To understand where they came from, we have to go back
-          40,000 years.
+          Most breeds are a recent invention, but a handful are far older, though: types of dog that hunted,
+          herded and kept people company for centuries before anyone wrote a breed standard. The ones with a
+          rough age sit on the timeline; five more have no agreed date at all.
         </p>
+        <AncientBreeds />
       </>
     ),
     view: { color: "ink" },
-    timeline: { show: ["farming", "breeds"] },
+    timeline: { show: ["farming", "breeds"], mode: "farming" },
   },
   {
     id: "wolves",
-    kicker: "Prologue · Wolf ancestors",
+    kicker: "Wolf ancestors",
     title: "Not from today’s wolves",
     body: (
       <>
         <p>
-          Here&rsquo;s the twist: dogs don&rsquo;t come from the grey wolves alive today.
+          Zoom out again, past the farming era and into the last Ice Age. Here&rsquo;s the
+          twist: dogs don&rsquo;t come from the grey wolves alive today.
           They come from an <strong>Ice Age wolf population that has since died out</strong>.
           The dog and wolf families split somewhere between 40,000 and 27,000 years ago.
         </p>
@@ -98,7 +146,7 @@ const PROLOGUE: Step[] = [
   },
   {
     id: "where",
-    kicker: "Prologue · The birthplace",
+    kicker: "The birthplace",
     title: "Where? Nobody’s sure",
     body: (
       <>
@@ -123,20 +171,23 @@ const PROLOGUE: Step[] = [
   },
   {
     id: "fossils",
-    kicker: "Prologue · The evidence",
+    kicker: "The evidence",
     title: "The oldest dogs we’ve dug up",
     body: (
       <>
         <p>
           The oldest bones everyone agrees are a dog come from <strong>Erralla, Spain</strong>,
-          about 17,500 years ago. At <strong>Bonn-Oberkassel</strong> in Germany, a dog was
-          buried alongside people 14,500 years ago, the oldest known shared grave of a
-          person and a dog.
+          about 17,500 years ago. At <strong>Bonn-Oberkassel</strong> in Germany, a puppy was
+          buried alongside two people about 14,200 years ago, the oldest known shared grave of
+          people and a dog. Pick a site to see what was found.
         </p>
+        <DigSites />
         <p>
           Older finds from Goyet in Belgium (36,000 years) and Siberia&rsquo;s Altai
-          Mountains (33,300 years) might be very early dogs, or just wolves. Skulls with a
-          clearly dog-shaped profile turn up around 11,000 years ago.
+          Mountains (33,300 years) have dog-like skulls, but they&rsquo;re hotly debated. DNA
+          puts the Goyet animal on a side branch, most likely an extinct population of wolves
+          rather than an ancestor of today&rsquo;s dogs. Skulls with a clearly dog-shaped
+          profile turn up around 11,000 years ago.
         </p>
       </>
     ),
@@ -148,7 +199,7 @@ const PROLOGUE: Step[] = [
   },
   {
     id: "how",
-    kicker: "Prologue · The how",
+    kicker: "The how",
     title: "How a wolf becomes a dog",
     body: (
       <>
@@ -173,7 +224,7 @@ const PROLOGUE: Step[] = [
   },
   {
     id: "lineages",
-    kicker: "Prologue · Ready for the breeds",
+    kicker: "Ready for the breeds",
     title: "Five family lines by the end of the Ice Age",
     body: (
       <>
@@ -186,7 +237,7 @@ const PROLOGUE: Step[] = [
         </p>
         <p>
           Today&rsquo;s breeds are far younger. Most were shaped in the last couple of
-          centuries out of that much older regional stock. Their family tree is up next.
+          centuries out of that much older regional stock.
         </p>
       </>
     ),
@@ -231,7 +282,7 @@ const BREED_STEPS: Step[] = [
         </p>
         <p>
           Next come <strong>grey wolves</strong>, dogs&rsquo; closest living relatives
-          (cousins, remember, not ancestors), then the <strong>basenji</strong>, an ancient
+          (cousins, not ancestors: dogs come from an Ice Age wolf population that has since died out), then the <strong>basenji</strong>, an ancient
           African breed. Every other breed is further out. The rule of thumb: the
           closer to the edge, the more recent the split.
         </p>
@@ -416,21 +467,28 @@ const BREED_STEPS: Step[] = [
     ),
     view: { color: "clade", split: true },
   },
+];
+
+/** Part 3: the same connections drawn as bundled edges along the family tree, then exploring. */
+const BUNDLE_STEPS: Step[] = [
   {
-    id: "eurasier",
+    id: "bundle",
     photos: ["CHOW", "KEES", "SAMO"],
-    kicker: "What a tree can’t show",
-    title: "The Eurasier is a mix",
+    kicker: "Ribbons meet the tree",
+    title: "Routing the connections through the tree",
     body: (
       <>
         <p>
-          Trees only split. They can&rsquo;t show two branches joining back together. But
-          that&rsquo;s exactly how the <strong>Eurasier</strong> was made: in the 1970s,
-          breeders crossed the chow chow, keeshond, and samoyed.
+          The circle chart drew each connection as a ribbon straight across the middle. Here is
+          another way to draw the very same data, called <strong>edge bundling</strong>: each
+          curve leaves one breed, follows the family tree&rsquo;s branches in toward the two
+          breeds&rsquo; shared ancestor, then travels back out to the other breed.
         </p>
         <p>
-          The curves show big chunks of DNA the Eurasier shares with each of them. Tugged
-          toward three parents at once, it ends up in its own wedge somewhere between them.
+          Take the <strong>Eurasier</strong> again. A tree can only split, but this breed was
+          made by joining three: in the 1970s breeders crossed the chow chow, keeshond and
+          samoyed. Its three curves follow the tree to each parent, which is why it ends up
+          in a wedge of its own somewhere between them.
         </p>
       </>
     ),
@@ -443,17 +501,19 @@ const BREED_STEPS: Step[] = [
   {
     id: "crossings",
     kicker: "The hidden web",
-    title: "Mixing everywhere",
+    title: "Every crossing, bundled",
     body: (
       <>
         <p>
-          Each curve connects two breeds from <em>different</em> families that share
-          unusually big chunks of DNA. Big shared chunks only survive a few generations, so
-          these are signs of recent crossbreeding, mostly within the last 200 years.
+          Now every connection between breeds from <em>different</em> families at once. Curves
+          that travel the same branches merge into thick bundles, like cables in a wall. A
+          bundle shows a lot of mixing between two parts of the tree; a lone thin curve is a
+          one-off cross.
         </p>
         <p>
-          117 breeds show this. The tree shows the old family structure. These curves show
-          how breeders have mixed things up since.
+          Bundling trades the circle chart&rsquo;s exact widths for structure: you can see the
+          old family tree and the last 200 years of crossbreeding in a single picture. In all,
+          117 breeds show this kind of recent mixing.
         </p>
       </>
     ),
@@ -475,4 +535,31 @@ const BREED_STEPS: Step[] = [
   },
 ];
 
-export const STEPS: Step[] = [...PROLOGUE, ...BREED_STEPS];
+/** Part 2: the chord diagram (the paper's Figure 4) explains shared DNA. */
+const strip = (k: string) => k.replace(/^\d+ · /, "");
+const CHORD_STEPS: Step[] = CIRCOS_STEPS.filter((c) => c.id !== "explore").map((c, i) => ({
+  id: `c-${c.id}`,
+  kicker: `The DNA web · ${strip(c.kicker)}`,
+  title: c.title,
+  photos: c.photos,
+  body:
+    i === 0 ? (
+      <>
+        <p>
+          <strong>Part two.</strong> The family tree shows how breeds branched apart. But
+          breeders also mix breeds back together, and that leaves long shared stretches of DNA
+          behind. The paper drew those as a <em>chord diagram</em>: a ring of breeds tied
+          together by ribbons. Here&rsquo;s how to read it.
+        </p>
+        {c.body}
+      </>
+    ) : (
+      c.body
+    ),
+  // Behind the chord diagram, keep the tree in its clade colours for the hand-off back.
+  view: { color: "clade", cladeRing: true },
+  circos: c.view,
+}));
+
+// The bundled-edge steps end with "Go exploring", the hand-off to the interactive tree.
+export const STEPS: Step[] = [...BREED_STEPS, ...CHORD_STEPS, ...BUNDLE_STEPS];

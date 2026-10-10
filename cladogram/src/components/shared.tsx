@@ -31,7 +31,16 @@ export function useActiveStep() {
 }
 
 /** Dog CEO photos for breeds: one per breed, or every stored photo of a single breed. */
-export function Specimens({ codes, all = false }: { codes: string[]; all?: boolean }) {
+export function Specimens({
+  codes,
+  all = false,
+  onHover,
+}: {
+  codes: string[];
+  all?: boolean;
+  /** Hovering (or focusing) a photo reports its breed; leaving reports null. */
+  onHover?: (code: string | null) => void;
+}) {
   const items = all
     ? (PHOTOS[codes[0]]?.urls ?? []).map((url) => ({ code: codes[0], url }))
     : codes.filter((c) => PHOTOS[c]).map((code) => ({ code, url: PHOTOS[code].urls[0] }));
@@ -39,7 +48,15 @@ export function Specimens({ codes, all = false }: { codes: string[]; all?: boole
   return (
     <ul className={`specimens n${Math.min(items.length, 4)}`}>
       {items.map(({ code, url }) => (
-        <li key={url}>
+        <li
+          key={url}
+          className={onHover ? "is-linked" : undefined}
+          tabIndex={onHover ? 0 : undefined}
+          onPointerEnter={onHover ? () => onHover(code) : undefined}
+          onPointerLeave={onHover ? () => onHover(null) : undefined}
+          onFocus={onHover ? () => onHover(code) : undefined}
+          onBlur={onHover ? () => onHover(null) : undefined}
+        >
           <figure>
             <img src={url} alt={data.breeds[code].name} loading="lazy" referrerPolicy="no-referrer" />
             {!all && (
@@ -56,9 +73,8 @@ export function Specimens({ codes, all = false }: { codes: string[]; all?: boole
 }
 
 const PAGES = [
-  { href: "/", label: "The family tree" },
-  { href: "/circos/guide", label: "The DNA web, explained" },
-  { href: "/circos", label: "The full circle chart" },
+  { href: "/history", label: "The history of dogs" },
+  { href: "/", label: "Family tree & DNA web" },
   { href: "/pairs", label: "Breed pairs" },
   { href: "/purpose", label: "Built for purpose" },
   { href: "/geography", label: "Where they came from" },

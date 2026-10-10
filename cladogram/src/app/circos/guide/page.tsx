@@ -1,11 +1,19 @@
-import type { Metadata } from "next";
-import CircosStory from "@/components/CircosStory";
+"use client";
 
-export const metadata: Metadata = {
-  title: "The DNA Web, Explained",
-  description: "A scrollytelling guide to Figure 4 of Parker et al. 2017: haplotype sharing between dog breeds.",
-};
+import { useEffect } from "react";
 
+const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
+/** This page moved into the home page; send visitors (and old links) to the right spot. */
 export default function Page() {
-  return <CircosStory />;
+  useEffect(() => {
+    window.location.replace(`${BASE}/#c-blocks`);
+  }, []);
+  return (
+    <main className="moved">
+      <p>
+        This page has moved. <a href={`${BASE}/#c-blocks`}>Continue to the family tree &amp; DNA web →</a>
+      </p>
+    </main>
+  );
 }

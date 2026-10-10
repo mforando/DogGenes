@@ -5,25 +5,48 @@ import { useMemo, useState } from "react";
 import Circos, { type CircosHover, type CircosView } from "./Circos";
 import CircosDetails from "./CircosDetails";
 import { SiteNav } from "./shared";
-import Primer from "./Primer";
 import { circosData, cladeArcs, links, nodeByCode, nodes } from "@/lib/circos";
 
 const withRibbons = nodes.filter((n) => n.degree > 0).length;
+
+/** Legend entries: the wolf, each family group in ring order, then the loners. */
+const GROUPS: { key: string; label: string; color: string; codes: string[] }[] = [
+  { key: "_wild", label: "Wild relative (wolf)", color: nodeByCode.get("WOLF")!.color, codes: ["WOLF"] },
+  ...cladeArcs.map((c) => ({
+    key: c.clade,
+    label: circosData.clades[c.clade],
+    color: nodes.find((n) => n.clade === c.clade)!.color,
+    codes: nodes.filter((n) => n.clade === c.clade).map((n) => n.code),
+  })),
+  {
+    key: "_loners",
+    label: "Loners (no clear family)",
+    color: nodeByCode.get("EURA")!.color,
+    codes: nodes.filter((n) => !n.clade && n.code !== "WOLF").map((n) => n.code),
+  },
+];
 const options = [...nodes].sort((a, b) => a.name.localeCompare(b.name));
 
-export default function CircosReplica() {
+/** The full interactive circle chart. `embedded` renders it as the last section of the home page. */
+export default function CircosReplica({ embedded = false }: { embedded?: boolean }) {
   const [pick, setPick] = useState<string | null>(null);
   const [names, setNames] = useState(true);
   const [showTree, setShowTree] = useState(true);
   const [sortBy, setSortBy] = useState<"value" | "pair">("value");
   const [hover, setHover] = useState<CircosHover>(null);
+  // Family-group legend: hover previews a group, click locks it.
+  const [groupHover, setGroupHover] = useState<string | null>(null);
+  const [groupLock, setGroupLock] = useState<string | null>(null);
+  const group = GROUPS.find((g) => g.key === (groupHover ?? groupLock)) ?? null;
 
   const view = useMemo<CircosView>(
     () =>
       pick
         ? { ribbons: { codes: [pick] }, focus: [pick, ...links.filter((l) => l.a === pick || l.b === pick).map((l) => (l.a === pick ? l.b : l.a))], cladeRing: names, tree: showTree, treePath: pick, frozen: true }
-        : { ribbons: "all", cladeRing: names, interactive: true, tree: showTree },
-    [pick, names, showTree],
+        : group
+          ? { ribbons: { codes: group.codes }, focus: group.codes, cladeRing: names, tree: showTree }
+          : { ribbons: "all", cladeRing: names, interactive: true, tree: showTree },
+    [pick, names, showTree, group],
   );
 
   const rows = useMemo(() => {
@@ -33,8 +56,8 @@ export default function CircosReplica() {
 
   return (
     <>
-      <SiteNav />
-      <main className="replica">
+      {!embedded && <SiteNav />}
+      <Wrapper embedded={embedded}>
 
         <div className="replica-body">
           <aside className="replica-side" aria-label="Figure key and controls">
@@ -46,7 +69,7 @@ export default function CircosReplica() {
                 the same order as the family tree. A ribbon connects two breeds from different
                 family groups that share an unusually big amount of DNA, a sign that they were
                 crossed in the last couple of centuries. Wider ribbons mean more shared DNA.{" "}
-                <Link href="/circos/guide">Walk me through it →</Link>
+                {embedded ? <a href="#c-blocks">Back to the walkthrough ↑</a> : <Link href="/#c-blocks">Walk me through it →</Link>}
               </p>
               <p className="replica-orig">
                 Original title and caption: &ldquo;Haplotype sharing between breeds from different phylogenetic clades. The circos plot is ordered and colored to match the
@@ -81,23 +104,41 @@ export default function CircosReplica() {
               </label>
             </div>
 
-            <h2 className="side-h">Family groups, counter-clockwise from the wolf</h2>
-            <ul className="clade-key">
-              <li>
-                <i style={{ background: nodeByCode.get("WOLF")!.color }} />
-                Wild relative (wolf)
-              </li>
-              {cladeArcs.map((c) => (
-                <li key={c.clade}>
-                  <i style={{ background: nodes.find((n) => n.clade === c.clade)!.color }} />
-                  {circosData.clades[c.clade]}
-                </li>
-              ))}
-              <li>
-                <i style={{ background: nodeByCode.get("EURA")!.color }} />
-                Loners (no clear family)
-              </li>
+            <h2 className="side-h">Family groups, counter-clockwise from the wolf · hover or click</h2>
+            <ul className="clade-key" aria-label="Family groups: hover to preview on the chart, click to lock">
+              {GROUPS.map((g) => {
+                const on = (groupHover ?? groupLock) === g.key;
+                const links_ = links.filter((l) => g.codes.includes(l.a) || g.codes.includes(l.b)).length;
+                return (
+                  <li key={g.key}>
+                    <button
+                      type="button"
+                      className={`${on ? "on" : ""}${groupLock === g.key ? " locked" : ""}`}
+                      aria-pressed={groupLock === g.key}
+                      title={`${g.codes.length} breed${g.codes.length === 1 ? "" : "s"} · ${links_} ribbon${links_ === 1 ? "" : "s"}`}
+                      onPointerEnter={() => setGroupHover(g.key)}
+                      onPointerLeave={() => setGroupHover(null)}
+                      onFocus={() => setGroupHover(g.key)}
+                      onBlur={() => setGroupHover(null)}
+                      onClick={() => {
+                        setPick(null);
+                        setGroupLock((k) => (k === g.key ? null : g.key));
+                      }}
+                    >
+                      <i style={{ background: g.color }} />
+                      {g.label}
+                    </button>
+                  </li>
+                );
+              })}
             </ul>
+            {group && (
+              <p className="clade-key-note">
+                <strong>{group.label}</strong>: {group.codes.length} breed{group.codes.length === 1 ? "" : "s"},{" "}
+                {links.filter((l) => group.codes.includes(l.a) || group.codes.includes(l.b)).length} ribbons to other
+                families.{groupLock && !groupHover ? " Click it again to unlock." : groupHover && groupLock !== groupHover ? " Click to lock." : ""}
+              </p>
+            )}
           </aside>
           <div className="replica-figure">
             <Circos
@@ -106,11 +147,13 @@ export default function CircosReplica() {
               // First click locks onto a breed; a second click returns to the default view.
               onBreedClick={(code) => {
                 setHover(null);
+                setGroupLock(null);
                 setPick((p) => (p ? null : code));
               }}
               onBackgroundClick={() => {
                 setHover(null);
                 setPick(null);
+                setGroupLock(null);
               }}
               ariaLabel="Replica of Figure 4: circos plot of cross-clade haplotype sharing among 168 dog breed populations."
             />
@@ -120,10 +163,6 @@ export default function CircosReplica() {
           </aside>
         </div>
 
-        <details className="replica-primer">
-          <summary>New to this? Quick glossary</summary>
-          <Primer terms={["dna", "haplotype", "clade", "cladogram"]} title="Key words, in plain English" compact />
-        </details>
 
         <details className="ribbon-table">
           <summary>See all {links.length} ribbons as a list</summary>
@@ -155,7 +194,17 @@ export default function CircosReplica() {
             </tbody>
           </table>
         </details>
-      </main>
+      </Wrapper>
     </>
+  );
+}
+
+function Wrapper({ embedded, children }: { embedded: boolean; children: React.ReactNode }) {
+  return embedded ? (
+    <section id="full-chart" className="replica embedded" aria-label="The full interactive circle chart">
+      {children}
+    </section>
+  ) : (
+    <main className="replica">{children}</main>
   );
 }

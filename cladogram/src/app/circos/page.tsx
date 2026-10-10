@@ -1,11 +1,19 @@
-import type { Metadata } from "next";
-import CircosReplica from "@/components/CircosReplica";
+"use client";
 
-export const metadata: Metadata = {
-  title: "The Full Circle Chart",
-  description: "Interactive replica of the circos plot of cross-clade haplotype sharing from Parker et al. 2017.",
-};
+import { useEffect } from "react";
 
+const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
+/** This page moved into the home page; send visitors (and old links) to the right spot. */
 export default function Page() {
-  return <CircosReplica />;
+  useEffect(() => {
+    window.location.replace(`${BASE}/#full-chart`);
+  }, []);
+  return (
+    <main className="moved">
+      <p>
+        This page has moved. <a href={`${BASE}/#full-chart`}>Continue to the family tree &amp; DNA web →</a>
+      </p>
+    </main>
+  );
 }

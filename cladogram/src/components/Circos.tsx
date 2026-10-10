@@ -53,6 +53,7 @@ export default function Circos({
   onHover,
   onBreedClick,
   onBackgroundClick,
+  spotlight = null,
 }: {
   view: CircosView;
   ariaLabel?: string;
@@ -62,6 +63,8 @@ export default function Circos({
   onBreedClick?: (code: string) => void;
   /** Clicking anywhere else on the chart. */
   onBackgroundClick?: () => void;
+  /** Breed highlighted from outside the chart (e.g. hovering its photo), shown like a hover. */
+  spotlight?: string | null;
 }) {
   const onBreedClickRef = useRef(onBreedClick);
   onBreedClickRef.current = onBreedClick;
@@ -70,7 +73,7 @@ export default function Circos({
   const onHoverRef = useRef(onHover);
   onHoverRef.current = onHover;
   const host = useRef<HTMLDivElement>(null);
-  const api = useRef<{ update: (v: CircosView) => void } | null>(null);
+  const api = useRef<{ update: (v: CircosView) => void; spot: (code: string | null) => void } | null>(null);
 
   useEffect(() => {
     const el = host.current!;
@@ -187,6 +190,8 @@ export default function Circos({
     // ---------- state ----------
     let current: CircosView = { ribbons: "none" };
     let hover: string | null = null;
+    let spot: string | null = null; // outside highlight; wins over the pointer
+    const active = (v: CircosView) => spot ?? (v.interactive ? hover : null);
     let hoverRibbon: CLink | null = null;
 
     /** Trace tree paths: a breed back to the grey wolf, or two breeds to their meeting point. */
@@ -206,7 +211,7 @@ export default function Circos({
         marks.push({ key: `m${top.data.id}`, n: top, label });
       };
       if (v.tree) {
-        const breed = (v.interactive && hover) || (!hoverRibbon && v.treePath) || null;
+        const breed = active(v) || (!hoverRibbon && v.treePath) || null;
         if (hoverRibbon) {
           const a = leafOf(hoverRibbon.a), b = leafOf(hoverRibbon.b);
           if (a && b) trace(a, b, "#e8b74a", "#e8b74a", "lines meet");
@@ -284,25 +289,28 @@ export default function Circos({
     function render() {
       const v = current;
       let shown = visibleLinks(v);
-      const hoverOn = v.interactive && hover;
-      if (hoverOn)
-        shown = layoutLinks(links.filter((l) => l.a === hover || l.b === hover).map((l) => rawLinkByKey.get(l.key)!));
+      const h = active(v);
+      const hoverOn = !!h;
+      if (h)
+        shown = layoutLinks(links.filter((l) => l.a === h || l.b === h).map((l) => rawLinkByKey.get(l.key)!));
 
       const focus = new Set(v.focus ?? []);
       if (hoverOn) {
         focus.clear();
-        focus.add(hover!);
-        for (const p of partnersOf(hover!)) focus.add(p.code);
+        focus.add(h!);
+        // A pointer hover also lights the partners; an outside spotlight focuses on one breed.
+        if (!spot) for (const p of partnersOf(h!)) focus.add(p.code);
       }
-      const clades = new Set(v.clades ?? []);
-      const hasFocus = focus.size > 0 || clades.size > 0 || !!v.silent;
+      const clades = new Set(spot ? [] : v.clades ?? []);
+      const silent = !spot && !!v.silent;
+      const hasFocus = focus.size > 0 || clades.size > 0 || silent;
       const on = (n: CNode) =>
         !hasFocus ||
         focus.has(n.code) ||
         (!!n.clade && clades.has(n.clade)) ||
-        (!!v.silent && n.degree === 0);
+        (silent && n.degree === 0);
 
-      const T = d3.transition().duration(hoverOn !== null && v.interactive ? DUR * 0.4 : DUR);
+      const T = d3.transition().duration(hoverOn ? DUR * 0.4 : DUR);
       segSel.transition(T).attr("fill", (d) => (on(d) ? d.color : DIM));
       labelSel
         .classed("hi", (d) => hasFocus && on(d))
@@ -314,7 +322,7 @@ export default function Circos({
       gStart.transition(T).attr("opacity", v.start ? 1 : 0);
 
       const many = shown.length > 40;
-      const baseOpacity = v.silent ? 0.12 : many ? 0.62 : 0.82;
+      const baseOpacity = silent ? 0.12 : many ? 0.62 : 0.82;
       gRibbons.selectAll<SVGPathElement, CLink>("path")
         .data(shown, (d) => d.key)
         .join(
@@ -350,7 +358,7 @@ export default function Circos({
         .transition(T)
         .delay((_, i) => (hoverOn || !many ? i * 30 : Math.min(i * 3, 500)))
         .attr("fill-opacity", baseOpacity)
-        .attr("stroke-opacity", v.silent ? 0.2 : 0.9)
+        .attr("stroke-opacity", silent ? 0.2 : 0.9)
         // Ends re-pack when the set of visible ribbons changes; glide to the new widths.
         .attrTween("d", function (d) {
           const self = this as SVGPathElement & { __g?: Geo };
@@ -440,6 +448,11 @@ export default function Circos({
     svg.on("click", () => onBgClickRef.current?.());
 
     api.current = {
+      spot(code) {
+        if (code === spot) return;
+        spot = code;
+        render();
+      },
       update(v) {
         current = v;
         hover = null;
@@ -458,6 +471,10 @@ export default function Circos({
   useEffect(() => {
     api.current?.update(view);
   }, [view]);
+
+  useEffect(() => {
+    api.current?.spot(spotlight);
+  }, [spotlight]);
 
   return <div ref={host} className="circos" />;
 }

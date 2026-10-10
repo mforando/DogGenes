@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Cladogram from "./Cladogram";
 import { STEPS } from "@/lib/steps";
 import { data, ringOrder } from "@/lib/tree";
@@ -10,7 +10,8 @@ import { PHOTOS } from "@/lib/photos";
 import { CITATION, SiteNav, Specimens, useActiveStep } from "./shared";
 import Primer from "./Primer";
 import LineageTree from "./LineageTree";
-import Timeline from "./Timeline";
+import Circos from "./Circos";
+import CircosReplica from "./CircosReplica";
 import RelatedBreeds from "./RelatedBreeds";
 
 const breedOptions = Object.entries(data.breeds)
@@ -25,10 +26,22 @@ export default function Story() {
 
   const step = STEPS[active];
   // Selection only applies while exploring.
-  const sel = step.view.explore ? selected : null;
+  // Hovering a breed photo in a step card highlights that breed in the chart on the right.
+  const [photoHover, setPhotoHover] = useState<string | null>(null);
+  useEffect(() => setPhotoHover(null), [active]);
+  const sel = photoHover && !step.circos ? photoHover : step.view.explore ? selected : null;
+  // While a photo is hovered, the step's own highlights step aside so only that breed shows.
+  const treeView = useMemo(() => {
+    if (!photoHover || step.circos) return step.view;
+    const { codes, clades, paths, outgroup, split, links, ...rest } = step.view;
+    void codes; void clades; void paths; void outgroup; void split;
+    return { ...rest, codes: [photoHover], ...(links ? { links: { codes: [photoHover] } } : {}) };
+  }, [photoHover, step]);
   const showLineage = treeOnly && !!sel;
-  // Keep the timeline's last state while it fades out into the cladogram.
-  const lastTimeline = STEPS.filter((s) => s.timeline).at(-1)!.timeline!;
+  // The chord diagram keeps the nearest chord step's view while it fades in or out.
+  const idx = STEPS.indexOf(step);
+  const lastCircos =
+    STEPS.slice(0, idx + 1).filter((s) => s.circos).at(-1)?.circos ?? STEPS.find((s) => s.circos)!.circos!;
 
   const cladeGroups = useMemo(() => {
     const groups = new Map<string, string[]>();
@@ -46,7 +59,7 @@ export default function Story() {
       <SiteNav />
       <header className="hero">
         <div className="hero-inner">
-          <p className="eyebrow">A beginner’s guide to dog DNA, from Ice Age wolves to modern breeds</p>
+          <p className="eyebrow">A beginner’s guide to dog DNA</p>
           <h1>
             How to read <em>the dog&rsquo;s</em> family tree
           </h1>
@@ -82,12 +95,12 @@ export default function Story() {
             </span>
             <span className="figure-title">{step.title}</span>
           </div>
-          <div className={`figure-stage${showLineage ? " lineage-on" : ""}${step.timeline ? " timeline-on" : ""}`}>
+          <div className={`figure-stage${showLineage ? " lineage-on" : ""}${step.circos ? " circos-on" : ""}`}>
             <div className="stage-circle" aria-hidden={showLineage}>
-              <Cladogram view={step.view} selected={sel} onSelect={setSelected} />
+              <Cladogram view={treeView} selected={sel} onSelect={setSelected} />
             </div>
-            <div className="stage-timeline" aria-hidden={!step.timeline}>
-              <Timeline view={step.timeline ?? lastTimeline} />
+            <div className="stage-circos" aria-hidden={!step.circos}>
+              <Circos view={step.circos ?? lastCircos} spotlight={step.circos ? photoHover : null} ariaLabel="Chord diagram of DNA shared between dog breeds from different family groups" />
             </div>
             {showLineage && sel && (
               <div className="stage-lineage">
@@ -101,6 +114,7 @@ export default function Story() {
           {STEPS.map((s, i) => (
             <section
               key={s.id}
+              id={s.id}
               ref={stepRef(i)}
               data-index={i}
               className={`step${i === active ? " is-active" : ""}`}
@@ -110,7 +124,7 @@ export default function Story() {
                 <p className="kicker">{s.kicker}</p>
                 <h2 id={`h-${s.id}`}>{s.title}</h2>
                 {s.body}
-                {s.photos && <Specimens codes={s.photos} />}
+                {s.photos && <Specimens codes={s.photos} onHover={i === active ? setPhotoHover : undefined} />}
                 {s.view.explore && (
                   <div className="explore">
                     <label htmlFor="breed-search">Find a breed</label>
@@ -168,6 +182,8 @@ export default function Story() {
         </div>
       </main>
 
+      <CircosReplica embedded />
+
       <section className="appendix" aria-labelledby="table-h">
         <details>
           <summary id="table-h">See every breed, grouped by family</summary>
@@ -190,17 +206,15 @@ export default function Story() {
         <footer>
           <p>
             Where this comes from: the family tree and DNA-sharing data published by Parker
-            et&nbsp;al. in 2017. The prologue&rsquo;s deep history comes from Wikipedia&rsquo;s{" "}
-            <a href="https://en.wikipedia.org/wiki/Domestication_of_the_dog">Domestication of
-            the dog</a> article (CC BY-SA). As in their chart, dogs of the same breed that cluster
+            et&nbsp;al. in 2017. As in their chart, dogs of the same breed that cluster
             together are drawn as one wedge. When a breed is split up, only its biggest piece
             gets a label (hover over the others to see what they are). We picked our own
             colors. Dog photos for the {Object.keys(PHOTOS).length} breeds it covers come from
             the free <a href="https://dog.ceo/dog-api/">Dog CEO API</a>.
           </p>
           <p className="next-page">
-            Up next: the same breeds, drawn as a web of shared DNA.{" "}
-            <Link href="/circos/guide">Learn to read the circle chart →</Link>
+            Up next: which breeds share the most DNA.{" "}
+            <Link href="/pairs">See the breed pairs →</Link>
           </p>
         </footer>
       </section>
