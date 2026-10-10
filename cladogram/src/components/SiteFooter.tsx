@@ -30,6 +30,13 @@ const C = {
   wikiBonn: { text: "Wikipedia: Bonn–Oberkassel dog", url: "https://en.wikipedia.org/wiki/Bonn%E2%80%93Oberkassel_dog", license: "CC BY-SA 4.0" },
   wikiPaleo: { text: "Wikipedia: Paleolithic dog", url: "https://en.wikipedia.org/wiki/Paleolithic_dog", license: "CC BY-SA 4.0" },
   wikiBreeds: { text: "Wikipedia breed articles (Siberian Husky, Chow Chow, Basenji, Saluki, Shar Pei, Lhasa Apso and others): ancient-breed origin dates", url: "https://en.wikipedia.org/wiki/List_of_dog_breeds", license: "CC BY-SA 4.0" },
+  parker2004: { text: "Parker H.G. et al. (2004). Genetic structure of the purebred domestic dog. Science 304(5674):1160–1164", url: "https://doi.org/10.1126/science.1097406" },
+  rosenberg: { text: "Rosenberg N.A. et al. (2002). Genetic structure of human populations. Science 298(5602):2381–2385", url: "https://doi.org/10.1126/science.1078311" },
+  boyko: { text: "Boyko A.R. et al. (2010). A simple genetic architecture underlies morphological variation in dogs. PLOS Biology 8(8):e1000451", url: "https://doi.org/10.1371/journal.pbio.1000451", license: "CC BY 4.0" },
+  yengo: { text: "Yengo L. et al. (2022). A saturated map of common genetic variants associated with human height. Nature 610:704–712", url: "https://doi.org/10.1038/s41586-022-05275-y", license: "CC BY 4.0" },
+  akc: { text: "American Kennel Club: Most Popular Dog Breeds, annual rankings 2021–2025", url: "https://www.akc.org/most-popular-breeds/" },
+  tidytuesday: { text: "AKC breed rankings 2013–2020, compiled by K. Kakey and the R4DS TidyTuesday project (2022-02-01)", url: "https://github.com/rfordatascience/tidytuesday/tree/main/data/2022/2022-02-01", license: "CC0 (compilation)" },
+  wikiTopBreeds: { text: "Wikipedia: Beagle, Poodle and American Cocker Spaniel (years at #1); AKC: Top Ten Breeds of the 1940s", url: "https://www.akc.org/expert-advice/lifestyle/did-you-know/top-ten-breeds-of-the-1940s/", license: "CC BY-SA 4.0 (Wikipedia)" },
   omia: { text: "OMIA: Online Mendelian Inheritance in Animals (University of Sydney)", url: "https://omia.org/", license: "CC BY" },
   donner: {
     text: "Donner J. et al. (2018). Frequency and distribution of 152 genetic disease variants in over 100,000 mixed breed and purebred dogs. PLOS Genetics 14(4):e1007361; data on Dryad",
@@ -66,7 +73,7 @@ const C = {
 
 /** Sources cited on each page (keyed by route, without the base path). */
 const BY_PAGE: Record<string, Cite[]> = {
-  "/history": [C.wikiDomestication, C.wikiGlacial, C.wikiBonn, C.wikiPaleo, C.wikiBreeds, C.breedHistories, C.parker, C.dogceo, C.naturalEarth],
+  "/history": [C.wikiDomestication, C.wikiGlacial, C.wikiBonn, C.wikiPaleo, C.wikiBreeds, C.breedHistories, C.parker, C.parker2004, C.rosenberg, C.boyko, C.yengo, C.dogceo, C.naturalEarth],
   "/": [C.parker, C.dogceo],
   "/pairs": [C.parker, C.breedHistories, C.dogceo],
   "/purpose": [C.parker, C.breedHistories, C.dogceo],
@@ -74,6 +81,7 @@ const BY_PAGE: Record<string, Cite[]> = {
   "/explorer": [C.dogceo, C.parker, C.breedHistories, C.naturalEarth, C.pudding],
   "/health": [C.parker, C.omia, C.donner, C.brown, C.marchant, C.karmi, C.dogwellnet, C.dap, C.dogceo],
   "/names": [C.nyc, C.monroe, C.parker, C.dogceo],
+  "/popularity": [C.akc, C.tidytuesday, C.wikiTopBreeds, C.parker, C.dogceo],
 };
 
 const SOURCES_URL = "https://github.com/mforando/DogGenes/blob/main/SOURCES.md";

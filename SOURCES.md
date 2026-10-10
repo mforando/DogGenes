@@ -26,6 +26,11 @@ The license summary at the end explains what those licenses mean for reusing thi
 | Wikipedia contributors, "[Last Glacial Period](https://en.wikipedia.org/wiki/Last_Glacial_Period)" and "[Last Glacial Maximum](https://en.wikipedia.org/wiki/Last_Glacial_Maximum)" | The Ice Age band on the timeline: began ~115,000 years ago, coldest ~26,000–20,000, ended 11,700 years ago | **CC BY-SA 4.0** |
 | Wikipedia contributors, "[Bonn–Oberkassel dog](https://en.wikipedia.org/wiki/Bonn%E2%80%93Oberkassel_dog)" and "[Paleolithic dog](https://en.wikipedia.org/wiki/Paleolithic_dog)" | The dig-site globe on "The oldest dogs we've dug up": the 1914 quarry find, double human burial with red hematite, the puppy's age and survival of distemper with human care, its DNA, the museum; the Erralla humerus and its identification; the Goyet debate | **CC BY-SA 4.0** |
 | Standard breed-club histories (e.g. American Kennel Club and national breed clubs), general reference knowledge | One-line histories of the ancient-breed cards; the founding years of the 28 dated breeds and the milestones (first dog show 1859, Kennel Club 1873, AKC 1884) on the "last 200 years" timeline | Facts; not copyrightable as facts. No text copied. |
+| Parker, H.G. et al. (2004). "Genetic structure of the purebred domestic dog." *Science* 304(5674): 1160–1164. [doi:10.1126/science.1097406](https://doi.org/10.1126/science.1097406) | "Natural selection vs. breeding": ~30% of dog genetic variation lies between breeds; 99% of dogs assigned to the right breed | Facts cited; article © AAAS |
+| Rosenberg, N.A. et al. (2002). "Genetic structure of human populations." *Science* 298(5602): 2381–2385. [doi:10.1126/science.1078311](https://doi.org/10.1126/science.1078311) | Comparison: 93–95% of human variation lies within populations | Facts cited; article © AAAS |
+| Boyko, A.R. et al. (2010). "A simple genetic architecture underlies morphological variation in dogs." *PLOS Biology* 8(8): e1000451. [doi:10.1371/journal.pbio.1000451](https://doi.org/10.1371/journal.pbio.1000451) | Three or fewer loci explain most variation in breed traits | **CC BY 4.0** |
+| Yengo, L. et al. (2022). "A saturated map of common genetic variants associated with human height." *Nature* 610: 704–712. [doi:10.1038/s41586-022-05275-y](https://doi.org/10.1038/s41586-022-05275-y) | Comparison: 12,111 height variants explaining ~40% of variation | **CC BY 4.0** |
+| Selection simulation (`cladogram/src/lib/selection.ts`) | The animated dot plots: a toy model written for this site, not real breed data | Site's own work |
 
 ## 3. Dog photos
 
@@ -56,15 +61,23 @@ The license summary at the end explains what those licenses mean for reusing thi
 | NYC Department of Health and Mental Hygiene, [NYC Dog Licensing Dataset](https://data.cityofnewyork.us/Health/NYC-Dog-Licensing-Dataset/nu7n-tubp) (NYC Open Data), 819,323 license records, 2016–2026 | The NYC dog names tab (aggregated summary in `cladogram/src/data/nycnames.json`; the raw CSV is not redistributed) | **NYC Open Data [Terms of Use](https://www.nyc.gov/html/data/terms.html):** free to use; provided as-is with no warranty of accuracy; reuses should note the data was modified from its original source and must not suggest City endorsement. |
 | Monroe, B.L., Colaresi, M.P., Quinn, K.M. (2008). "Fightin' Words." *Political Analysis* 16(4): 372–403 | Method for "most distinctive names" | Method only |
 
-## 6. Maps
+## 6. Most popular breeds
+
+| Source | Used for | License |
+|---|---|---|
+| American Kennel Club, "Most Popular Dog Breeds" announcements for [2021](https://www.akc.org/expert-advice/dog-breeds/most-popular-dog-breeds-of-2021/), [2022](https://www.akc.org/expert-advice/news/most-popular-dog-breeds-2022/), [2023](https://www.akc.org/expert-advice/news/most-popular-dog-breeds-2023/), [2024](https://www.akc.org/expert-advice/news/most-popular-dog-breeds-2024/) and [2025](https://www.akc.org/expert-advice/news/most-popular-dog-breeds-2025/) | Full breed rankings 2021–2025 (`cladogram/src/data/akc.json`) | Rankings are facts; AKC web pages © American Kennel Club |
+| K. Kakey, [dog_traits_AKC](https://github.com/kkakey/dog_traits_AKC), via R4DS [TidyTuesday 2022-02-01](https://github.com/rfordatascience/tidytuesday/tree/main/data/2022/2022-02-01) (`breed_rank.csv`) | Breed rankings 2013–2020 (AKC registration statistics) | Repository **CC0 1.0**; underlying data from the AKC |
+| AKC, "[Top Ten Breeds of the 1940s](https://www.akc.org/expert-advice/lifestyle/did-you-know/top-ten-breeds-of-the-1940s/)"; Wikipedia contributors, "[Beagle](https://en.wikipedia.org/wiki/Beagle)", "[Poodle](https://en.wikipedia.org/wiki/Poodle)", "[American Cocker Spaniel](https://en.wikipedia.org/wiki/American_Cocker_Spaniel)" | Years each breed held #1, 1936–2012 (sources differ by a year on the Cocker Spaniel's second run) | Facts; Wikipedia **CC BY-SA 4.0** |
+
+## 7. Maps
 
 | Source | Used for | License |
 |---|---|---|
 | [Natural Earth](https://www.naturalearthdata.com/) Admin 0 countries, 1:110m, v4.1.0 | Breed-origin globe, dig-site globe, Breed Explorer map | **Public domain** |
 | [world-atlas](https://github.com/topojson/world-atlas) (TopoJSON packaging of Natural Earth) | Same | **ISC** |
-| Breed origins (`cladogram/src/lib/origins.ts`) and original jobs (`cladogram/src/lib/purpose.ts`, `explorer.ts`) | Where they came from, Built for purpose, Breed Explorer | Compiled for this site from standard breed histories (facts) |
+| Breed origins (`cladogram/src/lib/origins.ts`) and original jobs (`cladogram/src/lib/purpose.ts`, `explorer.ts`) | Where they came from, Bred for purpose, Breed Explorer | Compiled for this site from standard breed histories (facts) |
 
-## 7. Software, fonts & design references
+## 8. Software, fonts & design references
 
 | Source | Used for | License |
 |---|---|---|
@@ -84,9 +97,10 @@ The license summary at the end explains what those licenses mean for reusing thi
 
 | License | Applies to | What it requires |
 |---|---|---|
-| **CC BY 4.0** | Parker et al. 2017 article and its supplementary data (`article.pdf`, `treeFile.pdf`, `haplotypeSharing.xlsx`); Donner et al. 2018; Marchant et al. 2017; OMIA content | Free to share and adapt, including commercially, **with credit** to the authors and a note of changes. |
-| **CC BY-SA 4.0** | Wikipedia "Domestication of the dog", "Last Glacial Period", "Last Glacial Maximum", "Bonn–Oberkassel dog", "Paleolithic dog", and 12 breed articles | Credit, **and share-alike**: adaptations of the article's *text* must use the same license. This site paraphrases facts rather than copying text, and credits the article on the History tab. |
-| **CC0 / public domain** | Dryad dataset; Natural Earth | No conditions. |
+| **CC BY 4.0** | Parker et al. 2017 article and its supplementary data (`article.pdf`, `treeFile.pdf`, `haplotypeSharing.xlsx`); Donner et al. 2018; Marchant et al. 2017; Boyko et al. 2010; Yengo et al. 2022; OMIA content | Free to share and adapt, including commercially, **with credit** to the authors and a note of changes. |
+| **CC BY-SA 4.0** | Wikipedia "Domestication of the dog", "Last Glacial Period", "Last Glacial Maximum", "Bonn–Oberkassel dog", "Paleolithic dog", 12 breed articles, and "Beagle", "Poodle", "American Cocker Spaniel" (years at #1) | Credit, **and share-alike**: adaptations of the article's *text* must use the same license. This site paraphrases facts rather than copying text, and credits the article on the History tab. |
+| **CC0 / public domain** | Dryad dataset; Natural Earth; TidyTuesday AKC ranking compilation | No conditions. |
+| **Facts, cited (no license needed for the facts)** | AKC breed rankings 2021–2025; figures from Parker et al. 2004 and Rosenberg et al. 2002 | Only the numbers are used, with credit; no text or figures are copied from the AKC pages or *Science* articles. |
 | **PNAS open access license** | Brown et al. 2017 | Reuse with attribution under PNAS terms. |
 | **NYC Open Data Terms of Use** | NYC Dog Licensing Dataset | Free use; as-is, no warranty; say the data was modified; no implied City endorsement. |
 | **ImageNet terms (non-commercial research/education) + GPL-3.0 repository + photographers' copyrights** | All dog photos (Dog CEO API / Stanford Dogs) | **The most restrictive part of the site.** Fine for this non-commercial, educational site; anyone reusing the site **commercially should remove or replace the photos** (including the Breed Explorer sprite sheets). |

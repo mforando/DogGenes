@@ -16,16 +16,17 @@ export default function AncientBreeds() {
         {ANCIENT_BREEDS.map((b) => {
           const url = photoOf(b.code);
           return (
+            // One row per breed: photo, then name, origin and age over a one-line story.
             <li key={b.code} className="ancient-card">
-              {url && <img src={url} alt={b.name} loading="lazy" referrerPolicy="no-referrer" />}
-              <div className="ancient-text">
-                <p className="ancient-name">{b.name}</p>
-                <p className="ancient-from">{b.from}</p>
-                <p className={`ancient-age${b.ago ? "" : " unknown"}`} title={b.dateNote}>
-                  {agoLabel(b)}
-                </p>
-                <p className="ancient-note">{b.note}</p>
-              </div>
+              {url ? <img src={url} alt={b.name} loading="lazy" referrerPolicy="no-referrer" /> : <span className="ancient-noimg" aria-hidden />}
+              <p className="ancient-name">
+                {b.name}
+                <span className="ancient-from">{b.from}</span>
+              </p>
+              <p className={`ancient-age${b.ago ? "" : " unknown"}`} title={b.dateNote}>
+                {agoLabel(b)}
+              </p>
+              <p className="ancient-note">{b.note}</p>
             </li>
           );
         })}

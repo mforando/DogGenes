@@ -26,7 +26,7 @@ export default function PurposePage() {
       <SiteNav />
       <main className="purpose">
         <header className="pairs-head">
-          <p className="eyebrow">Built for purpose</p>
+          <p className="eyebrow">Bred for purpose</p>
           <h1>Bred for a job</h1>
           <p className="pairs-lede">
             Most breeds were made to do something: chase hares, find birds, herd sheep, guard

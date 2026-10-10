@@ -4,6 +4,7 @@ import type { TimelineView } from "@/components/Timeline";
 import type { CircosView } from "@/components/Circos";
 import { CIRCOS_STEPS } from "./circosSteps";
 import { MODERN_BREEDS } from "./history";
+import SelectionExplainer from "@/components/SelectionExplainer";
 import AncientBreeds from "@/components/AncientBreeds";
 import DigSites from "@/components/DigSites";
 
@@ -239,6 +240,15 @@ export const HISTORY_STEPS: Step[] = [
           Today&rsquo;s breeds are far younger. Most were shaped in the last couple of
           centuries out of that much older regional stock.
         </p>
+        <p>
+          And they were shaped differently. For tens of thousands of years, dogs changed the
+          way wild animals do: the world around them decided which pups survived. Breeds were
+          made by <strong>people choosing which dogs had puppies</strong>, aiming at a few
+          traits and then closing the studbooks. That leaves a very different mark on their
+          DNA, and it means geneticists can&rsquo;t read breeds the way they read the
+          evolution of species. Watch the difference play out:
+        </p>
+        <SelectionExplainer />
       </>
     ),
     view: { color: "ink" },

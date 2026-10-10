@@ -25,7 +25,7 @@ const TABS: { id: keyof typeof D.groups; label: string; blurb: string }[] = [
   { id: "breed", label: "Breed", blurb: "The 24 most common breeds in NYC." },
   { id: "size", label: "Size", blurb: "Typical adult weight of each dog's breed." },
   { id: "family", label: "Family group", blurb: "Family groups from this site's family tree. Breeds outside the study use their closest relative's group." },
-  { id: "job", label: "Original job", blurb: "What each breed was first bred to do (from the Built for purpose tab)." },
+  { id: "job", label: "Original job", blurb: "What each breed was first bred to do (from the Bred for purpose tab)." },
   { id: "region", label: "Region of origin", blurb: "Where each breed was developed (from the Where they came from tab)." },
 ];
 const NAMES = Object.keys(D.lookup).sort();
