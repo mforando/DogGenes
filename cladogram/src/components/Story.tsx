@@ -10,17 +10,10 @@ import { PHOTOS } from "@/lib/photos";
 import { CITATION, SiteNav, Specimens, useActiveStep } from "./shared";
 import Primer, { type TermId } from "./Primer";
 import GlossaryButton from "./GlossaryButton";
-import LineageTree from "./LineageTree";
 import Circos from "./Circos";
 import CircosReplica from "./CircosReplica";
-import RelatedBreeds from "./RelatedBreeds";
 import ContinentGlobe from "./ContinentGlobe";
 import { CONTINENT_BREEDS, type Continent } from "@/lib/regions";
-
-const breedOptions = Object.entries(data.breeds)
-  .filter(([c]) => c !== "GDJK" && c !== "WOLF")
-  .map(([code, b]) => ({ code, name: b.name }))
-  .sort((a, b) => a.name.localeCompare(b.name));
 
 const GLOSSARY: TermId[] = ["dna", "cladogram", "clade", "bootstrap", "haplotype"];
 // The "?" shows from the glossary section through the end of the scroller.
@@ -28,11 +21,8 @@ const GLOSSARY_WATCH = [".primer", "main.scrolly"];
 
 export default function Story() {
   const { active, stepRef } = useActiveStep();
-  const [selected, setSelected] = useState<string | null>(null);
-  const [treeOnly, setTreeOnly] = useState(false);
 
   const step = STEPS[active];
-  // Selection only applies while exploring.
   // Hovering a breed photo in a step card highlights that breed in the chart on the right.
   const [photoHover, setPhotoHover] = useState<string | null>(null);
   // Picking a continent on the step's globe highlights that continent's breeds instead.
@@ -41,7 +31,7 @@ export default function Story() {
     setPhotoHover(null);
     setContinent(null);
   }, [active]);
-  const sel = photoHover && !step.circos ? photoHover : step.view.explore ? selected : null;
+  const sel = photoHover && !step.circos ? photoHover : null;
   // While a photo is hovered, the step's own highlights step aside so only that breed shows.
   const treeView = useMemo(() => {
     const focus = photoHover ? [photoHover] : step.continentGlobe && continent ? CONTINENT_BREEDS[continent] : null;
@@ -50,7 +40,6 @@ export default function Story() {
     void codes; void clades; void paths; void outgroup; void split;
     return { ...rest, codes: focus, ...(links ? { links: { codes: focus } } : {}) };
   }, [photoHover, continent, step]);
-  const showLineage = treeOnly && !!sel;
   // The chord diagram keeps the nearest chord step's view while it fades in or out.
   const idx = STEPS.indexOf(step);
   const lastCircos =
@@ -109,18 +98,13 @@ export default function Story() {
             </span>
             <span className="figure-title">{step.title}</span>
           </div>
-          <div className={`figure-stage${showLineage ? " lineage-on" : ""}${step.circos ? " circos-on" : ""}`}>
-            <div className="stage-circle" aria-hidden={showLineage}>
-              <Cladogram view={treeView} selected={sel} onSelect={setSelected} />
+          <div className={`figure-stage${step.circos ? " circos-on" : ""}`}>
+            <div className="stage-circle">
+              <Cladogram view={treeView} selected={sel} onSelect={() => {}} />
             </div>
             <div className="stage-circos" aria-hidden={!step.circos}>
               <Circos view={step.circos ?? lastCircos} spotlight={step.circos ? photoHover : null} ariaLabel="Chord diagram of DNA shared between dog breeds from different family groups" />
             </div>
-            {showLineage && sel && (
-              <div className="stage-lineage">
-                <LineageTree code={sel} onSelect={setSelected} />
-              </div>
-            )}
           </div>
         </div>
 
@@ -140,57 +124,6 @@ export default function Story() {
                 {s.body}
                 {s.photos && <Specimens codes={s.photos} onHover={i === active ? setPhotoHover : undefined} />}
                 {s.continentGlobe && <ContinentGlobe continent={i === active ? continent : null} onPick={i === active ? setContinent : undefined} />}
-                {s.view.explore && (
-                  <div className="explore">
-                    <label htmlFor="breed-search">Find a breed</label>
-                    <select
-                      id="breed-search"
-                      value={selected ?? ""}
-                      onChange={(e) => setSelected(e.target.value || null)}
-                    >
-                      <option value="">Choose a breed…</option>
-                      {breedOptions.map((b) => (
-                        <option key={b.code} value={b.code}>
-                          {b.name}
-                        </option>
-                      ))}
-                    </select>
-                    {selected && (
-                      <p className="sel-note">
-                        <i style={{ background: cladeColor(data.breeds[selected].clade, selected) }} />
-                        <strong>{data.breeds[selected].name}</strong>
-                        {" · "}
-                        {data.breeds[selected].clade ? data.clades[data.breeds[selected].clade!] : "Loner (no clear family)"}
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setSelected(null);
-                            setTreeOnly(false);
-                          }}
-                        >
-                          Clear
-                        </button>
-                      </p>
-                    )}
-                    {selected &&
-                      (PHOTOS[selected] ? (
-                        <Specimens codes={[selected]} all />
-                      ) : (
-                        <p className="no-photo">Sorry, we don’t have photos of this breed.</p>
-                      ))}
-                    {selected && (
-                      <button
-                        type="button"
-                        className="lineage-toggle"
-                        aria-pressed={treeOnly}
-                        onClick={() => setTreeOnly((t) => !t)}
-                      >
-                        {treeOnly ? "← Back to the full circle" : "Show just its family line →"}
-                      </button>
-                    )}
-                    {selected && <RelatedBreeds code={selected} onSelect={setSelected} />}
-                  </div>
-                )}
               </div>
             </section>
           ))}

@@ -1,5 +1,6 @@
 import raw from "@/data/circos.json";
 import { cladeColor } from "./palette";
+import { isLeaf, layout } from "./tree";
 
 export type CNode = {
   code: string;
@@ -36,21 +37,36 @@ export const circosData = raw as unknown as {
 };
 
 export const CGEOM = {
-  size: 1000,
+  size: 1110, // room for breed names (up to three words) and the family ring
   rIn: 330, // ribbons attach here
   rOut: 352, // outer edge of breed segments
   rLabel: 358,
-  rClade0: 398,
-  rClade1: 402,
-  rCladeName: 414,
+  rClade0: 497, // the family band sits outside the names
+  rClade1: 507,
+  rCladeName: 519,
 };
 
 const N = circosData.nodes.length;
 const SEG = (2 * Math.PI) / N;
 const PAD = SEG * 0.12;
 
-// Figure 4 starts with the wolf at 3 o'clock and runs counter-clockwise.
-const start = Math.PI / 2 + SEG / 2;
+// Like Figure 4, the ring runs counter-clockwise from the wolf. It's rotated to match the
+// family tree's ring (whose order runs the same way), so breeds sit where they do on the
+// tree: the rotation is the circular mean of each shared breed's angle difference.
+const start = (() => {
+  const treeAngle = new Map(
+    layout().leaves.filter((l) => isLeaf(l) && l.data.main).map((l) => [(l.data as { code: string }).code, l.a]),
+  );
+  let sx = 0, sy = 0;
+  circosData.nodes.forEach((n, i) => {
+    const t = treeAngle.get(n.code);
+    if (t === undefined) return;
+    const d = t - (-i * SEG - SEG / 2);
+    sx += Math.cos(d);
+    sy += Math.sin(d);
+  });
+  return Math.atan2(sy, sx);
+})();
 
 const crossLinks = circosData.links.filter((l) => l[3] === 1);
 const degree: Record<string, number> = {};

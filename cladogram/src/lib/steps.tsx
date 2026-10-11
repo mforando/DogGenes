@@ -5,11 +5,14 @@ import type { CircosView } from "@/components/Circos";
 import { CIRCOS_STEPS } from "./circosSteps";
 import { MODERN_BREEDS } from "./history";
 import SelectionExplainer from "@/components/SelectionExplainer";
+import MissingLinkFigure from "@/components/MissingLinkFigure";
 import AncientBreeds from "@/components/AncientBreeds";
 import DigSites from "@/components/DigSites";
 
 /** Declarative description of what the cladogram should show for a scroll step. */
 export type View = {
+  /** Show the hypothetical common ancestor of wolves and dogs (the "missing links" step). */
+  ancestor?: boolean;
   /** "ink" draws a monochrome tree; "clade" colors breeds by their clade. */
   color: "ink" | "clade";
   /** Breeds (codes) to emphasise; everything else recedes. */
@@ -557,18 +560,45 @@ const BUNDLE_STEPS: Step[] = [
     view: { color: "clade", links: "cross" },
   },
   {
-    id: "explore",
-    kicker: "Your turn",
-    title: "Go exploring",
+    id: "missing-links",
+    kicker: "Gaps in the record",
+    title: "The missing links",
     body: (
       <>
         <p>
-          Hover over any wedge to see what breed it is. Click one, or pick a breed below, to
-          light up its path back to the center and see which other breeds it shares DNA with.
+          Every fork in this tree is an ancestor nobody has ever seen. The researchers only had
+          DNA from dogs alive today, so the forks are worked out backwards from their
+          descendants. In human evolution these unseen ancestors are called{" "}
+          <strong>missing links</strong>: the ape that humans and gorillas both descend from,
+          for example, has never been found.
+        </p>
+        <figure className="ml-fig">
+          <MissingLinkFigure />
+          <figcaption>
+            Humans didn&rsquo;t evolve from gorillas: both descend from an ape that lived
+            roughly 8–10 million years ago. That shared ancestor is the &ldquo;missing
+            link&rdquo;, and no fossil of it has been found. On the human side, fossils fill in
+            later steps: <em>Australopithecus</em> (about 4–2 million years ago) and{" "}
+            <em>Homo erectus</em> (about 2 million to 100,000 years ago), before modern humans
+            about 300,000 years ago. Figures are simplified icons. Silhouettes: The Nature Box,{" "}
+            <a href="https://commons.wikimedia.org/wiki/File:Comparison_of_size_of_western_gorilla_(Gorilla_gorilla)_and_human.svg">CC BY-SA 4.0</a>,
+            rearranged.
+          </figcaption>
+        </figure>
+        <p>
+          Dogs have a missing link too. The <strong>grey wolf</strong> and the{" "}
+          <strong>basenji</strong> share an ancestor: the Ice Age wolf population dogs came from,
+          which has since died out. Watch the chart: if DNA from that population were found, it
+          would join the tree right at the fork where dogs part from wolves, between the wolf
+          and the basenji. Every breed shifts over to make room, but in this simple picture
+          none changes places: a sample of that ancestor fills in its fork rather than
+          rearranging the branches that grew from it. What it would add is a real, dated dog at
+          that fork, instead of one inferred from its descendants. (In practice, ancient DNA can
+          also reveal old mixing that redraws parts of a tree.)
         </p>
       </>
     ),
-    view: { color: "clade", cladeRing: true, explore: true },
+    view: { color: "ink", codes: ["WOLF", "BSJI"], ancestor: true },
   },
 ];
 

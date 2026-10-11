@@ -38,6 +38,11 @@ const DIM = "#2c3430";
 const W = CGEOM.size;
 const mb = (v: number) => `${(v / 1e6).toFixed(1)} Mb`;
 const pol = (a: number, r: number): [number, number] => [r * Math.sin(a), -r * Math.cos(a)];
+/** Ring labels stop at three words ("Nova Scotia Duck…") so the circle can be bigger. */
+const shortName = (name: string) => {
+  const w = name.split(/\s+/);
+  return w.length > 3 ? `${w.slice(0, 3).join(" ")}…` : name;
+};
 
 function cladeLabel(n: CNode) {
   if (n.code === "WOLF") return "Wild relative";
@@ -45,7 +50,11 @@ function cladeLabel(n: CNode) {
 }
 
 /** What the pointer (or keyboard focus) is on, for pages that show details outside the chart. */
-export type CircosHover = { kind: "breed"; code: string } | { kind: "ribbon"; key: string } | null;
+export type CircosHover =
+  | { kind: "breed"; code: string }
+  | { kind: "ribbon"; key: string }
+  | { kind: "clade"; clade: string }
+  | null;
 
 export default function Circos({
   view,
@@ -154,7 +163,7 @@ export default function Circos({
         const deg = (a * 180) / Math.PI - 90;
         return `rotate(${deg}) translate(${CGEOM.rLabel},0)${a > Math.PI ? " rotate(180)" : ""}`;
       })
-      .text((d) => d.code);
+      .text((d) => shortName(d.name));
 
     // ---------- clade ring ----------
     const bandArc = d3.arc<{ a0: number; a1: number }>()
@@ -186,6 +195,22 @@ export default function Circos({
       .append("textPath").attr("href", (d) => `#ctp-${d.clade}`)
       .attr("startOffset", "50%").attr("text-anchor", "middle")
       .text((d) => circosData.clades[d.clade]);
+    // With an onHover handler (the full chart), each family's band and name can be hovered.
+    const hitArc = d3.arc<{ a0: number; a1: number }>()
+      .innerRadius(CGEOM.rClade0 - 6).outerRadius(CGEOM.rCladeName + 34)
+      .startAngle((d) => d.a0).endAngle((d) => d.a1);
+    const cladeHits = gClade.selectAll("path.clade-hit").data(onHoverRef.current ? cladeArcs : []).join("path")
+      .attr("class", "clade-hit").attr("d", (d) => hitArc(d)).attr("fill", "transparent")
+      .attr("tabindex", 0).attr("role", "button")
+      .attr("aria-label", (d) => `${circosData.clades[d.clade]} family: show its tree and DNA sharing`)
+      .on("pointerenter focus", (_, d) => {
+        gClade.selectAll<SVGPathElement, { clade: string }>("path.band").classed("hover", (b) => b.clade === d.clade);
+        onHoverRef.current?.({ kind: "clade", clade: d.clade });
+      })
+      .on("pointerleave blur", () => {
+        gClade.selectAll("path.band").classed("hover", false);
+        onHoverRef.current?.(null);
+      });
 
     // ---------- state ----------
     let current: CircosView = { ribbons: "none" };
@@ -298,8 +323,6 @@ export default function Circos({
       if (hoverOn) {
         focus.clear();
         focus.add(h!);
-        // A pointer hover also lights the partners; an outside spotlight focuses on one breed.
-        if (!spot) for (const p of partnersOf(h!)) focus.add(p.code);
       }
       const clades = new Set(spot ? [] : v.clades ?? []);
       const silent = !spot && !!v.silent;
@@ -311,12 +334,18 @@ export default function Circos({
         (silent && n.degree === 0);
 
       const T = d3.transition().duration(hoverOn ? DUR * 0.4 : DUR);
-      segSel.transition(T).attr("fill", (d) => (on(d) ? d.color : DIM));
+      // Breeds at the far end of a highlighted chord: white labels, dimmer than the focus.
+      const ends = new Set(hasFocus ? shown.flatMap((l) => [l.a, l.b]) : []);
+      const isEnd = (d: CNode) => hasFocus && !on(d) && ends.has(d.code);
+      // Hovering a block keeps its partners' blocks in color, as before.
+      segSel.transition(T).attr("fill", (d) => (on(d) || (hoverOn && !spot && isEnd(d)) ? d.color : DIM));
       labelSel
         .classed("hi", (d) => hasFocus && on(d))
         .transition(T)
-        .attr("fill", (d) => (on(d) ? (hasFocus ? "#fffaf0" : "#b9b3a3") : "#4a524c"));
+        .attr("fill", (d) => (on(d) ? (hasFocus ? "#fffaf0" : "#b9b3a3") : isEnd(d) ? "#ffffff" : "#4a524c"))
+        .attr("fill-opacity", (d) => (isEnd(d) ? 0.6 : 1));
       gClade.transition(T).attr("opacity", v.cladeRing ? 1 : 0);
+      cladeHits.attr("pointer-events", v.cladeRing ? null : "none");
       gTree.transition(T).attr("opacity", v.tree ? 1 : 0);
       drawTreePaths(v);
       gStart.transition(T).attr("opacity", v.start ? 1 : 0);
@@ -390,7 +419,7 @@ export default function Circos({
       const photo = photoOf(d.code === "CHTM" ? "TIBM" : d.code === "COOS" ? "SALU" : d.code === "ITCC" ? "CANE" : d.code);
       tip.html(
         `${photo ? `<img class="tip-photo" src="${photo}" alt="" referrerpolicy="no-referrer" />` : ""}
-         <div class="tip-name">${d.name} <span class="tip-code">${d.code}</span></div>
+         <div class="tip-name">${d.name}</div>
          <div class="tip-clade"><i style="background:${d.color}"></i>${cladeLabel(d)}</div>
          ${ps.length
            ? `<div class="tip-sub">Shares big chunks of DNA with ${ps.length} breed${ps.length === 1 ? "" : "s"} from other families</div>

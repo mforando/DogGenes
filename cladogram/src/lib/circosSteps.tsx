@@ -22,9 +22,10 @@ export const CIRCOS_STEPS: CircosStep[] = [
     body: (
       <>
         <p>
-          The circle is cut into {nodes.length} blocks, one per breed. Each has a short code:{" "}
-          <strong>BOX</strong> is the boxer, <strong>GSD</strong> the German shepherd. Hover
-          over any block to see its full name.
+          The circle is cut into {nodes.length} blocks, one per breed, each labelled with its
+          name. The breeds sit in the same places as on the family tree, so the{" "}
+          <strong>grey wolf</strong> and <strong>basenji</strong> are still at the top. Hover
+          over any block for more about it.
         </p>
         <p>
           Every breed gets the same size slice, no matter how many dogs were tested. A few
@@ -42,7 +43,7 @@ export const CIRCOS_STEPS: CircosStep[] = [
     body: (
       <>
         <p>
-          Start at the <strong>wolf</strong>, at three o&rsquo;clock, and go
+          Start at the <strong>wolf</strong>, just left of the top, and go
           counter-clockwise. The breeds come in the same order as the edge of the family
           tree, with the same colors for each family group (clade).
         </p>

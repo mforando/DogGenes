@@ -1,12 +1,12 @@
 "use client";
 
-import { circosData, links, nodeByCode, partnersOf, type CNode } from "@/lib/circos";
+import { circosData, links, nodeByCode, nodes, partnersOf, type CNode } from "@/lib/circos";
 import { photoOf } from "@/lib/photos";
 import type { CircosHover } from "./Circos";
-import { lineage } from "@/lib/relatives";
-import { descendantsOf, stepsApart } from "@/lib/pairs";
-import MiniLineage from "./MiniLineage";
+import { stepsApart } from "@/lib/pairs";
 import BreedGallery from "./BreedGallery";
+import RelatedBreeds from "./RelatedBreeds";
+import CladeTree from "./CladeTree";
 import { data } from "@/lib/tree";
 
 const mb = (v: number) => `${(v / 1e6).toFixed(1)} Mb`;
@@ -27,12 +27,12 @@ function BreedHeader({ n, small = false, gallery = false }: { n: CNode; small?: 
         <img src={photo} alt={n.name} referrerPolicy="no-referrer" />
       ) : (
         <span className="cd-noimg" style={{ borderColor: n.color }} aria-hidden>
-          {n.code}
+          {n.name.split(/\s+/).slice(0, 2).map((w) => w[0]).join("")}
         </span>
       )}
       <div>
         <p className="cd-name">
-          {n.name} <span className="cd-code">{n.code}</span>
+          {n.name}
         </p>
         <p className="cd-family">
           <i style={{ background: n.color }} aria-hidden />
@@ -48,10 +48,16 @@ export default function CircosDetails({
   hover,
   pinned,
   onClear,
+  onPick,
+  onShowTree,
 }: {
   hover: CircosHover;
   pinned: string | null;
   onClear?: () => void;
+  /** Lock onto another breed (from the related-breeds lists). */
+  onPick?: (code: string) => void;
+  /** Open the breed's family tree (study code). */
+  onShowTree?: (code: string) => void;
 }) {
   const h: CircosHover = hover ?? (pinned ? { kind: "breed", code: pinned } : null);
 
@@ -73,6 +79,8 @@ export default function CircosDetails({
       </div>
     );
   }
+
+  if (h.kind === "clade") return <CladePanel clade={h.clade} />;
 
   if (h.kind === "ribbon") {
     const l = links.find((x) => x.key === h.key);
@@ -166,28 +174,78 @@ export default function CircosDetails({
           No big DNA overlap with breeds from other families. It has kept to itself.
         </p>
       )}
-      {n.code !== "WOLF" && data.breeds[treeCode(n.code)] && (
-        <div className="cd-tree">
-          <p className="cd-tree-h">Family line back to the grey wolf</p>
-          <p className="cd-treenote">
-            <span className="cd-swatch" aria-hidden />
-            <span>
-              On the chart, the <strong>gold</strong> line traces this breed&rsquo;s path,{" "}
-              {lineage(treeCode(n.code)).length} forks back to where dogs split from grey wolves.
-              The rest of the tree is hidden, leaving only the branches out to the relatives
-              that split off along the way.
-            </span>
-          </p>
-          <MiniLineage code={treeCode(n.code)} exclude={descendantsOf(treeCode(n.code))} />
-          {descendantsOf(treeCode(n.code)).length > 0 && (
-            <p className="cd-excluded">
-              Left out: breeds developed from the {n.name} (
-              {descendantsOf(treeCode(n.code)).map((c) => data.breeds[c]?.name ?? c).join(", ")}).
-              They&rsquo;re its descendants, not part of its line back to the wolf.
-            </p>
+      {data.breeds[treeCode(n.code)] && n.code !== "WOLF" && (
+        <>
+          {onShowTree && (
+            <button type="button" className="cd-treebtn" onClick={() => onShowTree(treeCode(n.code))}>
+              See the {n.name}&rsquo;s family tree →
+            </button>
           )}
-        </div>
+          <RelatedBreeds code={treeCode(n.code)} onSelect={(c) => onPick?.(c)} />
+        </>
       )}
+    </div>
+  );
+}
+
+const otherLabel = (code: string) => {
+  const n = nodeByCode.get(code)!;
+  return n.code === "WOLF" ? "Wild relative" : n.clade ? circosData.clades[n.clade] : "Loners";
+};
+
+/** Hovering a family's band: its tree, and how much DNA it shares with each other family. */
+function CladePanel({ clade }: { clade: string }) {
+  const members = nodes.filter((n) => n.clade === clade);
+  const color = members[0]?.color ?? "#888";
+  const codes = new Set(members.map((n) => n.code));
+  const out = links.filter((l) => codes.has(l.a) !== codes.has(l.b));
+  const byOther = new Map<string, { label: string; color: string; value: number; ribbons: number }>();
+  for (const l of out) {
+    const other = codes.has(l.a) ? l.b : l.a;
+    const key = otherLabel(other);
+    const o = nodeByCode.get(other)!;
+    const e = byOther.get(key) ?? { label: key, color: o.clade || o.code === "WOLF" ? o.color : "#7d847e", value: 0, ribbons: 0 };
+    e.value += l.value;
+    e.ribbons += 1;
+    byOther.set(key, e);
+  }
+  const rows = [...byOther.values()].sort((a, b) => b.value - a.value);
+  const max = rows[0]?.value ?? 1;
+  return (
+    <div className="cd-panel" aria-live="polite">
+      <p className="cd-kicker">Family group</p>
+      <p className="cd-name cd-clade-name">
+        <i style={{ background: color }} aria-hidden /> {circosData.clades[clade]}
+      </p>
+      <p className="cd-sub">
+        {members.length} breed{members.length === 1 ? "" : "s"}, {out.length} ribbon{out.length === 1 ? "" : "s"} to other families.
+      </p>
+      <p className="cd-tree-h">Its family tree</p>
+      <CladeTree clade={clade} />
+      <p className="cd-tree-h">Shares DNA with these families</p>
+      {rows.length ? (
+        <ol className="cd-list cd-clade-list">
+          {rows.map((r) => (
+            <li key={r.label}>
+              <span className="cd-pname">
+                <span>
+                  <i className="cd-dot" style={{ background: r.color }} aria-hidden /> {r.label}
+                </span>
+                <span className="cd-pfam">
+                  {r.ribbons} ribbon{r.ribbons === 1 ? "" : "s"}
+                </span>
+              </span>
+              <span className="cd-bar" aria-hidden>
+                <span style={{ width: `${Math.sqrt(r.value / max) * 100}%` }} />
+              </span>
+              <span className="cd-mb">{mb(r.value)}</span>
+            </li>
+          ))}
+        </ol>
+      ) : (
+        <p className="cd-sub">No big DNA overlaps with other families.</p>
+      )}
+      <p className="cd-note">Totals add up every ribbon between this family&rsquo;s breeds and each other family.</p>
     </div>
   );
 }

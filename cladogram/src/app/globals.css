@@ -374,8 +374,8 @@ body::before {
 /* ---------- circos ---------- */
 .circos { position: relative; flex: 1 1 auto; min-height: 0; display: flex; align-items: center; justify-content: center; }
 .circos svg { width: 100%; height: 100%; max-height: calc(100svh - 60px); display: block; }
-.circos .codes text { font-family: var(--font-label); font-size: 9.5px; letter-spacing: 0.04em; }
-.circos .codes text.hi { font-weight: 600; font-size: 11px; }
+.circos .codes text { font-family: var(--font-label); font-size: 9px; letter-spacing: 0.02em; }
+.circos .codes text.hi { font-weight: 600; font-size: 10px; }
 .circos .segs path { cursor: pointer; outline: none; stroke: var(--bg); stroke-width: 0.6; }
 .circos .segs path:focus-visible { stroke: var(--gold); stroke-width: 2; }
 .circos .ribbons path { mix-blend-mode: screen; }
@@ -1331,12 +1331,38 @@ body::before {
 .gloss-close:hover { color: var(--ink); border-color: var(--ink-3); }
 @keyframes gloss-in { from { opacity: 0; } to { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .gloss, .gloss-backdrop { transition: none; animation: none; } }
-.sel-chick { margin: 1.2rem 0 0; padding: 0.9rem 0 0; border-top: 1px solid var(--rule); }
-.card .sel-chick-h { font-family: var(--font-label); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); margin: 0 0 0.6rem; }
-.sel-chick-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
-.sel-chick-pair img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; display: block; border: 1px solid var(--rule); background: #1a211e; }
-.card .sel-chick-cap { font-family: var(--font-label); font-size: 0.72rem; line-height: 1.4; color: var(--ink-3); margin: 0.35rem 0 0; }
-.sel-chick-cap strong { color: var(--ink); }
-.sel-chick-cap a { color: var(--gold); }
-.sel-chick-text { font-family: var(--font-label); font-size: 0.85rem; line-height: 1.5; color: var(--ink-2); margin-top: 0.8rem; }
-.sel-chick-text strong { color: var(--ink); }
+
+/* ---------- "missing links" step: gorilla, missing link, human ---------- */
+.ml-fig { margin: 1rem 0 1.1rem; }
+.ml-svg { display: block; width: 100%; height: auto; }
+.ml-fig-ink { fill: var(--ink-2); }
+.ml-fig-ghost { fill: rgba(232, 183, 74, 0.08); stroke: var(--gold); stroke-width: 45; stroke-dasharray: 160 110; }
+.ml-q { font-family: var(--font-display); font-size: 2400px; fill: var(--gold); }
+.ml-ground { stroke: var(--ink-3); stroke-width: 30; }
+.ml-arrow { fill: none; stroke: var(--gold); stroke-width: 55; }
+.ml-arrowhead { fill: var(--gold); }
+.ml-lab { font-family: var(--font-label); font-size: 500px; font-weight: 600; fill: var(--ink); }
+.ml-lab.gold { fill: var(--gold); }
+.ml-sub { font-family: var(--font-label); font-size: 400px; font-weight: 400; fill: var(--ink-3); }
+.ml-fig figcaption { font-family: var(--font-label); font-size: 0.74rem; line-height: 1.45; color: var(--ink-3); margin-top: 0.5rem; }
+.ml-fig figcaption a { color: var(--gold); }
+
+/* ---------- full chart: tree button, family line under the chart, tree pop-up ---------- */
+.cd-treebtn { font: inherit; font-family: var(--font-label); font-size: 0.85rem; color: var(--bg); background: var(--gold); border: 0; border-radius: 2px; padding: 0.45rem 0.8rem; cursor: pointer; margin: 0.8rem 0 0.2rem; }
+.cd-treebtn:hover { background: #f0c45c; }
+.replica-details .related { margin-top: 1rem; }
+
+.modal-dialog { position: relative; }
+.modal-close { position: absolute; top: 12px; right: 12px; z-index: 2; }
+.modal-dialog .lineage { max-width: none; height: min(78svh, 780px); }
+
+/* ---------- full chart: hoverable family bands ---------- */
+.circos .clade-ring path.band { transition: opacity 0.15s; }
+.circos .clade-ring path.band.hover { stroke: var(--ink); stroke-width: 1.5; }
+.circos .clade-hit { cursor: pointer; outline: none; }
+.cd-clade-name { display: flex; align-items: center; gap: 0.5rem; }
+.cd-clade-name i { width: 12px; height: 12px; border-radius: 2px; display: inline-block; }
+.cd-dot { width: 9px; height: 9px; border-radius: 2px; display: inline-block; margin-right: 0.3rem; vertical-align: 0.05em; }
+.clade-tree { display: block; width: 100%; height: auto; margin: 0.2rem 0 1rem; }
+.clade-tree-lab { font-family: var(--font-label); font-size: 11px; fill: var(--ink-2); }
+.cd-clade-list li { grid-template-columns: minmax(0, 1fr) 2.6rem 3.8rem; }

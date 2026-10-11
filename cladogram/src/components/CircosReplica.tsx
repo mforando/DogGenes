@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import Circos, { type CircosHover, type CircosView } from "./Circos";
 import CircosDetails from "./CircosDetails";
+import LineageTree from "./LineageTree";
+import Modal from "./Modal";
 import BreedPairs from "./BreedPairs";
 import { SiteNav } from "./shared";
 import { circosData, cladeArcs, links, nodeByCode, nodes } from "@/lib/circos";
@@ -41,10 +43,14 @@ export default function CircosReplica({ embedded = false }: { embedded?: boolean
     pairsRef.current.scrollIntoView();
   }, []);
   const [hover, setHover] = useState<CircosHover>(null);
+  // The selected breed's family tree, in a pop-up.
+  const [treeFor, setTreeFor] = useState<string | null>(null);
   // Family-group legend: hover previews a group, click locks it.
   const [groupHover, setGroupHover] = useState<string | null>(null);
   const [groupLock, setGroupLock] = useState<string | null>(null);
-  const group = GROUPS.find((g) => g.key === (groupHover ?? groupLock)) ?? null;
+  // Hovering a family's band on the chart previews that family, like the legend.
+  const bandHover = hover?.kind === "clade" ? hover.clade : null;
+  const group = GROUPS.find((g) => g.key === (groupHover ?? bandHover ?? groupLock)) ?? null;
 
   const view = useMemo<CircosView>(
     () =>
@@ -93,7 +99,7 @@ export default function CircosReplica({ embedded = false }: { embedded?: boolean
                 <option value="">All breeds (hover, or click one to lock it)</option>
                 {options.map((n) => (
                   <option key={n.code} value={n.code}>
-                    {n.name} ({n.code}) · {n.degree} ribbon{n.degree === 1 ? "" : "s"}
+                    {n.name} · {n.degree} ribbon{n.degree === 1 ? "" : "s"}
                   </option>
                 ))}
               </select>
@@ -162,10 +168,27 @@ export default function CircosReplica({ embedded = false }: { embedded?: boolean
             />
           </div>
           <aside className="replica-details" aria-label="Details for the hovered breed or ribbon">
-            <CircosDetails hover={pick ? null : hover} pinned={pick} onClear={() => setPick(null)} />
+            <CircosDetails
+              hover={pick ? null : hover}
+              pinned={pick}
+              onClear={() => setPick(null)}
+              onPick={(code) => {
+                if (!nodeByCode.has(code)) return;
+                setHover(null);
+                setGroupLock(null);
+                setPick(code);
+              }}
+              onShowTree={setTreeFor}
+            />
           </aside>
         </div>
 
+
+        {treeFor && (
+          <Modal label="Family tree" onClose={() => setTreeFor(null)}>
+            <LineageTree code={treeFor} onSelect={setTreeFor} />
+          </Modal>
+        )}
 
         <details id="breed-pairs" className="ribbon-table" ref={pairsRef}>
           <summary>Which breeds share the most DNA? See the breed pairs</summary>

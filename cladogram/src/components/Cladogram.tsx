@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import * as d3 from "d3";
-import { data, GEOM, isLeaf, layout, nodeIdOf, type TNode } from "@/lib/tree";
+import { ANCESTOR, ANCESTOR_BREED, data, GEOM, isLeaf, layout, nodeIdOf, type TNode } from "@/lib/tree";
 import { cladeColor, OUTGROUP } from "@/lib/palette";
 import type { View } from "@/lib/steps";
 import { photoOf } from "@/lib/photos";
@@ -24,6 +24,9 @@ const GOLD = "#e8b74a";
 const W = GEOM.size;
 
 const pol = (a: number, r: number): [number, number] => [r * Math.sin(a), -r * Math.cos(a)];
+/** Breed info for a leaf, including the hypothetical ancestor (not in the study's data). */
+const breedOf = (code: string) => (code === ANCESTOR ? ANCESTOR_BREED : data.breeds[code]);
+const isAncestor = (d: TNode) => isLeaf(d) && d.data.code === ANCESTOR;
 const deg = (a: number) => (a * 180) / Math.PI;
 
 function linkPath({ pa, pr, a, r }: LinkGeom) {
@@ -98,7 +101,7 @@ function computeNodeClades(root: TNode) {
   root.eachAfter((n) => {
     const t = n as TNode;
     if (isLeaf(t)) {
-      m.set(t.data.id, data.breeds[t.data.code].clade);
+      m.set(t.data.id, breedOf(t.data.code).clade);
       return;
     }
     const cs = new Set((t.children as TNode[]).map((c) => m.get(c.data.id)));
@@ -111,7 +114,7 @@ function cladeSpans(leaves: TNode[]) {
   const spans: { clade: string; a0: number; a1: number }[] = [];
   for (const l of leaves) {
     if (!isLeaf(l)) continue;
-    const c = data.breeds[l.data.code].clade;
+    const c = breedOf(l.data.code).clade;
     if (!c) continue;
     const last = spans[spans.length - 1];
     if (last && last.clade === c) last.a1 = l.a1;
@@ -170,8 +173,8 @@ export default function Cladogram({ view, selected, onSelect }: Props) {
 
     const tip = d3.select(el).append("div").attr("class", "tip").attr("role", "status");
 
-    let L = layout();
-    let flipKey = "";
+    let L = layout(new Set(), { withAncestor: true });
+    let flipKey = "|";
     let nodeClade = computeNodeClades(L.root);
     let current: View = { color: "ink" };
     let currentSel: string | null = null;
@@ -203,7 +206,7 @@ export default function Cladogram({ view, selected, onSelect }: Props) {
       .text((d) => {
         if (!isLeaf(d)) return "";
         // Minor fragments of split breeds stay unlabelled; the tooltip names them.
-        return d.data.main ? data.breeds[d.data.code].name : "";
+        return d.data.main ? breedOf(d.data.code).name : "";
       });
 
     const internal = L.nodes.filter((n) => n.children && n.parent && n.data.t === "i" && n.data.bs >= 50);
@@ -231,11 +234,21 @@ export default function Cladogram({ view, selected, onSelect }: Props) {
       .attr("fill", "transparent")
       .attr("tabindex", 0)
       .attr("role", "button")
-      .attr("aria-label", (d) => (isLeaf(d) ? data.breeds[d.data.code].name : ""));
+      .attr("aria-label", (d) => (isLeaf(d) ? breedOf(d.data.code).name : ""));
 
     // ---------- tooltip ----------
     function showTip(ev: PointerEvent | FocusEvent, d: TNode) {
       if (!isLeaf(d)) return;
+      if (d.data.code === ANCESTOR) {
+        tip.html(
+          `<div class="tip-name">${ANCESTOR_BREED.name}</div>
+           <div class="tip-note">Where DNA from the wolf population that dogs came from would join the tree, if anyone had it.</div>`,
+        ).classed("on", true);
+        const box = el.getBoundingClientRect();
+        const r = (ev.target as Element).getBoundingClientRect();
+        tip.style("left", `${Math.min(r.left + r.width / 2 - box.left, box.width - 240)}px`).style("top", `${r.top + r.height / 2 - box.top}px`);
+        return;
+      }
       const b = data.breeds[d.data.code];
       const partners = partnersOf(d.data.code);
       const cross = partners.filter(([c]) => data.breeds[c]?.clade !== b.clade || !b.clade).length;
@@ -371,11 +384,11 @@ export default function Cladogram({ view, selected, onSelect }: Props) {
 
       // Rotation: relayout only when the set of flipped forks changes.
       const flipIds = (v.flip ?? []).map(nodeIdOf);
-      const key = flipIds.join(",");
+      const key = `${flipIds.join(",")}|${v.ancestor ? "anc" : ""}`;
       const relayout = key !== flipKey;
       if (relayout) {
         flipKey = key;
-        L = layout(new Set(flipIds));
+        L = layout(new Set(flipIds), { withAncestor: true, showAncestor: !!v.ancestor });
         nodeClade = computeNodeClades(L.root);
       }
       if (relayout) applyGeometry(prevView !== v);
@@ -390,6 +403,7 @@ export default function Cladogram({ view, selected, onSelect }: Props) {
         if (!hasFocus) return true;
         const c = d.data.code;
         if (codes.has(c)) return true;
+        if (c === ANCESTOR) return !!v.ancestor;
         const cl = data.breeds[c].clade;
         if (cl && clades.has(cl)) return true;
         if (v.outgroup && (c === "WOLF" || c === "GDJK")) return true;
@@ -404,6 +418,7 @@ export default function Cladogram({ view, selected, onSelect }: Props) {
       });
 
       const colorOf = (d: TNode) => {
+        if (isAncestor(d)) return GOLD;
         if (v.color === "ink") return INK;
         if (isLeaf(d)) return cladeColor(data.breeds[d.data.code].clade, d.data.code);
         const c = nodeClade.get(d.data.id);
@@ -412,13 +427,19 @@ export default function Cladogram({ view, selected, onSelect }: Props) {
       const ghost = !!v.links; // bundles take the stage
 
       const T = d3.transition("style").duration(DUR * 0.7);
-      linkSel.transition(T)
+      const ancOn = !!v.ancestor;
+      linkSel
+        .attr("stroke-dasharray", (d) => (isAncestor(d) ? "5 4" : null))
+        .transition(T)
         .attr("stroke", (d) => (onIds.has(d.data.id) ? colorOf(d) : INK_DIM))
-        .attr("stroke-opacity", (d) => (ghost ? 0.18 : onIds.has(d.data.id) ? 0.9 : 0.5));
+        .attr("stroke-width", (d) => (isAncestor(d) ? 2.4 : 0.9))
+        .attr("stroke-opacity", (d) => (isAncestor(d) ? (ancOn ? 1 : 0) : ghost ? 0.18 : onIds.has(d.data.id) ? 0.9 : 0.5));
       wedgeSel.transition(T)
         .attr("fill", (d) => (onIds.has(d.data.id) ? colorOf(d) : INK_DIM))
         .attr("fill-opacity", (d) =>
-          !onIds.has(d.data.id)
+          isAncestor(d)
+            ? ancOn ? 0.75 : 0
+            : !onIds.has(d.data.id)
             ? 0.3
             : ghost && !codes.has((d.data as { code: string }).code)
               ? 0.28
@@ -431,7 +452,9 @@ export default function Cladogram({ view, selected, onSelect }: Props) {
       labelSel
         .classed("hi", (d) => hasFocus && onIds.has(d.data.id))
         .transition(T)
-        .attr("fill", (d) => (onIds.has(d.data.id) ? (hasFocus ? "#fffaf0" : "#b9b3a3") : "#4a524c"));
+        .attr("fill", (d) => (isAncestor(d) ? GOLD : onIds.has(d.data.id) ? (hasFocus ? "#fffaf0" : "#b9b3a3") : "#4a524c"))
+        .attr("fill-opacity", (d) => (isAncestor(d) ? (ancOn ? 1 : 0) : 1));
+      hitSel.attr("pointer-events", (d) => (isAncestor(d) && !ancOn ? "none" : null));
       supportSel.transition(T).attr("opacity", v.support ? 1 : 0);
       gClade.transition(T).attr("opacity", v.cladeRing ? 1 : 0);
       gClade.selectAll<SVGPathElement, { clade: string }>("path.band")

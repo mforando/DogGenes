@@ -35,17 +35,45 @@ export const GEOM = {
   rCladeName: 530,
 };
 
+/**
+ * A hypothetical sample from the common ancestor of grey wolves and dogs, for the
+ * "missing links" step. It isn't in the study: it's inserted at the fork where the dogs
+ * split from the nearest wolves, and takes no room unless shown.
+ */
+export const ANCESTOR = "ANC";
+export const ANCESTOR_BREED: Breed = { name: "Common ancestor (hypothetical)", clade: null };
+const ANCESTOR_NODE: RawNode = { id: 100000, t: "b", code: ANCESTOR, n: 0, s: [], main: true, frags: 1 };
+const ANCESTOR_WEIGHT = 80;
+
+/** The fork where every dog breed splits from the nearest wolves (parent of the dogs' common ancestor). */
+const DOG_FORK = (() => {
+  const isWild = (c: string) => c === "WOLF" || c === "GDJK";
+  const hasDog = (n: RawNode): boolean => (n.t === "b" ? !isWild(n.code) : n.c.some(hasDog));
+  const allDog = (n: RawNode): boolean => (n.t === "b" ? !isWild(n.code) : n.c.every(allDog));
+  // Walk down from the root while exactly one child holds dogs, until that child is all dogs.
+  let fork = data.tree as Extract<RawNode, { t: "i" }>;
+  for (;;) {
+    const dogKids = fork.c.filter(hasDog);
+    if (dogKids.length !== 1 || allDog(dogKids[0]) || dogKids[0].t !== "i") return fork.id;
+    fork = dogKids[0];
+  }
+})();
+
 // Each labelled wedge gets angular room for its label plus room proportional to its
 // dogs; minor fragments of split breeds are unlabelled, so they only need their dogs.
-const leafWeight = (d: RawNode) =>
-  d.t === "b" ? (d.main ? 7 : 2) + 0.75 * d.n : 0;
+const leafWeight = (d: RawNode, showAncestor: boolean) =>
+  d.t !== "b" ? 0 : d.code === ANCESTOR ? (showAncestor ? ANCESTOR_WEIGHT : 0) : (d.main ? 7 : 2) + 0.75 * d.n;
 const GAP = 0.012; // radians left open at the top of the ring
 
 /**
  * Lays the tree out radially. `flipped` holds ids of internal nodes whose children
  * are drawn in reverse order — the rotation that leaves the tree's meaning unchanged.
  */
-export function layout(flipped: ReadonlySet<number> = new Set()): {
+export function layout(
+  flipped: ReadonlySet<number> = new Set(),
+  /** withAncestor adds the hypothetical ancestor leaf (zero width unless showAncestor). */
+  opts: { withAncestor?: boolean; showAncestor?: boolean } = {},
+): {
   root: TNode;
   nodes: TNode[];
   leaves: TNode[];
@@ -53,15 +81,18 @@ export function layout(flipped: ReadonlySet<number> = new Set()): {
 } {
   const root = hierarchy<RawNode>(data.tree, (d) => {
     if (d.t !== "i") return null;
-    return flipped.has(d.id) ? [...d.c].reverse() : d.c;
+    // The ancestor sits beside the dogs, between them and the wolves they split from.
+    const kids = opts.withAncestor && d.id === DOG_FORK ? [d.c[0], ANCESTOR_NODE, ...d.c.slice(1)] : d.c;
+    return flipped.has(d.id) ? [...kids].reverse() : kids;
   }) as TNode;
 
   const leaves = root.leaves() as TNode[];
-  const total = leaves.reduce((s, l) => s + leafWeight(l.data), 0);
+  const show = !!opts.showAncestor;
+  const total = leaves.reduce((s, l) => s + leafWeight(l.data, show), 0);
   const span = 2 * Math.PI - GAP;
   let acc = GAP / 2;
   for (const l of leaves) {
-    const w = (leafWeight(l.data) / total) * span;
+    const w = (leafWeight(l.data, show) / total) * span;
     l.a0 = acc;
     l.a1 = acc + w;
     l.a = acc + w / 2;
