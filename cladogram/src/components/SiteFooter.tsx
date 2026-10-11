@@ -39,6 +39,15 @@ const C = {
   rosenberg: { text: "Rosenberg N.A. et al. (2002). Genetic structure of human populations. Science 298(5602):2381–2385", url: "https://doi.org/10.1126/science.1078311" },
   boyko: { text: "Boyko A.R. et al. (2010). A simple genetic architecture underlies morphological variation in dogs. PLOS Biology 8(8):e1000451", url: "https://doi.org/10.1371/journal.pbio.1000451", license: "CC BY 4.0" },
   yengo: { text: "Yengo L. et al. (2022). A saturated map of common genetic variants associated with human height. Nature 610:704–712", url: "https://doi.org/10.1038/s41586-022-05275-y", license: "CC BY 4.0" },
+  zuidhof: {
+    text: "Zuidhof M.J. et al. (2014). Growth, efficiency, and yield of commercial broilers from 1957, 1978, and 2005. Poultry Science 93(12):2970–2982",
+    url: "https://doi.org/10.3382/ps.2014-04291",
+  },
+  chickenImages: {
+    text: "Chicken images: Melchior d'Hondecoeter, Cock and hens (1660s, National Museum in Warsaw, public domain); \"Broiler Chicken\" by Icem4k (CC BY-SA 4.0), Wikimedia Commons",
+    url: "https://commons.wikimedia.org/wiki/File:Broiler_Chicken.jpg",
+    license: "public domain / CC BY-SA 4.0",
+  },
   akc: { text: "American Kennel Club: Most Popular Dog Breeds, annual rankings 2021–2025", url: "https://www.akc.org/most-popular-breeds/" },
   tidytuesday: { text: "AKC breed rankings 2013–2020, compiled by K. Kakey and the R4DS TidyTuesday project (2022-02-01)", url: "https://github.com/rfordatascience/tidytuesday/tree/main/data/2022/2022-02-01", license: "CC0 (compilation)" },
   wikiTopBreeds: { text: "Wikipedia: Beagle, Poodle and American Cocker Spaniel (years at #1); AKC: Top Ten Breeds of the 1940s", url: "https://www.akc.org/expert-advice/lifestyle/did-you-know/top-ten-breeds-of-the-1940s/", license: "CC BY-SA 4.0 (Wikipedia)" },
@@ -93,7 +102,7 @@ const C = {
 
 /** Sources cited on each page (keyed by route, without the base path). */
 const BY_PAGE: Record<string, Cite[]> = {
-  "/history": [C.wikiDomestication, C.wikiGlacial, C.wikiBonn, C.wikiPaleo, C.wikiBreeds, C.breedHistories, C.parker, C.parker2004, C.rosenberg, C.boyko, C.yengo, C.dogceo, C.commons, C.naturalEarth],
+  "/history": [C.wikiDomestication, C.wikiGlacial, C.wikiBonn, C.wikiPaleo, C.wikiBreeds, C.breedHistories, C.parker, C.parker2004, C.rosenberg, C.boyko, C.yengo, C.zuidhof, C.chickenImages, C.dogceo, C.commons, C.naturalEarth],
   "/": [C.parker, C.breedHistories, C.dogceo, C.commons],
   "/purpose": [C.parker, C.breedHistories, C.dogceo, C.commons],
   "/geography": [C.breedHistories, C.parker, C.naturalEarth, C.dogceo, C.commons],

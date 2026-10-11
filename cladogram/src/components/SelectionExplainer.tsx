@@ -193,6 +193,7 @@ function AnimatedVersion() {
         lines vanish, and a hidden disease variant can ride along with a popular sire because
         nobody can see it to select against it.
       </p>
+      <ChickenExample />
       <TreeVsWeb animate />
       <ul className="sel-points">
         <li>
@@ -212,6 +213,51 @@ function AnimatedVersion() {
         </li>
       </ul>
     </div>
+  );
+}
+
+/** Selective breeding beyond dogs: a 1660s farmyard chicken next to a modern broiler. */
+function ChickenExample() {
+  return (
+    <figure className="sel-chick">
+      <p className="sel-chick-h">The same thing, in chickens</p>
+      <div className="sel-chick-pair">
+        <div>
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/4/40/Hondecoeter_Cock_and_hens.jpg"
+            alt="A 1660s painting of a rooster and hens: lean, upright farmyard birds"
+            loading="lazy"
+            referrerPolicy="no-referrer"
+          />
+          <p className="sel-chick-cap">
+            <strong>1660s.</strong> Farmyard chickens painted by Melchior d&rsquo;Hondecoeter.{" "}
+            <a href="https://commons.wikimedia.org/wiki/File:Hondecoeter_Cock_and_hens.jpg">Public domain</a>, National Museum in Warsaw.
+          </p>
+        </div>
+        <div>
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Broiler_Chicken.jpg/960px-Broiler_Chicken.jpg"
+            alt="A modern broiler chicken: white, with a very broad, heavy breast"
+            loading="lazy"
+            referrerPolicy="no-referrer"
+          />
+          <p className="sel-chick-cap">
+            <strong>Today.</strong> A broiler, the modern meat chicken. Photo: Icem4k,{" "}
+            <a href="https://commons.wikimedia.org/wiki/File:Broiler_Chicken.jpg">CC BY-SA 4.0</a>.
+          </p>
+        </div>
+      </div>
+      <figcaption className="sel-chick-text">
+        For most of history, chickens were lean, upright farmyard birds kept for eggs and meat
+        alike. In the mid-1900s, breeders began choosing meat chickens almost entirely for one thing:
+        fast growth with a big breast. Researchers who raised a strain left unchanged since 1957
+        next to a 2005 commercial strain, on the same feed, found the modern birds grew over{" "}
+        <strong>400% more</strong>, needed half the feed per kilogram gained, and carried about{" "}
+        <strong>80% more breast muscle</strong> as a share of their body (Zuidhof et al. 2014).
+        It&rsquo;s the simulation above in real life: strong selection on one trait, from a
+        small pool of chosen parents, reshaping an animal within a human lifetime.
+      </figcaption>
+    </figure>
   );
 }
 

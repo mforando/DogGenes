@@ -1331,3 +1331,12 @@ body::before {
 .gloss-close:hover { color: var(--ink); border-color: var(--ink-3); }
 @keyframes gloss-in { from { opacity: 0; } to { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .gloss, .gloss-backdrop { transition: none; animation: none; } }
+.sel-chick { margin: 1.2rem 0 0; padding: 0.9rem 0 0; border-top: 1px solid var(--rule); }
+.card .sel-chick-h { font-family: var(--font-label); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); margin: 0 0 0.6rem; }
+.sel-chick-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+.sel-chick-pair img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; display: block; border: 1px solid var(--rule); background: #1a211e; }
+.card .sel-chick-cap { font-family: var(--font-label); font-size: 0.72rem; line-height: 1.4; color: var(--ink-3); margin: 0.35rem 0 0; }
+.sel-chick-cap strong { color: var(--ink); }
+.sel-chick-cap a { color: var(--gold); }
+.sel-chick-text { font-family: var(--font-label); font-size: 0.85rem; line-height: 1.5; color: var(--ink-2); margin-top: 0.8rem; }
+.sel-chick-text strong { color: var(--ink); }
