@@ -75,7 +75,6 @@ export function Specimens({
 const PAGES = [
   { href: "/history", label: "The history of dogs" },
   { href: "/", label: "Family tree & DNA web" },
-  { href: "/pairs", label: "Breed pairs" },
   { href: "/purpose", label: "Bred for purpose" },
   { href: "/geography", label: "Where they came from" },
   { href: "/explorer", label: "Breed Explorer" },

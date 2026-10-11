@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Circos, { type CircosHover, type CircosView } from "./Circos";
 import CircosDetails from "./CircosDetails";
+import BreedPairs from "./BreedPairs";
 import { SiteNav } from "./shared";
 import { circosData, cladeArcs, links, nodeByCode, nodes } from "@/lib/circos";
 
@@ -32,7 +33,13 @@ export default function CircosReplica({ embedded = false }: { embedded?: boolean
   const [pick, setPick] = useState<string | null>(null);
   const [names, setNames] = useState(true);
   const [showTree, setShowTree] = useState(true);
-  const [sortBy, setSortBy] = useState<"value" | "pair">("value");
+  // Links to /#breed-pairs (including the old Breed pairs tab) open the list.
+  const pairsRef = useRef<HTMLDetailsElement>(null);
+  useEffect(() => {
+    if (window.location.hash !== "#breed-pairs" || !pairsRef.current) return;
+    pairsRef.current.open = true;
+    pairsRef.current.scrollIntoView();
+  }, []);
   const [hover, setHover] = useState<CircosHover>(null);
   // Family-group legend: hover previews a group, click locks it.
   const [groupHover, setGroupHover] = useState<string | null>(null);
@@ -49,10 +56,6 @@ export default function CircosReplica({ embedded = false }: { embedded?: boolean
     [pick, names, showTree, group],
   );
 
-  const rows = useMemo(() => {
-    const r = links.map((l) => ({ ...l, an: nodeByCode.get(l.a)!.name, bn: nodeByCode.get(l.b)!.name }));
-    return sortBy === "value" ? r.sort((x, y) => y.value - x.value) : r.sort((x, y) => x.an.localeCompare(y.an));
-  }, [sortBy]);
 
   return (
     <>
@@ -164,35 +167,9 @@ export default function CircosReplica({ embedded = false }: { embedded?: boolean
         </div>
 
 
-        <details className="ribbon-table">
-          <summary>See all {links.length} ribbons as a list</summary>
-          <div className="table-tools">
-            Sort by{" "}
-            <button type="button" aria-pressed={sortBy === "value"} onClick={() => setSortBy("value")}>
-              shared length
-            </button>
-            <button type="button" aria-pressed={sortBy === "pair"} onClick={() => setSortBy("pair")}>
-              breed name
-            </button>
-          </div>
-          <table>
-            <thead>
-              <tr>
-                <th scope="col">Breed</th>
-                <th scope="col">Breed</th>
-                <th scope="col" className="num">Shared DNA (Mb)</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((r) => (
-                <tr key={r.key}>
-                  <td><i style={{ background: nodeByCode.get(r.a)!.color }} />{r.an}</td>
-                  <td><i style={{ background: nodeByCode.get(r.b)!.color }} />{r.bn}</td>
-                  <td className="num">{(r.value / 1e6).toFixed(1)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <details id="breed-pairs" className="ribbon-table" ref={pairsRef}>
+          <summary>Which breeds share the most DNA? See the breed pairs</summary>
+          <BreedPairs />
         </details>
       </Wrapper>
     </>

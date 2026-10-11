@@ -1,11 +1,19 @@
-import type { Metadata } from "next";
-import PairsPage from "@/components/PairsPage";
+"use client";
 
-export const metadata: Metadata = {
-  title: "Breed Pairs",
-  description: "Which dog breeds share the most DNA: close cousins, founder breeds, and pairs across families.",
-};
+import { useEffect } from "react";
 
+const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
+/** The breed pairs moved into the home page; send visitors (and old links) to the right spot. */
 export default function Page() {
-  return <PairsPage />;
+  useEffect(() => {
+    window.location.replace(`${BASE}/#breed-pairs`);
+  }, []);
+  return (
+    <main className="moved">
+      <p>
+        This page has moved. <a href={`${BASE}/#breed-pairs`}>Continue to the breed pairs on the family tree &amp; DNA web →</a>
+      </p>
+    </main>
+  );
 }

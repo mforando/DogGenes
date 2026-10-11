@@ -407,17 +407,17 @@ body::before {
 .side-h { font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); font-weight: 500; margin: 0 0 0.6rem; }
 .clade-key { list-style: none; margin: 0; padding: 0; columns: 2; column-gap: 1rem; font-size: 0.85rem; color: var(--ink-2); }
 .clade-key li { display: flex; align-items: center; gap: 0.45rem; padding: 0.12rem 0; break-inside: avoid; }
-.clade-key i, .ribbon-table td i { width: 9px; height: 9px; border-radius: 2px; flex: none; display: inline-block; }
+.clade-key i { width: 9px; height: 9px; border-radius: 2px; flex: none; display: inline-block; }
 .ribbon-table { margin-top: 3rem; border-top: 1px solid var(--rule); padding-top: 1.5rem; }
 .ribbon-table summary { font-family: var(--font-display); font-size: var(--step-1); cursor: pointer; }
-.table-tools { font-family: var(--font-label); color: var(--ink-3); margin: 1rem 0; display: flex; gap: 0.5rem; align-items: center; }
-.table-tools button { font: inherit; color: var(--ink-2); background: none; border: 1px solid var(--rule); padding: 0.2rem 0.7rem; cursor: pointer; }
-.table-tools button[aria-pressed="true"] { color: var(--gold); border-color: var(--gold-dim); }
-.ribbon-table table { border-collapse: collapse; font-family: var(--font-label); font-size: 0.9rem; width: 100%; max-width: 44rem; }
-.ribbon-table th { text-align: left; color: var(--ink-3); font-weight: 500; border-bottom: 1px solid var(--rule); padding: 0.4rem 0.6rem; }
-.ribbon-table td { border-bottom: 1px solid #1a211e; padding: 0.35rem 0.6rem; color: var(--ink-2); }
-.ribbon-table td i { margin-right: 0.5rem; }
-.ribbon-table .num { text-align: right; font-variant-numeric: tabular-nums; }
+/* The breed pairs, inside the expandable section under the full chart (formerly its own tab). */
+.ribbon-table { scroll-margin-top: 1rem; }
+.pairs-embed { margin-top: 1.2rem; }
+.pairs-embed .pairs-section h3 { font-family: var(--font-display); font-weight: 500; font-size: 1.25rem; margin: 0 0 0.5rem; color: var(--ink); }
+.pairs-embed .pairs-section > p { color: var(--ink-2); max-width: 52rem; margin: 0 0 1.2rem; }
+.pairs-embed .pairs-section > p strong { color: var(--ink); }
+.pairs-embed .pairs-lede { max-width: 52rem; }
+.pairs-note { margin-top: 2.5rem; padding-top: 1.2rem; border-top: 1px solid var(--rule); font-size: 0.88rem; color: var(--ink-3); max-width: 56rem; }
 
 @media (max-width: 900px) {
   .site-nav { padding: 12px 16px; font-size: 0.7rem; }
@@ -1307,3 +1307,27 @@ body::before {
 .nm-other-card { max-width: 26rem; }
 .nm-other-miss { background: var(--bg-raise); border: 1px solid var(--rule); border-left: 2px solid var(--ink-3); padding: 0.7rem 0.9rem; max-width: 34rem; line-height: 1.5; }
 .nm-other-miss strong { color: var(--ink); }
+
+/* ---------- family tree story: region globe ---------- */
+.rg { margin-top: 1rem; display: grid; gap: 0.6rem; }
+.rg-globe { max-width: 380px; width: 100%; justify-self: center; }
+.rg-chips { margin: 0; }
+.rg-chips button { font-size: 0.8rem; padding: 0.3rem 0.65rem; }
+.rg-n { opacity: 0.65; margin-left: 0.2rem; font-variant-numeric: tabular-nums; }
+.card .rg-status { font-family: var(--font-label); font-size: 0.82rem; color: var(--ink-3); margin: 0; }
+
+/* ---------- glossary "?" (home page, from the glossary through the scroller) ---------- */
+.gloss { position: fixed; top: 14px; right: 16px; z-index: 30; opacity: 0; pointer-events: none; transform: translateY(-6px); transition: opacity 0.25s ease, transform 0.25s ease; }
+.gloss.on { opacity: 1; pointer-events: auto; transform: none; }
+.gloss-btn { width: 38px; height: 38px; border-radius: 50%; border: 0; background: #d23f37; color: #fff; font-family: var(--font-display); font-size: 1.35rem; font-weight: 600; line-height: 1; cursor: pointer; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45); display: grid; place-items: center; }
+.gloss-btn:hover, .gloss-btn[aria-expanded="true"] { background: #e04c43; }
+.gloss-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+.gloss-backdrop { position: fixed; inset: 0; z-index: 40; background: rgba(5, 8, 7, 0.78); display: grid; place-items: center; padding: 16px; animation: gloss-in 0.2s ease both; }
+.gloss-dialog { width: min(1240px, 100%); max-height: calc(100svh - 32px); overflow-y: auto; background: var(--bg); border: 1px solid var(--rule); border-top: 2px solid #d23f37; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6); padding: clamp(16px, 3vw, 32px); }
+.gloss-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; margin-bottom: 1.4rem; }
+.gloss-head h2 { font-family: var(--font-display); font-weight: 500; font-size: var(--step-2); line-height: 1.05; margin: 0; }
+.gloss-head .eyebrow { margin: 0 0 0.4rem; }
+.gloss-close { font: inherit; font-size: 1.8rem; line-height: 1; color: var(--ink-3); background: none; border: 1px solid var(--rule); width: 40px; height: 40px; cursor: pointer; flex: none; }
+.gloss-close:hover { color: var(--ink); border-color: var(--ink-3); }
+@keyframes gloss-in { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .gloss, .gloss-backdrop { transition: none; animation: none; } }

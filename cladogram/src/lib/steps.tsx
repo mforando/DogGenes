@@ -44,6 +44,8 @@ export type Step = {
   view: View;
   /** Breeds to show as photos alongside the text (Dog CEO API). */
   photos?: string[];
+  /** Show the continent globe in this step's card (picking a continent highlights its breeds). */
+  continentGlobe?: boolean;
   /** Prologue steps show the deep-history timeline instead of the cladogram. */
   timeline?: TimelineView;
   /** "DNA web" steps show the chord (circos) diagram instead of the cladogram. */
@@ -451,8 +453,33 @@ const BREED_STEPS: Step[] = [
           The likely story: each region bred its own hunting dogs and its own farm dogs from
           the same local stock. Home turf mattered more than the job.
         </p>
+        <p>
+          Why does Europe dominate? About <strong>70%</strong> of the breeds on the globe below
+          (115 of 164) are European, and that says more about history than about dogs. The idea
+          of a breed, with a written standard and a closed studbook, was invented in Victorian
+          Britain: the first dog show was held in 1859 and the Kennel Club was founded in 1873,
+          and kennel clubs across Europe and North America followed. Owners there turned their
+          local working dogs into named breeds, so Europe&rsquo;s regional dogs were recorded and
+          kept apart. Elsewhere, most dogs were, and still are, free-roaming village dogs that
+          belong to no breed at all. The study also drew mostly on breeds recognized by
+          European and North American kennel clubs, so it reflects which dogs were registered,
+          not where dogs live.
+        </p>
+        <p>
+          Shared DNA follows the map too. About <strong>three-quarters</strong> of all the DNA
+          that breeds share in the study links breeds from the same continent. Partly
+          that&rsquo;s because most breeds are European, but Asia&rsquo;s keep to themselves as
+          well: more than half of their sharing is with other Asian breeds, like the Shih Tzu,
+          Lhasa Apso and Pekingese. Breeds from the rest of the world mostly point back to
+          Europe, because many were built from dogs that settlers brought with them. Only about
+          a fifth of North America&rsquo;s sharing stays on the continent, and less for
+          Australia and Africa: the Australian kelpie&rsquo;s closest relative is the border
+          collie, and South Africa&rsquo;s boerboel&rsquo;s is the bullmastiff. Pick a continent
+          to light up its breeds.
+        </p>
       </>
     ),
+    continentGlobe: true,
     view: { color: "clade", clades: ["Mediterranean", "UKRural"], cladeRing: true },
   },
   {

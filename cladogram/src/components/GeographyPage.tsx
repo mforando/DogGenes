@@ -8,6 +8,7 @@ import { data } from "@/lib/tree";
 import { cladeColor, CLADE_COLOR } from "@/lib/palette";
 import { PHOTOS } from "@/lib/photos";
 import { ORIGINS, PINS } from "@/lib/origins";
+import { REGIONS } from "@/lib/regions";
 import { PURPOSES, purposeOf, type PurposeId } from "@/lib/purpose";
 
 // Job colours borrowed from the validated categorical palette.
@@ -16,16 +17,6 @@ const JOB_COLOR: Record<PurposeId, string> = {
   flock: "#b88f1b", guard: "#1ca8b7", work: "#698ff7", spitz: "#e7685d", companion: "#df6597",
 };
 
-const REGIONS: { name: string; lat: number; lon: number; k: number }[] = [
-  { name: "Whole world", lat: 25, lon: 10, k: 1 },
-  { name: "British Isles", lat: 54.5, lon: -4, k: 6 },
-  { name: "Western Europe", lat: 49, lon: 6, k: 4 },
-  { name: "Mediterranean", lat: 38, lon: 15, k: 3 },
-  { name: "Asia", lat: 33, lon: 105, k: 2 },
-  { name: "The Arctic", lat: 72, lon: -20, k: 1.5 },
-  { name: "The Americas", lat: 20, lon: -85, k: 1.4 },
-  { name: "Africa & Australia", lat: -12, lon: 75, k: 1 },
-];
 
 const nameOf = (c: string) => data.breeds[c]?.name ?? c;
 const familyName = (c: string) => {

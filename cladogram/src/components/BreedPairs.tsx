@@ -2,7 +2,6 @@
 
 import { useMemo, useState, type ReactNode } from "react";
 import * as d3 from "d3";
-import { SiteNav } from "./shared";
 import { data } from "@/lib/tree";
 import { cladeColor } from "@/lib/palette";
 import { PHOTOS } from "@/lib/photos";
@@ -154,77 +153,72 @@ function PairTable({
   );
 }
 
-export default function PairsPage() {
+/**
+ * Which breeds share the most DNA: close cousins, founder breeds, and pairs across families.
+ * Shown on the home page under the full circle chart (it used to be its own tab).
+ */
+export default function BreedPairs() {
   return (
-    <>
-      <SiteNav />
-      <main className="pairs">
-        <header className="pairs-head">
-          <p className="eyebrow">Breed pairs</p>
-          <h1>Which breeds share the most DNA?</h1>
-          <p className="pairs-lede">
-            When dogs of two breeds carry the same <strong>long, unbroken chunks of DNA</strong>,
-            they had common ancestors not long ago. Below are the pairs that share the most,
-            in three flavors. The percent is how much DNA a typical dog from each breed has
-            in common in those long chunks. The most closely tied pair in the study shares
-            about {Math.round(maxPct)}%, and even 1% between two breeds is a lot.
-          </p>
-          <nav className="pairs-jump" aria-label="Sections">
-            <a href="#cousins">Close cousins</a>
-            <a href="#founders">Founder breeds</a>
-            <a href="#across">Across families</a>
-          </nav>
-          <p className="pairs-tip">Click any column heading to sort. Click it again to flip the order.</p>
-        </header>
+    <div className="pairs-embed">
+      <p className="pairs-lede">
+        When dogs of two breeds carry the same <strong>long, unbroken chunks of DNA</strong>,
+        they had common ancestors not long ago. Below are the pairs that share the most, in
+        three flavors. The percent is how much DNA a typical dog from each breed has in common
+        in those long chunks. The most closely tied pair in the study shares about{" "}
+        {Math.round(maxPct)}%, and even 1% between two breeds is a lot.
+      </p>
+      <nav className="pairs-jump" aria-label="Breed pair lists">
+        <a href="#pairs-cousins">Close cousins</a>
+        <a href="#pairs-founders">Founder breeds</a>
+        <a href="#pairs-across">Across families</a>
+      </nav>
+      <p className="pairs-tip">Click any column heading to sort. Click it again to flip the order.</p>
 
-        <section id="cousins" className="pairs-section" aria-labelledby="cousins-h">
-          <h2 id="cousins-h">Close cousins</h2>
-          <p>
-            Breeds from the <strong>same family group</strong> that share the most DNA. They
-            come from the same ancestors and, in many cases, were one breed not long ago:
-            size varieties, coat varieties, or local types that registries later split apart.
-          </p>
-          <PairTable rows={cousinPairs} labels={["Breed", "Breed"]} caption="Same-family breed pairs ranked by shared DNA" />
-        </section>
+      <section id="pairs-cousins" className="pairs-section" aria-labelledby="pairs-cousins-h">
+        <h3 id="pairs-cousins-h">Close cousins</h3>
+        <p>
+          Breeds from the <strong>same family group</strong> that share the most DNA. They come
+          from the same ancestors and, in many cases, were one breed not long ago: size
+          varieties, coat varieties, or local types that registries later split apart.
+        </p>
+        <PairTable rows={cousinPairs} labels={["Breed", "Breed"]} caption="Same-family breed pairs ranked by shared DNA" />
+      </section>
 
-        <section id="founders" className="pairs-section" aria-labelledby="founders-h">
-          <h2 id="founders-h">Parent and child breeds</h2>
-          <p>
-            Breeds with a <strong>documented founder</strong>: the newer breed was created from
-            the older one. The DNA can&rsquo;t say which came first, since both are breeds alive
-            today, so the direction comes from written breed histories. What the DNA
-            <em> does</em> show is how much of the founder each newer breed still carries.
-          </p>
-          <PairTable
-            rows={lineagePairs}
-            labels={["Founder breed", "Breed made from it"]}
-            withNote
-            caption="Founder breeds and the breeds developed from them, ranked by shared DNA"
-          />
-        </section>
+      <section id="pairs-founders" className="pairs-section" aria-labelledby="pairs-founders-h">
+        <h3 id="pairs-founders-h">Parent and child breeds</h3>
+        <p>
+          Breeds with a <strong>documented founder</strong>: the newer breed was created from the
+          older one. The DNA can&rsquo;t say which came first, since both are breeds alive today,
+          so the direction comes from written breed histories. What the DNA <em>does</em> show
+          is how much of the founder each newer breed still carries.
+        </p>
+        <PairTable
+          rows={lineagePairs}
+          labels={["Founder breed", "Breed made from it"]}
+          withNote
+          caption="Founder breeds and the breeds developed from them, ranked by shared DNA"
+        />
+      </section>
 
-        <section id="across" className="pairs-section" aria-labelledby="across-h">
-          <h2 id="across-h">Closest across families</h2>
-          <p>
-            Pairs from <strong>different family groups</strong>, which shouldn&rsquo;t share
-            much at all, but do. These are the fingerprints of crossbreeding: a breed built
-            from far-apart parents, or a popular breed mixed into others. Notice how many
-            tree branches can sit between them.
-          </p>
-          <PairTable rows={crossPairs} labels={["Breed", "Breed"]} caption="Breed pairs from different families ranked by shared DNA" />
-        </section>
+      <section id="pairs-across" className="pairs-section" aria-labelledby="pairs-across-h">
+        <h3 id="pairs-across-h">Closest across families</h3>
+        <p>
+          Pairs from <strong>different family groups</strong>, which shouldn&rsquo;t share much at
+          all, but do. These are the fingerprints of crossbreeding: a breed built from far-apart
+          parents, or a popular breed mixed into others. Notice how many tree branches can sit
+          between them.
+        </p>
+        <PairTable rows={crossPairs} labels={["Breed", "Breed"]} caption="Breed pairs from different families ranked by shared DNA" />
+      </section>
 
-        <footer className="pairs-foot">
-          <p>
-            Shared DNA: median total length of long identical DNA chunks shared between dogs of
-            the two breeds, for pairs that passed the significance cutoff in Parker et&nbsp;al.
-            2017 (Supplemental Table 2), shown as a share of the roughly 2.4 billion-letter dog
-            genome. &ldquo;Tree branches apart&rdquo; counts the lines you&rsquo;d follow on the
-            family tree to get from one breed to the other. Breed histories are summarized from
-            standard breed-club accounts. Photos: <a href="https://dog.ceo/dog-api/">Dog CEO API</a>.
-          </p>
-        </footer>
-      </main>
-    </>
+      <p className="pairs-note">
+        Shared DNA: median total length of long identical DNA chunks shared between dogs of the
+        two breeds, for pairs that passed the significance cutoff in Parker et&nbsp;al. 2017
+        (Supplemental Table 2), shown as a share of the roughly 2.4 billion-letter dog genome.
+        &ldquo;Tree branches apart&rdquo; counts the lines you&rsquo;d follow on the family tree to
+        get from one breed to the other. Breed histories are summarized from standard
+        breed-club accounts.
+      </p>
+    </div>
   );
 }

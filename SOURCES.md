@@ -15,7 +15,7 @@ The license summary at the end explains what those licenses mean for reusing thi
 |---|---|---|
 | **Parker, H.G., Dreger, D.L., Rimbault, M., Davis, B.W., Mullen, A.B., Carpintero-Ramirez, G., Ostrander, E.A. (2017).** "Genomic Analyses Reveal the Influence of Geographic Origin, Migration, and Hybridization on Modern Dog Breed Development." *Cell Reports* 19(4), 697–708. [doi:10.1016/j.celrep.2017.03.079](https://doi.org/10.1016/j.celrep.2017.03.079) — copy in `article.pdf` | Family tree, 23 clades, breed list, Figure 1 and Figure 4 replicas, Figure 7 disease case studies, all facts quoted from the paper | **CC BY 4.0** ("open access article under the CC BY license", stated on the article) |
 | Study supplementary data: neighbor-joining bootstrap tree (NEXUS) — `treeFile.pdf` | The cladogram on the Family tree & DNA web tab and everywhere the tree appears | **CC BY 4.0** (published with the article) |
-| Study supplementary data: Supplemental Table 2, haplotype sharing between breeds — `haplotypeSharing.xlsx` | Chord diagram, edge bundles, Breed pairs, "shares DNA with" lists, health-page carrier candidates | **CC BY 4.0** (published with the article) |
+| Study supplementary data: Supplemental Table 2, haplotype sharing between breeds — `haplotypeSharing.xlsx` | Chord diagram, edge bundles, the breed pairs lists on the Family tree & DNA web tab, "shares DNA with" lists, health-page carrier candidates | **CC BY 4.0** (published with the article) |
 
 ## 2. History of dogs
 

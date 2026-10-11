@@ -111,7 +111,7 @@ const DRAW: Record<TermId, (g: G) => void> = {
   },
 };
 
-const TERMS: Record<TermId, { word: string; say?: string; body: ReactNode }> = {
+export const TERMS: Record<TermId, { word: string; say?: string; body: ReactNode }> = {
   dna: {
     word: "DNA",
     body: (
@@ -192,7 +192,7 @@ const TERMS: Record<TermId, { word: string; say?: string; body: ReactNode }> = {
   },
 };
 
-function TermCard({ id }: { id: TermId }) {
+export function TermCard({ id }: { id: TermId }) {
   const svgRef = useRef<SVGSVGElement>(null);
   useEffect(() => {
     const svg = d3.select(svgRef.current!);

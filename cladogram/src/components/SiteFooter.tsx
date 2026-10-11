@@ -94,8 +94,7 @@ const C = {
 /** Sources cited on each page (keyed by route, without the base path). */
 const BY_PAGE: Record<string, Cite[]> = {
   "/history": [C.wikiDomestication, C.wikiGlacial, C.wikiBonn, C.wikiPaleo, C.wikiBreeds, C.breedHistories, C.parker, C.parker2004, C.rosenberg, C.boyko, C.yengo, C.dogceo, C.commons, C.naturalEarth],
-  "/": [C.parker, C.dogceo, C.commons],
-  "/pairs": [C.parker, C.breedHistories, C.dogceo, C.commons],
+  "/": [C.parker, C.breedHistories, C.dogceo, C.commons],
   "/purpose": [C.parker, C.breedHistories, C.dogceo, C.commons],
   "/geography": [C.breedHistories, C.parker, C.naturalEarth, C.dogceo, C.commons],
   "/explorer": [C.dogceo, C.commons, C.parker, C.breedHistories, C.naturalEarth, C.pudding],

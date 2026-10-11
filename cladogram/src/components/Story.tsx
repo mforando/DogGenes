@@ -8,16 +8,23 @@ import { data, ringOrder } from "@/lib/tree";
 import { CLADE_COLOR, cladeColor } from "@/lib/palette";
 import { PHOTOS } from "@/lib/photos";
 import { CITATION, SiteNav, Specimens, useActiveStep } from "./shared";
-import Primer from "./Primer";
+import Primer, { type TermId } from "./Primer";
+import GlossaryButton from "./GlossaryButton";
 import LineageTree from "./LineageTree";
 import Circos from "./Circos";
 import CircosReplica from "./CircosReplica";
 import RelatedBreeds from "./RelatedBreeds";
+import ContinentGlobe from "./ContinentGlobe";
+import { CONTINENT_BREEDS, type Continent } from "@/lib/regions";
 
 const breedOptions = Object.entries(data.breeds)
   .filter(([c]) => c !== "GDJK" && c !== "WOLF")
   .map(([code, b]) => ({ code, name: b.name }))
   .sort((a, b) => a.name.localeCompare(b.name));
+
+const GLOSSARY: TermId[] = ["dna", "cladogram", "clade", "bootstrap", "haplotype"];
+// The "?" shows from the glossary section through the end of the scroller.
+const GLOSSARY_WATCH = [".primer", "main.scrolly"];
 
 export default function Story() {
   const { active, stepRef } = useActiveStep();
@@ -28,15 +35,21 @@ export default function Story() {
   // Selection only applies while exploring.
   // Hovering a breed photo in a step card highlights that breed in the chart on the right.
   const [photoHover, setPhotoHover] = useState<string | null>(null);
-  useEffect(() => setPhotoHover(null), [active]);
+  // Picking a continent on the step's globe highlights that continent's breeds instead.
+  const [continent, setContinent] = useState<Continent | null>(null);
+  useEffect(() => {
+    setPhotoHover(null);
+    setContinent(null);
+  }, [active]);
   const sel = photoHover && !step.circos ? photoHover : step.view.explore ? selected : null;
   // While a photo is hovered, the step's own highlights step aside so only that breed shows.
   const treeView = useMemo(() => {
-    if (!photoHover || step.circos) return step.view;
+    const focus = photoHover ? [photoHover] : step.continentGlobe && continent ? CONTINENT_BREEDS[continent] : null;
+    if (!focus || step.circos) return step.view;
     const { codes, clades, paths, outgroup, split, links, ...rest } = step.view;
     void codes; void clades; void paths; void outgroup; void split;
-    return { ...rest, codes: [photoHover], ...(links ? { links: { codes: [photoHover] } } : {}) };
-  }, [photoHover, step]);
+    return { ...rest, codes: focus, ...(links ? { links: { codes: focus } } : {}) };
+  }, [photoHover, continent, step]);
   const showLineage = treeOnly && !!sel;
   // The chord diagram keeps the nearest chord step's view while it fades in or out.
   const idx = STEPS.indexOf(step);
@@ -77,7 +90,7 @@ export default function Story() {
       </header>
 
       <Primer
-        terms={["dna", "cladogram", "clade", "bootstrap", "haplotype"]}
+        terms={GLOSSARY}
         intro={
           <p>
             The chart uses a few science words. Here&rsquo;s what they mean in plain
@@ -86,6 +99,7 @@ export default function Story() {
         }
       />
 
+      <GlossaryButton terms={GLOSSARY} watch={GLOSSARY_WATCH} />
       <main className="scrolly">
         <div className="figure" aria-live="polite">
           <div className="figure-meta">
@@ -125,6 +139,7 @@ export default function Story() {
                 <h2 id={`h-${s.id}`}>{s.title}</h2>
                 {s.body}
                 {s.photos && <Specimens codes={s.photos} onHover={i === active ? setPhotoHover : undefined} />}
+                {s.continentGlobe && <ContinentGlobe continent={i === active ? continent : null} onPick={i === active ? setContinent : undefined} />}
                 {s.view.explore && (
                   <div className="explore">
                     <label htmlFor="breed-search">Find a breed</label>
@@ -213,8 +228,8 @@ export default function Story() {
             the free <a href="https://dog.ceo/dog-api/">Dog CEO API</a>.
           </p>
           <p className="next-page">
-            Up next: which breeds share the most DNA.{" "}
-            <Link href="/pairs">See the breed pairs →</Link>
+            Up next: what each breed was bred to do.{" "}
+            <Link href="/purpose">See Bred for purpose →</Link>
           </p>
         </footer>
       </section>
