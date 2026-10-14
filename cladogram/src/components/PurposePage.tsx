@@ -6,7 +6,7 @@ import { MixingBars, PurposeMatrix } from "./PurposeCharts";
 import { SiteNav } from "./shared";
 import { data } from "@/lib/tree";
 import { cladeColor } from "@/lib/palette";
-import { PHOTOS } from "@/lib/photos";
+import { photoOf } from "@/lib/photos";
 import { FAMILIES, PURPOSE_NOTE, PURPOSES, SUMMARIES, type PurposeId } from "@/lib/purpose";
 import type { View } from "@/lib/steps";
 
@@ -19,7 +19,6 @@ export default function PurposePage() {
   const purpose = PURPOSES.find((p) => p.id === sel)!;
   const s = SUMMARIES.find((x) => x.id === sel)!;
   const view = useMemo<View>(() => ({ color: "clade", codes: s.codes, cladeRing: true }), [s]);
-  const gallery = s.codes.filter((c) => PHOTOS[c]).slice(0, 8);
 
   return (
     <>
@@ -47,7 +46,8 @@ export default function PurposePage() {
             Each row is a job. Each column is one of the family groups from the family tree, in
             the same order. A dot means that family has breeds doing that job, and bigger dots
             mean more breeds. A job spread across many columns was bred more than once, in
-            unrelated dogs. Hover over a dot to see the breeds, and click a row to explore it
+            unrelated dogs. Hover over a dot to see the breeds, over a job to see all its breeds
+            by family, or over a family to see all its breeds by job. Click a row to explore it
             below.
           </p>
           <div className="matrix-wrap">
@@ -55,7 +55,7 @@ export default function PurposePage() {
           </div>
         </section>
 
-        <section className="pairs-section" aria-labelledby="explore-h">
+        <section className="pairs-section job-explore" aria-labelledby="explore-h">
           <h2 id="explore-h">Explore a job</h2>
           <div className="job-chips" role="tablist" aria-label="Jobs">
             {PURPOSES.map((p) => (
@@ -92,15 +92,6 @@ export default function PurposePage() {
                 </div>
               </dl>
               <p className="job-note">{PURPOSE_NOTE[sel]}</p>
-              <ul className="job-fams">
-                {s.families.map((f) => (
-                  <li key={f}>
-                    <i style={{ background: f === "_none" ? "#7d847e" : cladeColor(f) }} />
-                    <strong>{FAMILIES.find((x) => x.id === f)!.name}</strong>
-                    <span>{s.byFamily[f].map(nameOf).join(", ")}</span>
-                  </li>
-                ))}
-              </ul>
               {s.topPair && (
                 <p className="job-pair">
                   Closest pair doing this job: <strong>{nameOf(s.topPair.a)}</strong> and{" "}
@@ -108,16 +99,29 @@ export default function PurposePage() {
                   {s.topPair.pct < 1 ? s.topPair.pct.toFixed(1) : Math.round(s.topPair.pct)}% of their DNA.
                 </p>
               )}
-              {gallery.length > 0 && (
-                <ul className="job-gallery">
-                  {gallery.map((c) => (
-                    <li key={c}>
-                      <img src={PHOTOS[c].urls[0]} alt={nameOf(c)} loading="lazy" referrerPolicy="no-referrer" />
-                      <span>{nameOf(c)}</span>
-                    </li>
-                  ))}
-                </ul>
-              )}
+            </div>
+            <div className="job-gallery" aria-label={`${purpose.name} breeds by family`}>
+              {s.families.map((f) => (
+                <section key={f}>
+                  <h4>
+                    <i style={{ background: f === "_none" ? "#7d847e" : cladeColor(f) }} />
+                    {FAMILIES.find((x) => x.id === f)!.name}
+                    <b>{s.byFamily[f].length}</b>
+                  </h4>
+                  <ul>
+                    {s.byFamily[f].map((c) => (
+                      <li key={c}>
+                        {photoOf(c) ? (
+                          <img src={photoOf(c)} alt="" loading="lazy" referrerPolicy="no-referrer" />
+                        ) : (
+                          <span className="job-nophoto" />
+                        )}
+                        <span>{nameOf(c)}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              ))}
             </div>
           </div>
         </section>

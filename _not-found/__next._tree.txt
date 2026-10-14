@@ -1,4 +1,4 @@
-:HL["/DogGenes/_next/static/chunks/202bkiz3im9pb.css","style"]
+:HL["/DogGenes/_next/static/chunks/3ebx2tomg7ptl.css","style"]
 2:[["children",{"s":"__PAGE__","h":160}]]
 1:[["children",{"s":"/_not-found","h":96,"c":"$Q2"}]]
-0:{"b":"WGyeuprhty51zBA2BAHlQ","t":{"t":{"s":"","h":80,"c":"$Q1"}}}
+0:{"b":"hqwrDdonzWKx8FM33ugO9","t":{"t":{"s":"","h":80,"c":"$Q1"}}}

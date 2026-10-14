@@ -4,7 +4,11 @@ import { useEffect, useRef } from "react";
 import * as d3 from "d3";
 import { data } from "@/lib/tree";
 import { cladeColor } from "@/lib/palette";
+import { photoOf } from "@/lib/photos";
 import { FAMILIES, PURPOSES, SUMMARIES, type PurposeId } from "@/lib/purpose";
+
+/** Most breed photos a matrix tooltip shows; any more are listed by name. */
+const PHOTO_MAX = 9;
 
 const INK = "#e9e2d0";
 const MUTED = "#8a8a7f";
@@ -32,6 +36,42 @@ export function PurposeMatrix({ selected, onSelect }: { selected: PurposeId; onS
       .attr("role", "img")
       .attr("aria-label", "Matrix of dog jobs by family group; dot size shows how many breeds of each job are in each family.");
     const tip = d3.select(el).append("div").attr("class", "tip").attr("role", "status");
+    const jobName = (id: PurposeId) => PURPOSES.find((p) => p.id === id)!.name;
+    const breeds = (n: number) => `${n} breed${n === 1 ? "" : "s"}`;
+    /** Show the tooltip with this content; it follows the pointer until the pointer leaves. */
+    const hoverTip = (sel: d3.Selection<any, any, any, any>, html: () => string, wide: string) =>
+      sel
+        .on("pointerenter.tip", () => {
+          tip.attr("class", `tip ${wide}`).html(html());
+        })
+        .on("pointermove.tip", (ev: PointerEvent) => {
+          tip.classed("on", true);
+          const box = el.getBoundingClientRect();
+          const t = tip.node() as HTMLElement;
+          // Keep it inside both the chart and the screen (the chart scrolls sideways on phones).
+          const maxX = Math.min(box.width, window.innerWidth - box.left) - t.offsetWidth - 8;
+          tip.style("left", `${Math.max(-box.left + 8, Math.min(ev.clientX - box.left + 14, maxX))}px`)
+            .style("top", `${Math.max(0, Math.min(ev.clientY - box.top + 14, box.height - t.offsetHeight - 8))}px`);
+        })
+        .on("pointerleave.tip", () => tip.classed("on", false));
+    /** A whole row or column: its breeds as small photos, grouped by family (for a job) or by job (for a family). */
+    const groupedHtml = (title: string, sub: string, groups: { name: string; color: string; codes: string[] }[]) =>
+      `<div class="tip-name">${title}</div>
+       <div class="tip-sub">${sub}</div>
+       <div class="tip-groups${groups.length > 3 ? " two" : ""}">${groups
+         .map(
+           (g) => `<section>
+             <h4><i style="background:${g.color}"></i>${g.name}<b>${g.codes.length}</b></h4>
+             <div class="tip-thumbs">${g.codes
+               .map((c) => {
+                 const src = photoOf(c);
+                 return src ? `<img src="${src}" alt="${data.breeds[c].name}" title="${data.breeds[c].name}">` : "";
+               })
+               .join("")}</div>
+             <p>${g.codes.map((c) => data.breeds[c].name).join(", ")}</p>
+           </section>`,
+         )
+         .join("")}</div>`;
     // Area grows with breed count; even a single breed gets a dot big enough to hover.
     const r = d3.scaleSqrt().domain([1, d3.max(SUMMARIES, (s) => d3.max(Object.values(s.byFamily), (v) => v.length))!]).range([6, 14]);
 
@@ -45,6 +85,17 @@ export function PurposeMatrix({ selected, onSelect }: { selected: PurposeId; onS
         .attr("fill", famColor(f.id));
       cols.append("text").attr("transform", `translate(${x + 3},${top - 20}) rotate(-55)`)
         .attr("class", "pm-col").text(f.name);
+      // Hover a family's label to see its breeds, grouped by job.
+      const hit = cols.append("g").attr("class", "pm-col-hit");
+      hit.append("rect").attr("transform", `translate(${x + 3},${top - 20}) rotate(-55)`)
+        .attr("x", -6).attr("y", -13).attr("width", 128).attr("height", 18).attr("fill", "transparent");
+      hit.append("rect").attr("x", x - 9).attr("y", top - 20).attr("width", 18).attr("height", 14).attr("fill", "transparent");
+      hoverTip(hit, () => {
+        const groups = SUMMARIES.filter((s) => s.byFamily[f.id])
+          .map((s) => ({ name: jobName(s.id), color: famColor(f.id), codes: s.byFamily[f.id] }));
+        const n = d3.sum(groups, (g) => g.codes.length);
+        return groupedHtml(f.name, `${breeds(n)} · ${groups.length} job${groups.length === 1 ? "" : "s"}`, groups);
+      }, "tip-group");
     });
 
     const rows = svg.selectAll<SVGGElement, (typeof SUMMARIES)[number]>("g.pm-row")
@@ -65,6 +116,15 @@ export function PurposeMatrix({ selected, onSelect }: { selected: PurposeId; onS
     rows.append("rect").attr("class", "pm-band").attr("x", 0).attr("y", -rowH / 2 + 2).attr("width", W).attr("height", rowH - 4).attr("rx", 4);
     rows.append("text").attr("x", left - 14).attr("dy", "0.35em").attr("text-anchor", "end").attr("class", "pm-name")
       .text((s) => PURPOSES.find((p) => p.id === s.id)!.name);
+    // Hover a job's label to see its breeds, grouped by family.
+    rows.each(function (s) {
+      const hit = d3.select(this).append("rect").attr("class", "pm-name-hit")
+        .attr("x", 0).attr("y", -rowH / 2 + 2).attr("width", left - 4).attr("height", rowH - 4).attr("fill", "transparent");
+      hoverTip(hit, () => {
+        const groups = s.families.map((f) => ({ name: famName(f), color: famColor(f), codes: s.byFamily[f] }));
+        return groupedHtml(jobName(s.id), `${breeds(s.codes.length)} · ${groups.length} famil${groups.length === 1 ? "y" : "ies"}`, groups);
+      }, "tip-group");
+    });
     rows.append("text").attr("x", W - right + 12).attr("dy", "0.35em").attr("class", "pm-count")
       .text((s) => `${s.families.length} famil${s.families.length === 1 ? "y" : "ies"}`);
 
@@ -78,19 +138,19 @@ export function PurposeMatrix({ selected, onSelect }: { selected: PurposeId; onS
         dot.append("circle").attr("r", r(list.length)).attr("fill", famColor(f.id)).attr("stroke", "#0d1110").attr("stroke-width", 1.5);
         if (list.length > 1) dot.append("text").attr("dy", "0.35em").attr("text-anchor", "middle").attr("class", "pm-n").text(list.length);
         // Generous hit area for the tooltip.
-        dot.append("circle").attr("r", 14).attr("fill", "transparent")
-          .on("pointermove", (ev: PointerEvent) => {
-            tip.html(
-              `<div class="tip-name">${famName(f.id)}</div>
-               <div class="tip-sub">${PURPOSES.find((p) => p.id === s.id)!.name} · ${list.length} breed${list.length === 1 ? "" : "s"}</div>
-               <div class="tip-list">${list.map((c) => data.breeds[c].name).join("<br>")}</div>`,
-            ).classed("on", true);
-            const box = el.getBoundingClientRect();
-            const t = tip.node() as HTMLElement;
-            tip.style("left", `${Math.min(ev.clientX - box.left + 14, box.width - t.offsetWidth - 8)}px`)
-              .style("top", `${Math.min(ev.clientY - box.top + 14, box.height - t.offsetHeight - 8)}px`);
-          })
-          .on("pointerleave", () => tip.classed("on", false));
+        // Generous hit area for the tooltip.
+        hoverTip(dot.append("circle").attr("r", 14).attr("fill", "transparent"), () => {
+          // A photo for each breed (up to nine), with any others listed by name below.
+          const shown = list.slice(0, PHOTO_MAX), rest = list.slice(PHOTO_MAX);
+          const card = (c: string) => {
+            const src = photoOf(c);
+            return `<figure>${src ? `<img src="${src}" alt="">` : "<span></span>"}<figcaption>${data.breeds[c].name}</figcaption></figure>`;
+          };
+          return `<div class="tip-name">${famName(f.id)}</div>
+             <div class="tip-sub">${jobName(s.id)} · ${breeds(list.length)}</div>
+             <div class="tip-photos n${Math.min(shown.length, 3)}">${shown.map(card).join("")}</div>
+             ${rest.length ? `<div class="tip-list">Also: ${rest.map((c) => data.breeds[c].name).join(", ")}</div>` : ""}`;
+        }, list.length > 1 ? "tip-wide" : "");
       });
     });
 
