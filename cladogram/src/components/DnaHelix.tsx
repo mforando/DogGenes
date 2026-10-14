@@ -7,7 +7,8 @@ import { useEffect, useRef } from "react";
  * concentric rings. Two golden phosphate backbones twist around a vertical axis; each rung
  * is a base pair, colored like the classic textbook diagram: adenine (green) with thymine
  * (purple), cytosine (pink) with guanine (blue). Everything is depth-sorted and shaded so
- * the far side recedes. It holds still for reduced motion and pauses when off screen.
+ * the far side recedes. It holds still for reduced motion and only animates while the
+ * opening section is on screen.
  */
 const BACKBONE = [240, 200, 118];
 const BASE = { A: [110, 231, 160], T: [205, 125, 240], C: [240, 118, 150], G: [120, 132, 245] };
@@ -25,7 +26,6 @@ export default function DnaHelix() {
     const ctx = canvas.getContext("2d")!;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let raf = 0;
-    let visible = true;
     let W = 0;
     let H = 0;
 
@@ -132,7 +132,7 @@ export default function DnaHelix() {
     };
 
     const loop = (t: number) => {
-      if (visible) draw(t);
+      draw(t);
       raf = requestAnimationFrame(loop);
     };
     resize();
@@ -141,10 +141,15 @@ export default function DnaHelix() {
       if (reduce) draw(0);
     });
     ro.observe(canvas);
-    const io = new IntersectionObserver(([e]) => (visible = e.isIntersecting));
-    io.observe(canvas);
+    // Animate only while the opening section is on screen: off screen the frame loop stops
+    // completely, so it costs nothing while the reader scrolls the rest of the page.
+    const io = new IntersectionObserver(([e]) => {
+      cancelAnimationFrame(raf);
+      raf = 0;
+      if (e.isIntersecting && !reduce) raf = requestAnimationFrame(loop);
+    });
+    io.observe(canvas.closest("header") ?? canvas);
     if (reduce) draw(0);
-    else raf = requestAnimationFrame(loop);
     return () => {
       cancelAnimationFrame(raf);
       ro.disconnect();

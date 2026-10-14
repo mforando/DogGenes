@@ -12,4 +12,4 @@
 :HL["/DogGenes/_next/static/media/f577e48814abc562-s.p.32qtc5gvtu4f4.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
 2:[["children",{"s":"__PAGE__","h":160}]]
 1:[["children",{"s":"explorer","h":96,"c":"$Q2"}]]
-0:{"b":"e70UeJ13We81Lu0sWjs2H","t":{"t":{"s":"","h":80,"c":"$Q1"}}}
+0:{"b":"VP94KfybeJEEDm8o5dQX2","t":{"t":{"s":"","h":80,"c":"$Q1"}}}

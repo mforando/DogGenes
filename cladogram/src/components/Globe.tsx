@@ -162,7 +162,26 @@ export default function Globe({ colorOf, highlight, selected, onSelect, fly, onH
 
     // ---------- interaction: drag to rotate ----------
     let spinning = !reduce;
-    const stopSpin = () => (spinning = false);
+    let onScreen = false;
+    // The idle spin's timer runs only while the globe is spinning and on screen; once a reader
+    // grabs it (or it scrolls away) the timer stops, so it never ticks in the background.
+    let timer: d3.Timer | null = null;
+    const syncTimer = () => {
+      const want = spinning && onScreen;
+      if (want && !timer) {
+        timer = d3.timer(() => {
+          rot = [rot[0] + 0.08, rot[1]];
+          render();
+        });
+      } else if (!want && timer) {
+        timer.stop();
+        timer = null;
+      }
+    };
+    const stopSpin = () => {
+      spinning = false;
+      syncTimer();
+    };
     svg.call(
       d3.drag<SVGSVGElement, unknown>()
         .on("start", () => {
@@ -186,11 +205,11 @@ export default function Globe({ colorOf, highlight, selected, onSelect, fly, onH
       render();
     }, { passive: false } as unknown as boolean);
 
-    const timer = d3.timer(() => {
-      if (!spinning) return;
-      rot = [rot[0] + 0.08, rot[1]];
-      render();
+    const io = new IntersectionObserver(([e]) => {
+      onScreen = e.isIntersecting;
+      syncTimer();
     });
+    io.observe(el);
 
     function flyTo(t: FlyTarget) {
       stopSpin();
@@ -232,7 +251,8 @@ export default function Globe({ colorOf, highlight, selected, onSelect, fly, onH
     };
     render();
     return () => {
-      timer.stop();
+      timer?.stop();
+      io.disconnect();
       ro.disconnect();
       d3.select(el).selectAll("*").remove();
       api.current = null;

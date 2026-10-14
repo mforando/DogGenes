@@ -22,7 +22,7 @@ function labelAt(t: number) {
  * (eyes, nose, mouth, head and cheeks), the in-between shapes are warped triangle by
  * triangle, and the blend lets coarse shape and colour change before fine fur detail, so
  * the in-between faces read as animals rather than a double exposure. It holds on the wolf
- * for reduced motion and pauses when off screen.
+ * for reduced motion and only plays while the opening section is on screen.
  */
 export default function FaceMorph() {
   const video = useRef<HTMLVideoElement>(null);
@@ -37,6 +37,8 @@ export default function FaceMorph() {
       setLabel(labelAt(v.currentTime));
       raf = requestAnimationFrame(tick);
     };
+    // Play only while the opening section is on screen; off screen the video and its label
+    // loop stop completely, so the rest of the page scrolls without the decoder running.
     const io = new IntersectionObserver(([e]) => {
       cancelAnimationFrame(raf);
       if (e.isIntersecting) {
@@ -44,10 +46,11 @@ export default function FaceMorph() {
         raf = requestAnimationFrame(tick);
       } else v.pause();
     });
-    io.observe(v);
+    io.observe(v.closest("header") ?? v);
     return () => {
       io.disconnect();
       cancelAnimationFrame(raf);
+      v.pause();
     };
   }, []);
 
