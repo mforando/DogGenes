@@ -1,11 +1,19 @@
-import type { Metadata } from "next";
-import HistoryStory from "@/components/HistoryStory";
+"use client";
 
-export const metadata: Metadata = {
-  title: "The History of Dogs",
-  description: "40,000 years of dog history, from Ice Age wolves to modern breeds, on a scroll-driven timeline.",
-};
+import { useEffect } from "react";
 
+const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
+/** The history of dogs is now the home page; send old links (and their #section) there. */
 export default function Page() {
-  return <HistoryStory />;
+  useEffect(() => {
+    window.location.replace(`${BASE}/${window.location.hash}`);
+  }, []);
+  return (
+    <main className="moved">
+      <p>
+        This page has moved. <a href={`${BASE}/`}>Continue to the history of dogs →</a>
+      </p>
+    </main>
+  );
 }

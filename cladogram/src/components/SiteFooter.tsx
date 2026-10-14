@@ -39,10 +39,25 @@ const C = {
   rosenberg: { text: "Rosenberg N.A. et al. (2002). Genetic structure of human populations. Science 298(5602):2381–2385", url: "https://doi.org/10.1126/science.1078311" },
   boyko: { text: "Boyko A.R. et al. (2010). A simple genetic architecture underlies morphological variation in dogs. PLOS Biology 8(8):e1000451", url: "https://doi.org/10.1371/journal.pbio.1000451", license: "CC BY 4.0" },
   yengo: { text: "Yengo L. et al. (2022). A saturated map of common genetic variants associated with human height. Nature 610:704–712", url: "https://doi.org/10.1038/s41586-022-05275-y", license: "CC BY 4.0" },
+  wolfPhoto: {
+    text: "Grey wolf portrait (\"Loup gris (Canis lupus)\") by Clément Bardot, Wikimedia Commons; cropped and morphed into ten Dog CEO dog photos (the morph video is shared under the same license)",
+    url: "https://commons.wikimedia.org/wiki/File:Loup_gris_(Canis_lupus_).jpg",
+    license: "CC BY-SA 4.0",
+  },
   silhouettes: {
     text: "Gorilla and human silhouettes from \"Comparison of size of western gorilla (Gorilla gorilla) and human\" by The Nature Box, Wikimedia Commons; rearranged",
     url: "https://commons.wikimedia.org/wiki/File:Comparison_of_size_of_western_gorilla_(Gorilla_gorilla)_and_human.svg",
     license: "CC BY-SA 4.0",
+  },
+  resnet: {
+    text: "He K. et al. (2016). Deep residual learning for image recognition (ResNet-50), via torchvision's pretrained IMAGENET1K_V2 weights",
+    url: "https://pytorch.org/vision/stable/models/generated/torchvision.models.resnet50.html",
+    license: "torchvision: BSD-3-Clause",
+  },
+  stanfordDogs: {
+    text: "Khosla A. et al. (2011). Novel dataset for fine-grained image categorization: Stanford Dogs (ImageNet)",
+    url: "http://vision.stanford.edu/aditya86/ImageNetDogs/",
+    license: "non-commercial research & education",
   },
   akc: { text: "American Kennel Club: Most Popular Dog Breeds, annual rankings 2021–2025", url: "https://www.akc.org/most-popular-breeds/" },
   tidytuesday: { text: "AKC breed rankings 2013–2020, compiled by K. Kakey and the R4DS TidyTuesday project (2022-02-01)", url: "https://github.com/rfordatascience/tidytuesday/tree/main/data/2022/2022-02-01", license: "CC0 (compilation)" },
@@ -98,13 +113,14 @@ const C = {
 
 /** Sources cited on each page (keyed by route, without the base path). */
 const BY_PAGE: Record<string, Cite[]> = {
-  "/history": [C.wikiDomestication, C.wikiGlacial, C.wikiBonn, C.wikiPaleo, C.wikiBreeds, C.breedHistories, C.parker, C.parker2004, C.rosenberg, C.boyko, C.yengo, C.dogceo, C.commons, C.naturalEarth],
-  "/": [C.parker, C.breedHistories, C.dogceo, C.commons, C.silhouettes],
+  "/": [C.wolfPhoto, C.wikiDomestication, C.wikiGlacial, C.wikiBonn, C.wikiPaleo, C.wikiBreeds, C.breedHistories, C.parker, C.parker2004, C.rosenberg, C.boyko, C.yengo, C.dogceo, C.commons, C.naturalEarth],
+  "/tree": [C.parker, C.breedHistories, C.dogceo, C.commons, C.silhouettes],
   "/purpose": [C.parker, C.breedHistories, C.dogceo, C.commons],
   "/geography": [C.breedHistories, C.parker, C.naturalEarth, C.dogceo, C.commons],
   "/explorer": [C.dogceo, C.commons, C.parker, C.breedHistories, C.naturalEarth, C.pudding],
   "/health": [C.parker, C.omia, C.donner, C.brown, C.marchant, C.karmi, C.dogwellnet, C.dap, C.dogceo, C.commons],
   "/names": [C.nyc, C.toronto, C.torontoCensus, C.acsAncestry, C.monroe, C.parker, C.dogceo, C.commons],
+  "/game": [C.dogceo, C.stanfordDogs, C.resnet, C.akc],
   "/popularity": [C.akc, C.tidytuesday, C.wikiTopBreeds, C.parker, C.dogceo, C.commons],
 };
 

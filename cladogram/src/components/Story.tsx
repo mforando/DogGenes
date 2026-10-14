@@ -10,6 +10,10 @@ import { PHOTOS } from "@/lib/photos";
 import { CITATION, SiteNav, Specimens, useActiveStep } from "./shared";
 import Primer, { type TermId } from "./Primer";
 import GlossaryButton from "./GlossaryButton";
+import DnaHelix from "./DnaHelix";
+import LevelToggle from "./LevelToggle";
+import { ReadingLevelProvider, useReadingLevel } from "@/lib/readingLevel";
+import { LEVEL_BODIES } from "@/lib/levels";
 import Circos from "./Circos";
 import CircosReplica from "./CircosReplica";
 import ContinentGlobe from "./ContinentGlobe";
@@ -20,6 +24,15 @@ const GLOSSARY: TermId[] = ["dna", "cladogram", "clade", "bootstrap", "haplotype
 const GLOSSARY_WATCH = [".primer", "main.scrolly"];
 
 export default function Story() {
+  return (
+    <ReadingLevelProvider>
+      <StoryBody />
+    </ReadingLevelProvider>
+  );
+}
+
+function StoryBody() {
+  const { level } = useReadingLevel();
   const { active, stepRef } = useActiveStep();
 
   const step = STEPS[active];
@@ -27,19 +40,26 @@ export default function Story() {
   const [photoHover, setPhotoHover] = useState<string | null>(null);
   // Picking a continent on the step's globe highlights that continent's breeds instead.
   const [continent, setContinent] = useState<Continent | null>(null);
+  // Hovering a dot on the step's globe highlights that breed on the circle chart.
+  const [globeHover, setGlobeHover] = useState<string | null>(null);
+  // ...and hovering a wedge on the circle chart spins the globe to that breed's origin.
+  const [treeHover, setTreeHover] = useState<string | null>(null);
   useEffect(() => {
     setPhotoHover(null);
     setContinent(null);
+    setGlobeHover(null);
+    setTreeHover(null);
   }, [active]);
-  const sel = photoHover && !step.circos ? photoHover : null;
+  const pointed = photoHover ?? (step.continentGlobe ? globeHover : null);
+  const sel = pointed && !step.circos ? pointed : null;
   // While a photo is hovered, the step's own highlights step aside so only that breed shows.
   const treeView = useMemo(() => {
-    const focus = photoHover ? [photoHover] : step.continentGlobe && continent ? CONTINENT_BREEDS[continent] : null;
+    const focus = pointed ? [pointed] : step.continentGlobe && continent ? CONTINENT_BREEDS[continent] : null;
     if (!focus || step.circos) return step.view;
     const { codes, clades, paths, outgroup, split, links, ...rest } = step.view;
     void codes; void clades; void paths; void outgroup; void split;
     return { ...rest, codes: focus, ...(links ? { links: { codes: focus } } : {}) };
-  }, [photoHover, continent, step]);
+  }, [pointed, continent, step]);
   // The chord diagram keeps the nearest chord step's view while it fades in or out.
   const idx = STEPS.indexOf(step);
   const lastCircos =
@@ -60,6 +80,7 @@ export default function Story() {
     <>
       <SiteNav />
       <header className="hero">
+        <DnaHelix />
         <div className="hero-inner">
           <p className="eyebrow">A beginner’s guide to dog DNA</p>
           <h1>
@@ -72,6 +93,10 @@ export default function Story() {
             we&rsquo;ll walk through it one step at a time. No science background needed.
           </p>
           <p className="cite">{CITATION}</p>
+          <div className="level-hero">
+            <span>Reading level</span>
+            <LevelToggle />
+          </div>
           <div className="scroll-cue" aria-hidden>
             <span>scroll</span>
           </div>
@@ -100,7 +125,7 @@ export default function Story() {
           </div>
           <div className={`figure-stage${step.circos ? " circos-on" : ""}`}>
             <div className="stage-circle">
-              <Cladogram view={treeView} selected={sel} onSelect={() => {}} />
+              <Cladogram view={treeView} selected={sel} onSelect={() => {}} onHover={step.continentGlobe ? setTreeHover : undefined} />
             </div>
             <div className="stage-circos" aria-hidden={!step.circos}>
               <Circos view={step.circos ?? lastCircos} spotlight={step.circos ? photoHover : null} ariaLabel="Chord diagram of DNA shared between dog breeds from different family groups" />
@@ -121,9 +146,16 @@ export default function Story() {
               <div className="card">
                 <p className="kicker">{s.kicker}</p>
                 <h2 id={`h-${s.id}`}>{s.title}</h2>
-                {s.body}
+                {level === "adult" ? s.body : LEVEL_BODIES[s.id]?.[level] ?? s.body}
                 {s.photos && <Specimens codes={s.photos} onHover={i === active ? setPhotoHover : undefined} />}
-                {s.continentGlobe && <ContinentGlobe continent={i === active ? continent : null} onPick={i === active ? setContinent : undefined} />}
+                {s.continentGlobe && (
+                  <ContinentGlobe
+                    continent={i === active ? continent : null}
+                    onPick={i === active ? setContinent : undefined}
+                    spotlight={i === active ? photoHover ?? treeHover : null}
+                    onHoverBreed={i === active ? setGlobeHover : undefined}
+                  />
+                )}
               </div>
             </section>
           ))}

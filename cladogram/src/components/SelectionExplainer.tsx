@@ -335,7 +335,7 @@ function TreeVsWeb({ animate = false }: { animate?: boolean }) {
       </svg>
       <figcaption>
         That&rsquo;s why the study behind this site pairs its family tree with a{" "}
-        <Link href="/">web of shared DNA</Link>.
+        <Link href="/tree">web of shared DNA</Link>.
         {animate && (
           <button
             type="button"

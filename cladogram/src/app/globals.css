@@ -375,7 +375,7 @@ body::before {
 .circos { position: relative; flex: 1 1 auto; min-height: 0; display: flex; align-items: center; justify-content: center; }
 .circos svg { width: 100%; height: 100%; max-height: calc(100svh - 60px); display: block; }
 .circos .codes text { font-family: var(--font-label); font-size: 9px; letter-spacing: 0.02em; }
-.circos .codes text.hi { font-weight: 600; font-size: 10px; }
+.circos .codes text.hi { font-weight: 600; font-size: 12.5px; }
 .circos .segs path { cursor: pointer; outline: none; stroke: var(--bg); stroke-width: 0.6; }
 .circos .segs path:focus-visible { stroke: var(--gold); stroke-width: 2; }
 .circos .ribbons path { mix-blend-mode: screen; }
@@ -1366,3 +1366,86 @@ body::before {
 .clade-tree { display: block; width: 100%; height: auto; margin: 0.2rem 0 1rem; }
 .clade-tree-lab { font-family: var(--font-label); font-size: 11px; fill: var(--ink-2); }
 .cd-clade-list li { grid-template-columns: minmax(0, 1fr) 2.6rem 3.8rem; }
+.circos .codes text.clickable { cursor: pointer; }
+
+/* ---------- reading level toggle (Puppy / Adult / Albert Pawstein) ---------- */
+.level-toggle { display: inline-flex; background: rgba(13, 17, 16, 0.92); border: 1px solid var(--rule); border-radius: 999px; padding: 3px; gap: 2px; font-family: var(--font-label); box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35); }
+.level-toggle button { font: inherit; font-size: 0.8rem; color: var(--ink-2); background: none; border: 0; border-radius: 999px; padding: 0.35rem 0.75rem; cursor: pointer; white-space: nowrap; }
+.level-toggle button:hover { color: var(--ink); }
+.level-toggle button.on { background: var(--gold); color: var(--bg); font-weight: 600; }
+.level-toggle button:focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; }
+.gloss { display: flex; align-items: center; gap: 10px; }
+.gloss .level-fixed { order: -1; }
+.level-hero { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem 0.9rem; margin-top: 1.4rem; font-family: var(--font-label); font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); }
+.level-hero .level-toggle { letter-spacing: 0; text-transform: none; box-shadow: none; }
+@media (max-width: 480px) { .level-toggle button { font-size: 0.72rem; padding: 0.3rem 0.55rem; } }
+
+/* ---------- Dog Breed Game ---------- */
+.dg-controls { display: flex; flex-wrap: wrap; gap: 0.8rem 1.6rem; margin-top: 1.2rem; }
+.dg-toggle { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
+.dg-toggle-label { font-family: var(--font-label); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); }
+.dg-toggle .level-toggle { box-shadow: none; }
+.dg-card { max-width: 760px; margin: 2rem auto 0; background: var(--bg-raise); border: 1px solid var(--rule); border-top: 2px solid var(--gold); padding: clamp(1rem, 3vw, 1.6rem); font-family: var(--font-label); }
+.dg-top { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; }
+.dg-kicker { font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); margin: 0; }
+.dg-score { margin: 0; color: var(--ink-3); font-size: 0.9rem; }
+.dg-score strong { color: var(--ink); font-variant-numeric: tabular-nums; }
+.dg-progress { height: 3px; background: var(--rule); margin: 0.6rem 0 1rem; }
+.dg-progress span { display: block; height: 100%; background: var(--gold); transition: width 0.3s; }
+.dg-photo { background: #0a0d0c; border: 1px solid var(--rule); height: min(52vh, 420px); display: grid; place-items: center; }
+.dg-photo img { max-width: 100%; max-height: min(52vh, 420px); width: auto; height: auto; object-fit: contain; display: block; }
+.dg-photo { overflow: hidden; }
+.dg-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.5rem; margin-top: 1rem; }
+.dg-options button { font: inherit; font-size: 1rem; text-align: left; color: var(--ink); background: var(--bg); border: 1px solid var(--rule); padding: 0.75rem 0.9rem; cursor: pointer; }
+.dg-options button:hover, .dg-options button:focus-visible { border-color: var(--gold); color: var(--gold); outline: none; }
+.dg-search { margin-top: 1rem; display: grid; gap: 0.4rem; }
+.dg-search label { font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); }
+.dg-search > div { display: flex; gap: 0.5rem; }
+.dg-search input { flex: 1; min-width: 0; font: inherit; font-size: 1.05rem; color: var(--ink); background: var(--bg); border: 1px solid var(--gold-dim); padding: 0.6rem 0.75rem; }
+.dg-error { color: #e07a6d; margin: 0; font-size: 0.85rem; }
+.dg-primary { font: inherit; font-size: 0.95rem; font-weight: 600; color: var(--bg); background: var(--gold); border: 0; border-radius: 2px; padding: 0.6rem 1.1rem; cursor: pointer; }
+.dg-primary:hover { background: #f0c45c; }
+.dg-reveal { margin-top: 1rem; display: grid; gap: 0.8rem; justify-items: start; }
+.dg-verdict { margin: 0; font-size: 1.15rem; font-family: var(--font-display); color: var(--ink); }
+.dg-verdict.yes::before { content: "✓ "; color: #4ec98a; }
+.dg-verdict.no::before { content: "✗ "; color: #e07a6d; }
+.dg-ai { width: 100%; background: var(--bg); border: 1px solid var(--rule); padding: 0.7rem 0.85rem; }
+.dg-ai-h { margin: 0 0 0.4rem; font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); }
+.dg-ai ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.3rem; }
+.dg-ai li { display: grid; grid-template-columns: minmax(0, 12rem) 1fr 3rem; align-items: center; gap: 0.6rem; font-size: 0.9rem; color: var(--ink-2); }
+.dg-ai li.hit { color: #4ec98a; }
+.dg-ai-bar { height: 8px; background: var(--rule); border-radius: 2px; overflow: hidden; }
+.dg-ai-bar span { display: block; height: 100%; background: var(--ink-3); }
+.dg-ai li.hit .dg-ai-bar span { background: #4ec98a; }
+.dg-ai-p { text-align: right; font-variant-numeric: tabular-nums; }
+.dg-ai-note { margin: 0.5rem 0 0; font-size: 0.82rem; color: var(--ink-3); }
+.dg-vs { margin: 0; color: var(--ink-2); }
+.dg-vs strong { color: var(--gold); }
+.dg-end { text-align: left; display: grid; gap: 0.8rem; }
+.dg-final { font-family: var(--font-display); font-size: clamp(1.6rem, 4vw, 2.4rem); margin: 0; color: var(--ink); }
+.dg-final strong { color: var(--gold); font-weight: 500; }
+.dg-final span { font-size: 0.5em; color: var(--ink-3); font-family: var(--font-label); }
+.dg-history table { border-collapse: collapse; width: 100%; font-size: 0.85rem; margin-top: 0.4rem; }
+.dg-history th { text-align: left; color: var(--ink-3); font-weight: 500; border-bottom: 1px solid var(--rule); padding: 0.35rem 0.5rem; }
+.dg-history td { border-bottom: 1px solid #1a211e; padding: 0.35rem 0.5rem; color: var(--ink-2); }
+.dg-history .num { text-align: right; font-variant-numeric: tabular-nums; }
+.dg-best { margin: 0.5rem 0 0; color: var(--ink-3); font-size: 0.85rem; }
+.dg-loading { margin-top: 2rem; color: var(--ink-3); font-family: var(--font-label); }
+@media (max-width: 560px) { .dg-options { grid-template-columns: 1fr; } .dg-ai li { grid-template-columns: minmax(0, 1fr) 4rem 2.6rem; } }
+.dg-end .dg-primary { justify-self: start; }
+/* The three difficulty labels are long: let them wrap onto rows on narrow screens. */
+.dg-toggle .level-toggle { flex-wrap: wrap; border-radius: 14px; max-width: 100%; }
+.dg-toggle { max-width: 100%; }
+
+/* ---------- history header: spinning DNA at the center of the rings ---------- */
+/* The rings (.hero::after) are 80vmax wide, 18vmax past the right edge and 14vmax above
+   the top, so their center sits 22vmax in from the right and 26vmax down. */
+.dna-helix { position: absolute; z-index: 0; pointer-events: none; width: 22vmax; height: 40vmax; left: calc(100% - 22vmax); top: 26vmax; transform: translate(-50%, -50%); opacity: 0.9; }
+@media (max-width: 760px) { .dna-helix { opacity: 0.35; } }
+
+/* ---------- history header: wolf-to-dog face morph at the center of the rings ---------- */
+.face-morph { position: absolute; z-index: 0; left: calc(100% - 22vmax); top: 26vmax; transform: translate(-50%, -50%); width: 24vmax; display: grid; justify-items: center; gap: 1rem; pointer-events: none; }
+.face-ring { position: relative; width: 100%; aspect-ratio: 1; border-radius: 50%; overflow: hidden; box-shadow: 0 0 0 1px rgba(236, 229, 211, 0.25), 0 0 0 10px rgba(236, 229, 211, 0.04), 0 20px 60px rgba(0, 0, 0, 0.55); background: #0a0d0c; }
+.face-ring video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.face-name { margin: 0; font-family: var(--font-label); font-size: 0.8rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); text-align: center; min-height: 1.3em; }
+@media (max-width: 760px) { .face-morph { width: 46vw; top: 30vmax; opacity: 0.4; } .face-name { display: none; } }

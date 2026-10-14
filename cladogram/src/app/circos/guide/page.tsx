@@ -7,12 +7,12 @@ const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 /** This page moved into the home page; send visitors (and old links) to the right spot. */
 export default function Page() {
   useEffect(() => {
-    window.location.replace(`${BASE}/#c-blocks`);
+    window.location.replace(`${BASE}/tree/#c-blocks`);
   }, []);
   return (
     <main className="moved">
       <p>
-        This page has moved. <a href={`${BASE}/#c-blocks`}>Continue to the family tree &amp; DNA web →</a>
+        This page has moved. <a href={`${BASE}/tree/#c-blocks`}>Continue to the family tree &amp; DNA web →</a>
       </p>
     </main>
   );

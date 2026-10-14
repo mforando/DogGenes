@@ -2,19 +2,19 @@
  "AIRT": {
   "api": "airedale",
   "urls": [
+   "https://images.dog.ceo/breeds/airedale/n02096051_7602.jpg",
    "https://images.dog.ceo/breeds/airedale/n02096051_1017.jpg",
    "https://images.dog.ceo/breeds/airedale/n02096051_2633.jpg",
-   "https://images.dog.ceo/breeds/airedale/n02096051_5018.jpg",
-   "https://images.dog.ceo/breeds/airedale/n02096051_7118.jpg"
+   "https://images.dog.ceo/breeds/airedale/n02096051_5018.jpg"
   ]
  },
  "AKIT": {
   "api": "akita",
   "urls": [
+   "https://images.dog.ceo/breeds/akita/japaneseakita.jpg",
    "https://images.dog.ceo/breeds/akita/512px-ainu-dog.jpg",
    "https://images.dog.ceo/breeds/akita/512px-akita_inu.jpg",
-   "https://images.dog.ceo/breeds/akita/akita_inu_blanc.jpg",
-   "https://images.dog.ceo/breeds/akita/an_akita_inu_resting.jpg"
+   "https://images.dog.ceo/breeds/akita/akita_inu_blanc.jpg"
   ]
  },
  "AUSS": {
@@ -29,8 +29,8 @@
  "KELP": {
   "api": "australian/kelpie",
   "urls": [
-   "https://images.dog.ceo/breeds/australian-kelpie/img_2599.jpg",
    "https://images.dog.ceo/breeds/australian-kelpie/img_4918.jpg",
+   "https://images.dog.ceo/breeds/australian-kelpie/img_2599.jpg",
    "https://images.dog.ceo/breeds/australian-kelpie/resized_20200214_191118_346649120350209.jpg",
    "https://images.dog.ceo/breeds/australian-kelpie/resized_20200416_142905_108884348190285.jpg"
   ]
@@ -38,37 +38,37 @@
  "BSJI": {
   "api": "basenji",
   "urls": [
+   "https://images.dog.ceo/breeds/basenji/n02110806_1902.jpg",
    "https://images.dog.ceo/breeds/basenji/n02110806_1013.jpg",
    "https://images.dog.ceo/breeds/basenji/n02110806_2627.jpg",
-   "https://images.dog.ceo/breeds/basenji/n02110806_3974.jpg",
-   "https://images.dog.ceo/breeds/basenji/n02110806_4711.jpg"
+   "https://images.dog.ceo/breeds/basenji/n02110806_3974.jpg"
   ]
  },
  "BEAG": {
   "api": "beagle",
   "urls": [
+   "https://images.dog.ceo/breeds/beagle/n02088364_4070.jpg",
    "https://images.dog.ceo/breeds/beagle/01-12brady.jpg.jpg",
    "https://images.dog.ceo/breeds/beagle/n02088364_12920.jpg",
-   "https://images.dog.ceo/breeds/beagle/n02088364_16065.jpg",
-   "https://images.dog.ceo/breeds/beagle/n02088364_3752.jpg"
+   "https://images.dog.ceo/breeds/beagle/n02088364_16065.jpg"
   ]
  },
  "BORZ": {
   "api": "borzoi",
   "urls": [
+   "https://images.dog.ceo/breeds/borzoi/n02090622_7111.jpg",
    "https://images.dog.ceo/breeds/borzoi/n02090622_10281.jpg",
    "https://images.dog.ceo/breeds/borzoi/n02090622_5556.jpg",
-   "https://images.dog.ceo/breeds/borzoi/n02090622_6979.jpg",
-   "https://images.dog.ceo/breeds/borzoi/n02090622_8009.jpg"
+   "https://images.dog.ceo/breeds/borzoi/n02090622_6979.jpg"
   ]
  },
  "BOUV": {
   "api": "bouvier",
   "urls": [
+   "https://images.dog.ceo/breeds/bouvier/n02106382_3571.jpg",
    "https://images.dog.ceo/breeds/bouvier/n02106382_1000.jpg",
    "https://images.dog.ceo/breeds/bouvier/n02106382_1925.jpg",
-   "https://images.dog.ceo/breeds/bouvier/n02106382_3080.jpg",
-   "https://images.dog.ceo/breeds/bouvier/n02106382_4602.jpg"
+   "https://images.dog.ceo/breeds/bouvier/n02106382_3080.jpg"
   ]
  },
  "BOX": {
@@ -83,17 +83,17 @@
  "BRIA": {
   "api": "briard",
   "urls": [
+   "https://images.dog.ceo/breeds/briard/n02105251_7950.jpg",
    "https://images.dog.ceo/breeds/briard/n02105251_12.jpg",
    "https://images.dog.ceo/breeds/briard/n02105251_5309.jpg",
-   "https://images.dog.ceo/breeds/briard/n02105251_6942.jpg",
-   "https://images.dog.ceo/breeds/briard/n02105251_7996.jpg"
+   "https://images.dog.ceo/breeds/briard/n02105251_6942.jpg"
   ]
  },
  "BULD": {
   "api": "bulldog/english",
   "urls": [
-   "https://images.dog.ceo/breeds/bulldog-english/bunz.jpg",
    "https://images.dog.ceo/breeds/bulldog-english/jager-1.jpg",
+   "https://images.dog.ceo/breeds/bulldog-english/bunz.jpg",
    "https://images.dog.ceo/breeds/bulldog-english/jager-2.jpg",
    "https://images.dog.ceo/breeds/bulldog-english/mami.jpg"
   ]
@@ -101,36 +101,36 @@
  "BOST": {
   "api": "bulldog/boston",
   "urls": [
+   "https://images.dog.ceo/breeds/bulldog-boston/n02096585_7859.jpg",
    "https://images.dog.ceo/breeds/bulldog-boston/20200710_175933.jpg",
    "https://images.dog.ceo/breeds/bulldog-boston/n02096585_1449.jpg",
-   "https://images.dog.ceo/breeds/bulldog-boston/n02096585_2394.jpg",
-   "https://images.dog.ceo/breeds/bulldog-boston/n02096585_554.jpg"
+   "https://images.dog.ceo/breeds/bulldog-boston/n02096585_2394.jpg"
   ]
  },
  "FBUL": {
   "api": "bulldog/french",
   "urls": [
+   "https://images.dog.ceo/breeds/bulldog-french/n02108915_5367.jpg",
    "https://images.dog.ceo/breeds/bulldog-french/hunghung.jpg",
    "https://images.dog.ceo/breeds/bulldog-french/n02108915_2279.jpg",
-   "https://images.dog.ceo/breeds/bulldog-french/n02108915_3520.jpg",
-   "https://images.dog.ceo/breeds/bulldog-french/n02108915_5596.jpg"
+   "https://images.dog.ceo/breeds/bulldog-french/n02108915_3520.jpg"
   ]
  },
  "STAF": {
   "api": "bullterrier/staffordshire",
   "urls": [
+   "https://images.dog.ceo/breeds/bullterrier-staffordshire/n02093256_5110.jpg",
    "https://images.dog.ceo/breeds/bullterrier-staffordshire/20200820_131119.jpg",
    "https://images.dog.ceo/breeds/bullterrier-staffordshire/n02093256_1643.jpg",
-   "https://images.dog.ceo/breeds/bullterrier-staffordshire/n02093256_3812.jpg",
-   "https://images.dog.ceo/breeds/bullterrier-staffordshire/n02093256_5734.jpg"
+   "https://images.dog.ceo/breeds/bullterrier-staffordshire/n02093256_3812.jpg"
   ]
  },
  "AUCD": {
   "api": "cattledog/australian",
   "urls": [
+   "https://images.dog.ceo/breeds/cattledog-australian/img_3668.jpg",
    "https://images.dog.ceo/breeds/cattledog-australian/img_0206.jpg",
    "https://images.dog.ceo/breeds/cattledog-australian/img_1418.jpg",
-   "https://images.dog.ceo/breeds/cattledog-australian/img_3668.jpg",
    "https://images.dog.ceo/breeds/cattledog-australian/img_5177.jpg"
   ]
  },
@@ -146,26 +146,26 @@
  "CHOW": {
   "api": "chow",
   "urls": [
+   "https://images.dog.ceo/breeds/chow/n02112137_16815.jpg",
    "https://images.dog.ceo/breeds/chow/modi2.jpg",
    "https://images.dog.ceo/breeds/chow/n02112137_14448.jpg",
-   "https://images.dog.ceo/breeds/chow/n02112137_2739.jpg",
-   "https://images.dog.ceo/breeds/chow/n02112137_6709.jpg"
+   "https://images.dog.ceo/breeds/chow/n02112137_2739.jpg"
   ]
  },
  "BORD": {
   "api": "collie/border",
   "urls": [
+   "https://images.dog.ceo/breeds/collie-border/n02106166_2596.jpg",
    "https://images.dog.ceo/breeds/collie-border/brodie.jpg",
    "https://images.dog.ceo/breeds/collie-border/n02106166_1842.jpg",
-   "https://images.dog.ceo/breeds/collie-border/n02106166_3473.jpg",
-   "https://images.dog.ceo/breeds/collie-border/n02106166_6659.jpg"
+   "https://images.dog.ceo/breeds/collie-border/n02106166_3473.jpg"
   ]
  },
  "COLL": {
   "api": "rough/collie",
   "urls": [
-   "https://images.dog.ceo/breeds/rough-collie/1dog-rough-collie-portrait.jpg",
-   "https://images.dog.ceo/breeds/rough-collie/collie-chatter-rough-collie-gus-posing.jpg"
+   "https://images.dog.ceo/breeds/rough-collie/collie-chatter-rough-collie-gus-posing.jpg",
+   "https://images.dog.ceo/breeds/rough-collie/1dog-rough-collie-portrait.jpg"
   ]
  },
  "REDB": {
@@ -180,10 +180,10 @@
  "CARD": {
   "api": "corgi/cardigan",
   "urls": [
+   "https://images.dog.ceo/breeds/corgi-cardigan/n02113186_13335.jpg",
    "https://images.dog.ceo/breeds/corgi-cardigan/miss-muffin.jpg",
    "https://images.dog.ceo/breeds/corgi-cardigan/n02113186_13102.jpg",
-   "https://images.dog.ceo/breeds/corgi-cardigan/n02113186_4536.jpg",
-   "https://images.dog.ceo/breeds/corgi-cardigan/n02113186_7159.jpg"
+   "https://images.dog.ceo/breeds/corgi-cardigan/n02113186_4536.jpg"
   ]
  },
  "PEMB": {
@@ -198,10 +198,10 @@
  "COTO": {
   "api": "cotondetulear",
   "urls": [
+   "https://images.dog.ceo/breeds/cotondetulear/img_20160830_202631573.jpg",
    "https://images.dog.ceo/breeds/cotondetulear/100_2013.jpg",
    "https://images.dog.ceo/breeds/cotondetulear/100_2397.jpg",
-   "https://images.dog.ceo/breeds/cotondetulear/imag1063.jpg",
-   "https://images.dog.ceo/breeds/cotondetulear/img_20160830_202631573.jpg"
+   "https://images.dog.ceo/breeds/cotondetulear/imag1063.jpg"
   ]
  },
  "DACH": {
@@ -249,10 +249,10 @@
  "NELK": {
   "api": "elkhound/norwegian",
   "urls": [
+   "https://images.dog.ceo/breeds/elkhound-norwegian/n02091467_6726.jpg",
    "https://images.dog.ceo/breeds/elkhound-norwegian/n02091467_1110.jpg",
    "https://images.dog.ceo/breeds/elkhound-norwegian/n02091467_2950.jpg",
-   "https://images.dog.ceo/breeds/elkhound-norwegian/n02091467_4110.jpg",
-   "https://images.dog.ceo/breeds/elkhound-norwegian/n02091467_5755.jpg"
+   "https://images.dog.ceo/breeds/elkhound-norwegian/n02091467_4110.jpg"
   ]
  },
  "AESK": {
@@ -267,19 +267,19 @@
  "BICH": {
   "api": "frise/bichon",
   "urls": [
+   "https://images.dog.ceo/breeds/frise-bichon/h-3.jpg",
    "https://images.dog.ceo/breeds/frise-bichon/1.jpg",
    "https://images.dog.ceo/breeds/frise-bichon/4.jpg",
-   "https://images.dog.ceo/breeds/frise-bichon/h-1.jpg",
-   "https://images.dog.ceo/breeds/frise-bichon/jh-ezio-1.jpg"
+   "https://images.dog.ceo/breeds/frise-bichon/h-1.jpg"
   ]
  },
  "GSD": {
   "api": "german/shepherd",
   "urls": [
+   "https://images.dog.ceo/breeds/german-shepherd/n02106662_2884.jpg",
    "https://images.dog.ceo/breeds/german-shepherd/bagira_site.jpg",
    "https://images.dog.ceo/breeds/german-shepherd/n02106662_15813.jpg",
-   "https://images.dog.ceo/breeds/german-shepherd/n02106662_23360.jpg",
-   "https://images.dog.ceo/breeds/german-shepherd/n02106662_590.jpg"
+   "https://images.dog.ceo/breeds/german-shepherd/n02106662_23360.jpg"
   ]
  },
  "GREY": {
@@ -300,64 +300,64 @@
  "HAVA": {
   "api": "havanese",
   "urls": [
+   "https://images.dog.ceo/breeds/havanese/00100trportrait_00100_burst20191222103956878_cover.jpg",
    "https://images.dog.ceo/breeds/havanese/00100trportrait_00100_burst20191030212452971_cover.jpg",
    "https://images.dog.ceo/breeds/havanese/00100trportrait_00100_burst20191103202017556_cover.jpg",
-   "https://images.dog.ceo/breeds/havanese/00100trportrait_00100_burst20191112123933390_cover.jpg",
-   "https://images.dog.ceo/breeds/havanese/00100trportrait_00100_burst20191126134713895_cover.jpg"
+   "https://images.dog.ceo/breeds/havanese/00100trportrait_00100_burst20191112123933390_cover.jpg"
   ]
  },
  "AFGH": {
   "api": "hound/afghan",
   "urls": [
+   "https://images.dog.ceo/breeds/hound-afghan/n02088094_980.jpg",
    "https://images.dog.ceo/breeds/hound-afghan/n02088094_1003.jpg",
    "https://images.dog.ceo/breeds/hound-afghan/n02088094_1724.jpg",
-   "https://images.dog.ceo/breeds/hound-afghan/n02088094_3588.jpg",
-   "https://images.dog.ceo/breeds/hound-afghan/n02088094_522.jpg"
+   "https://images.dog.ceo/breeds/hound-afghan/n02088094_3588.jpg"
   ]
  },
  "BASS": {
   "api": "hound/basset",
   "urls": [
+   "https://images.dog.ceo/breeds/hound-basset/n02088238_2217.jpg",
    "https://images.dog.ceo/breeds/hound-basset/n02088238_10005.jpg",
    "https://images.dog.ceo/breeds/hound-basset/n02088238_11511.jpg",
-   "https://images.dog.ceo/breeds/hound-basset/n02088238_3066.jpg",
-   "https://images.dog.ceo/breeds/hound-basset/n02088238_9015.jpg"
+   "https://images.dog.ceo/breeds/hound-basset/n02088238_3066.jpg"
   ]
  },
  "BLDH": {
   "api": "hound/blood",
   "urls": [
+   "https://images.dog.ceo/breeds/hound-blood/n02088466_7962.jpg",
    "https://images.dog.ceo/breeds/hound-blood/n02088466_10083.jpg",
    "https://images.dog.ceo/breeds/hound-blood/n02088466_4749.jpg",
-   "https://images.dog.ceo/breeds/hound-blood/n02088466_7409.jpg",
-   "https://images.dog.ceo/breeds/hound-blood/n02088466_8754.jpg"
+   "https://images.dog.ceo/breeds/hound-blood/n02088466_7409.jpg"
   ]
  },
  "IBIZ": {
   "api": "hound/ibizan",
   "urls": [
+   "https://images.dog.ceo/breeds/hound-ibizan/n02091244_226.jpg",
    "https://images.dog.ceo/breeds/hound-ibizan/n02091244_100.jpg",
    "https://images.dog.ceo/breeds/hound-ibizan/n02091244_2275.jpg",
-   "https://images.dog.ceo/breeds/hound-ibizan/n02091244_3346.jpg",
-   "https://images.dog.ceo/breeds/hound-ibizan/n02091244_4914.jpg"
+   "https://images.dog.ceo/breeds/hound-ibizan/n02091244_3346.jpg"
   ]
  },
  "FOXH": {
   "api": "hound/english",
   "urls": [
+   "https://images.dog.ceo/breeds/hound-english/n02089973_99.jpg",
    "https://images.dog.ceo/breeds/hound-english/n02089973_1.jpg",
    "https://images.dog.ceo/breeds/hound-english/n02089973_2.jpg",
-   "https://images.dog.ceo/breeds/hound-english/n02089973_2633.jpg",
-   "https://images.dog.ceo/breeds/hound-english/n02089973_3647.jpg"
+   "https://images.dog.ceo/breeds/hound-english/n02089973_2633.jpg"
   ]
  },
  "HUSK": {
   "api": "husky",
   "urls": [
+   "https://images.dog.ceo/breeds/husky/n02110185_11445.jpg",
    "https://images.dog.ceo/breeds/husky/20180901_150234.jpg",
    "https://images.dog.ceo/breeds/husky/n02110185_12441.jpg",
-   "https://images.dog.ceo/breeds/husky/n02110185_2604.jpg",
-   "https://images.dog.ceo/breeds/husky/n02110185_698.jpg"
+   "https://images.dog.ceo/breeds/husky/n02110185_2604.jpg"
   ]
  },
  "KEES": {
@@ -372,46 +372,46 @@
  "KOMO": {
   "api": "komondor",
   "urls": [
+   "https://images.dog.ceo/breeds/komondor/n02105505_4070.jpg",
    "https://images.dog.ceo/breeds/komondor/n02105505_1024.jpg",
    "https://images.dog.ceo/breeds/komondor/n02105505_2592.jpg",
-   "https://images.dog.ceo/breeds/komondor/n02105505_3705.jpg",
-   "https://images.dog.ceo/breeds/komondor/n02105505_4180.jpg"
+   "https://images.dog.ceo/breeds/komondor/n02105505_3705.jpg"
   ]
  },
  "KUVZ": {
   "api": "kuvasz",
   "urls": [
+   "https://images.dog.ceo/breeds/kuvasz/n02104029_2501.jpg",
    "https://images.dog.ceo/breeds/kuvasz/bella_buddy.jpg",
    "https://images.dog.ceo/breeds/kuvasz/n02104029_1779.jpg",
-   "https://images.dog.ceo/breeds/kuvasz/n02104029_3397.jpg",
-   "https://images.dog.ceo/breeds/kuvasz/n02104029_4466.jpg"
+   "https://images.dog.ceo/breeds/kuvasz/n02104029_3397.jpg"
   ]
  },
  "LAB": {
   "api": "labrador",
   "urls": [
+   "https://images.dog.ceo/breeds/labrador/n02099712_4543.jpg",
    "https://images.dog.ceo/breeds/labrador/dog2.jpg",
    "https://images.dog.ceo/breeds/labrador/n02099712_2501.jpg",
-   "https://images.dog.ceo/breeds/labrador/n02099712_4653.jpg",
-   "https://images.dog.ceo/breeds/labrador/n02099712_6664.jpg"
+   "https://images.dog.ceo/breeds/labrador/n02099712_4653.jpg"
   ]
  },
  "LEON": {
   "api": "leonberg",
   "urls": [
+   "https://images.dog.ceo/breeds/leonberg/n02111129_2617.jpg",
    "https://images.dog.ceo/breeds/leonberg/n02111129_1042.jpg",
    "https://images.dog.ceo/breeds/leonberg/n02111129_2047.jpg",
-   "https://images.dog.ceo/breeds/leonberg/n02111129_3028.jpg",
-   "https://images.dog.ceo/breeds/leonberg/n02111129_454.jpg"
+   "https://images.dog.ceo/breeds/leonberg/n02111129_3028.jpg"
   ]
  },
  "LHSA": {
   "api": "lhasa",
   "urls": [
+   "https://images.dog.ceo/breeds/lhasa/n02098413_7910.jpg",
    "https://images.dog.ceo/breeds/lhasa/n02098413_10144.jpg",
    "https://images.dog.ceo/breeds/lhasa/n02098413_17369.jpg",
-   "https://images.dog.ceo/breeds/lhasa/n02098413_3152.jpg",
-   "https://images.dog.ceo/breeds/lhasa/n02098413_6354.jpg"
+   "https://images.dog.ceo/breeds/lhasa/n02098413_3152.jpg"
   ]
  },
  "AMAL": {
@@ -435,37 +435,37 @@
  "MALT": {
   "api": "maltese",
   "urls": [
+   "https://images.dog.ceo/breeds/maltese/n02085936_1244.jpg",
    "https://images.dog.ceo/breeds/maltese/n02085936_10073.jpg",
    "https://images.dog.ceo/breeds/maltese/n02085936_21320.jpg",
-   "https://images.dog.ceo/breeds/maltese/n02085936_4343.jpg",
-   "https://images.dog.ceo/breeds/maltese/n02085936_6892.jpg"
+   "https://images.dog.ceo/breeds/maltese/n02085936_4343.jpg"
   ]
  },
  "BULM": {
   "api": "mastiff/bull",
   "urls": [
+   "https://images.dog.ceo/breeds/mastiff-bull/n02108422_4102.jpg",
    "https://images.dog.ceo/breeds/mastiff-bull/n02108422_1013.jpg",
    "https://images.dog.ceo/breeds/mastiff-bull/n02108422_2203.jpg",
-   "https://images.dog.ceo/breeds/mastiff-bull/n02108422_3576.jpg",
-   "https://images.dog.ceo/breeds/mastiff-bull/n02108422_4978.jpg"
+   "https://images.dog.ceo/breeds/mastiff-bull/n02108422_3576.jpg"
   ]
  },
  "MAST": {
   "api": "mastiff/english",
   "urls": [
+   "https://images.dog.ceo/breeds/mastiff-english/3.jpg",
    "https://images.dog.ceo/breeds/mastiff-english/1.jpg",
    "https://images.dog.ceo/breeds/mastiff-english/2.jpg",
-   "https://images.dog.ceo/breeds/mastiff-english/3.jpg",
    "https://images.dog.ceo/breeds/mastiff-english/4.jpg"
   ]
  },
  "TIBM": {
   "api": "mastiff/tibetan",
   "urls": [
+   "https://images.dog.ceo/breeds/mastiff-tibetan/n02108551_4310.jpg",
    "https://images.dog.ceo/breeds/mastiff-tibetan/n02108551_10182.jpg",
    "https://images.dog.ceo/breeds/mastiff-tibetan/n02108551_1815.jpg",
-   "https://images.dog.ceo/breeds/mastiff-tibetan/n02108551_3501.jpg",
-   "https://images.dog.ceo/breeds/mastiff-tibetan/n02108551_5050.jpg"
+   "https://images.dog.ceo/breeds/mastiff-tibetan/n02108551_3501.jpg"
   ]
  },
  "XOLO": {
@@ -480,19 +480,19 @@
  "NEWF": {
   "api": "newfoundland",
   "urls": [
+   "https://images.dog.ceo/breeds/newfoundland/n02111277_6143.jpg",
    "https://images.dog.ceo/breeds/newfoundland/n02111277_10160.jpg",
    "https://images.dog.ceo/breeds/newfoundland/n02111277_2038.jpg",
-   "https://images.dog.ceo/breeds/newfoundland/n02111277_3634.jpg",
-   "https://images.dog.ceo/breeds/newfoundland/n02111277_5928.jpg"
+   "https://images.dog.ceo/breeds/newfoundland/n02111277_3634.jpg"
   ]
  },
  "OTTR": {
   "api": "otterhound",
   "urls": [
+   "https://images.dog.ceo/breeds/otterhound/n02091635_4446.jpg",
    "https://images.dog.ceo/breeds/otterhound/n02091635_1043.jpg",
    "https://images.dog.ceo/breeds/otterhound/n02091635_1706.jpg",
-   "https://images.dog.ceo/breeds/otterhound/n02091635_3072.jpg",
-   "https://images.dog.ceo/breeds/otterhound/n02091635_436.jpg"
+   "https://images.dog.ceo/breeds/otterhound/n02091635_3072.jpg"
   ]
  },
  "PAPI": {
@@ -507,19 +507,19 @@
  "PEKE": {
   "api": "pekinese",
   "urls": [
+   "https://images.dog.ceo/breeds/pekinese/n02086079_14929.jpg",
    "https://images.dog.ceo/breeds/pekinese/n02086079_10059.jpg",
    "https://images.dog.ceo/breeds/pekinese/n02086079_14748.jpg",
-   "https://images.dog.ceo/breeds/pekinese/n02086079_22136.jpg",
-   "https://images.dog.ceo/breeds/pekinese/n02086079_606.jpg"
+   "https://images.dog.ceo/breeds/pekinese/n02086079_22136.jpg"
   ]
  },
  "MPIN": {
   "api": "pinscher/miniature",
   "urls": [
+   "https://images.dog.ceo/breeds/pinscher-miniature/n02107312_3449.jpg",
    "https://images.dog.ceo/breeds/pinscher-miniature/2013-08-23_21.38.32.jpg",
    "https://images.dog.ceo/breeds/pinscher-miniature/n02107312_2893.jpg",
-   "https://images.dog.ceo/breeds/pinscher-miniature/n02107312_4907.jpg",
-   "https://images.dog.ceo/breeds/pinscher-miniature/n02107312_612.jpg"
+   "https://images.dog.ceo/breeds/pinscher-miniature/n02107312_4907.jpg"
   ]
  },
  "GSHP": {
@@ -534,28 +534,28 @@
  "POM": {
   "api": "pomeranian",
   "urls": [
+   "https://images.dog.ceo/breeds/pomeranian/n02112018_14482.jpg",
    "https://images.dog.ceo/breeds/pomeranian/n02112018_10129.jpg",
    "https://images.dog.ceo/breeds/pomeranian/n02112018_2154.jpg",
-   "https://images.dog.ceo/breeds/pomeranian/n02112018_436.jpg",
-   "https://images.dog.ceo/breeds/pomeranian/n02112018_6190.jpg"
+   "https://images.dog.ceo/breeds/pomeranian/n02112018_436.jpg"
   ]
  },
  "MPOO": {
   "api": "poodle/miniature",
   "urls": [
+   "https://images.dog.ceo/breeds/poodle-miniature/n02113712_5289.jpg",
    "https://images.dog.ceo/breeds/poodle-miniature/242981_4709618542275_742310792_o.jpg",
    "https://images.dog.ceo/breeds/poodle-miniature/n02113712_1897.jpg",
-   "https://images.dog.ceo/breeds/poodle-miniature/n02113712_3171.jpg",
-   "https://images.dog.ceo/breeds/poodle-miniature/n02113712_574.jpg"
+   "https://images.dog.ceo/breeds/poodle-miniature/n02113712_3171.jpg"
   ]
  },
  "SPOO": {
   "api": "poodle/standard",
   "urls": [
+   "https://images.dog.ceo/breeds/poodle-standard/n02113799_4642.jpg",
    "https://images.dog.ceo/breeds/poodle-standard/n02113799_1057.jpg",
    "https://images.dog.ceo/breeds/poodle-standard/n02113799_2068.jpg",
-   "https://images.dog.ceo/breeds/poodle-standard/n02113799_341.jpg",
-   "https://images.dog.ceo/breeds/poodle-standard/n02113799_5975.jpg"
+   "https://images.dog.ceo/breeds/poodle-standard/n02113799_341.jpg"
   ]
  },
  "TPOO": {
@@ -570,19 +570,19 @@
  "PUG": {
   "api": "pug",
   "urls": [
+   "https://images.dog.ceo/breeds/pug/n02110958_5912.jpg",
    "https://images.dog.ceo/breeds/pug/alf.jpg",
    "https://images.dog.ceo/breeds/pug/n02110958_12432.jpg",
-   "https://images.dog.ceo/breeds/pug/n02110958_15129.jpg",
-   "https://images.dog.ceo/breeds/pug/n02110958_353.jpg"
+   "https://images.dog.ceo/breeds/pug/n02110958_15129.jpg"
   ]
  },
  "GPYR": {
   "api": "pyrenees",
   "urls": [
+   "https://images.dog.ceo/breeds/pyrenees/n02111500_7935.jpg",
    "https://images.dog.ceo/breeds/pyrenees/beau1.jpg",
    "https://images.dog.ceo/breeds/pyrenees/n02111500_2617.jpg",
-   "https://images.dog.ceo/breeds/pyrenees/n02111500_4851.jpg",
-   "https://images.dog.ceo/breeds/pyrenees/n02111500_7324.jpg"
+   "https://images.dog.ceo/breeds/pyrenees/n02111500_4851.jpg"
   ]
  },
  "RHOD": {
@@ -597,19 +597,19 @@
  "ROTT": {
   "api": "rottweiler",
   "urls": [
+   "https://images.dog.ceo/breeds/rottweiler/n02106550_9432.jpg",
    "https://images.dog.ceo/breeds/rottweiler/n02106550_10048.jpg",
    "https://images.dog.ceo/breeds/rottweiler/n02106550_12073.jpg",
-   "https://images.dog.ceo/breeds/rottweiler/n02106550_3886.jpg",
-   "https://images.dog.ceo/breeds/rottweiler/n02106550_6192.jpg"
+   "https://images.dog.ceo/breeds/rottweiler/n02106550_3886.jpg"
   ]
  },
  "CCRT": {
   "api": "retriever/curly",
   "urls": [
+   "https://images.dog.ceo/breeds/retriever-curly/n02099429_2119.jpg",
    "https://images.dog.ceo/breeds/retriever-curly/n02099429_1039.jpg",
    "https://images.dog.ceo/breeds/retriever-curly/n02099429_1744.jpg",
-   "https://images.dog.ceo/breeds/retriever-curly/n02099429_2504.jpg",
-   "https://images.dog.ceo/breeds/retriever-curly/n02099429_3249.jpg"
+   "https://images.dog.ceo/breeds/retriever-curly/n02099429_2504.jpg"
   ]
  },
  "FCR": {
@@ -642,64 +642,64 @@
  "SAMO": {
   "api": "samoyed",
   "urls": [
+   "https://images.dog.ceo/breeds/samoyed/n02111889_5602.jpg",
    "https://images.dog.ceo/breeds/samoyed/n02111889_1.jpg",
    "https://images.dog.ceo/breeds/samoyed/n02111889_16283.jpg",
-   "https://images.dog.ceo/breeds/samoyed/n02111889_3345.jpg",
-   "https://images.dog.ceo/breeds/samoyed/n02111889_5786.jpg"
+   "https://images.dog.ceo/breeds/samoyed/n02111889_3345.jpg"
   ]
  },
  "SKIP": {
   "api": "schipperke",
   "urls": [
+   "https://images.dog.ceo/breeds/schipperke/n02104365_5411.jpg",
    "https://images.dog.ceo/breeds/schipperke/middy.jpg",
    "https://images.dog.ceo/breeds/schipperke/n02104365_3950.jpg",
-   "https://images.dog.ceo/breeds/schipperke/n02104365_6755.jpg",
-   "https://images.dog.ceo/breeds/schipperke/n02104365_8119.jpg"
+   "https://images.dog.ceo/breeds/schipperke/n02104365_6755.jpg"
   ]
  },
  "GSNZ": {
   "api": "schnauzer/giant",
   "urls": [
+   "https://images.dog.ceo/breeds/schnauzer-giant/n02097130_602.jpg",
    "https://images.dog.ceo/breeds/schnauzer-giant/cash.jpg",
    "https://images.dog.ceo/breeds/schnauzer-giant/n02097130_2164.jpg",
-   "https://images.dog.ceo/breeds/schnauzer-giant/n02097130_364.jpg",
-   "https://images.dog.ceo/breeds/schnauzer-giant/n02097130_5668.jpg"
+   "https://images.dog.ceo/breeds/schnauzer-giant/n02097130_364.jpg"
   ]
  },
  "MSNZ": {
   "api": "schnauzer/miniature",
   "urls": [
+   "https://images.dog.ceo/breeds/schnauzer-miniature/n02097047_6434.jpg",
    "https://images.dog.ceo/breeds/schnauzer-miniature/n02097047_1028.jpg",
    "https://images.dog.ceo/breeds/schnauzer-miniature/n02097047_1936.jpg",
-   "https://images.dog.ceo/breeds/schnauzer-miniature/n02097047_2871.jpg",
-   "https://images.dog.ceo/breeds/schnauzer-miniature/n02097047_535.jpg"
+   "https://images.dog.ceo/breeds/schnauzer-miniature/n02097047_2871.jpg"
   ]
  },
  "SSNZ": {
   "api": "schnauzer",
   "urls": [
+   "https://images.dog.ceo/breeds/schnauzer/n02097209_632.jpg",
    "https://images.dog.ceo/breeds/schnauzer/n02097209_1.jpg",
    "https://images.dog.ceo/breeds/schnauzer/n02097209_1889.jpg",
-   "https://images.dog.ceo/breeds/schnauzer/n02097209_2924.jpg",
-   "https://images.dog.ceo/breeds/schnauzer/n02097209_3911.jpg"
+   "https://images.dog.ceo/breeds/schnauzer/n02097209_2924.jpg"
   ]
  },
  "ESET": {
   "api": "setter/english",
   "urls": [
+   "https://images.dog.ceo/breeds/setter-english/n02100735_5353.jpg",
    "https://images.dog.ceo/breeds/setter-english/englishsetter-mabel.jpg",
    "https://images.dog.ceo/breeds/setter-english/n02100735_3185.jpg",
-   "https://images.dog.ceo/breeds/setter-english/n02100735_4949.jpg",
-   "https://images.dog.ceo/breeds/setter-english/n02100735_7078.jpg"
+   "https://images.dog.ceo/breeds/setter-english/n02100735_4949.jpg"
   ]
  },
  "GORD": {
   "api": "setter/gordon",
   "urls": [
+   "https://images.dog.ceo/breeds/setter-gordon/n02101006_3422.jpg",
    "https://images.dog.ceo/breeds/setter-gordon/n02101006_1016.jpg",
    "https://images.dog.ceo/breeds/setter-gordon/n02101006_1934.jpg",
-   "https://images.dog.ceo/breeds/setter-gordon/n02101006_3026.jpg",
-   "https://images.dog.ceo/breeds/setter-gordon/n02101006_489.jpg"
+   "https://images.dog.ceo/breeds/setter-gordon/n02101006_3026.jpg"
   ]
  },
  "ISET": {
@@ -720,10 +720,10 @@
  "OES": {
   "api": "sheepdog/english",
   "urls": [
+   "https://images.dog.ceo/breeds/sheepdog-english/n02105641_5776.jpg",
    "https://images.dog.ceo/breeds/sheepdog-english/finnigan_chair_sml.jpg",
    "https://images.dog.ceo/breeds/sheepdog-english/n02105641_13952.jpg",
-   "https://images.dog.ceo/breeds/sheepdog-english/n02105641_3800.jpg",
-   "https://images.dog.ceo/breeds/sheepdog-english/n02105641_696.jpg"
+   "https://images.dog.ceo/breeds/sheepdog-english/n02105641_3800.jpg"
   ]
  },
  "SSHP": {
@@ -756,10 +756,10 @@
  "CKCS": {
   "api": "spaniel/blenheim",
   "urls": [
+   "https://images.dog.ceo/breeds/spaniel-blenheim/n02086646_2891.jpg",
    "https://images.dog.ceo/breeds/spaniel-blenheim/n02086646_1002.jpg",
    "https://images.dog.ceo/breeds/spaniel-blenheim/n02086646_20.jpg",
-   "https://images.dog.ceo/breeds/spaniel-blenheim/n02086646_3053.jpg",
-   "https://images.dog.ceo/breeds/spaniel-blenheim/n02086646_3986.jpg"
+   "https://images.dog.ceo/breeds/spaniel-blenheim/n02086646_3053.jpg"
   ]
  },
  "BRIT": {
@@ -774,37 +774,37 @@
  "ECKR": {
   "api": "spaniel/cocker",
   "urls": [
+   "https://images.dog.ceo/breeds/spaniel-cocker/n02102318_9495.jpg",
    "https://images.dog.ceo/breeds/spaniel-cocker/audrey.jpg",
    "https://images.dog.ceo/breeds/spaniel-cocker/n02102318_11141.jpg",
-   "https://images.dog.ceo/breeds/spaniel-cocker/n02102318_2226.jpg",
-   "https://images.dog.ceo/breeds/spaniel-cocker/n02102318_7110.jpg"
+   "https://images.dog.ceo/breeds/spaniel-cocker/n02102318_2226.jpg"
   ]
  },
  "IWSP": {
   "api": "spaniel/irish",
   "urls": [
+   "https://images.dog.ceo/breeds/spaniel-irish/n02102973_4566.jpg",
    "https://images.dog.ceo/breeds/spaniel-irish/n02102973_1037.jpg",
    "https://images.dog.ceo/breeds/spaniel-irish/n02102973_2384.jpg",
-   "https://images.dog.ceo/breeds/spaniel-irish/n02102973_356.jpg",
-   "https://images.dog.ceo/breeds/spaniel-irish/n02102973_4566.jpg"
+   "https://images.dog.ceo/breeds/spaniel-irish/n02102973_356.jpg"
   ]
  },
  "CHIN": {
   "api": "spaniel/japanese",
   "urls": [
+   "https://images.dog.ceo/breeds/spaniel-japanese/n02085782_665.jpg",
    "https://images.dog.ceo/breeds/spaniel-japanese/n02085782_1039.jpg",
    "https://images.dog.ceo/breeds/spaniel-japanese/n02085782_1949.jpg",
-   "https://images.dog.ceo/breeds/spaniel-japanese/n02085782_3052.jpg",
-   "https://images.dog.ceo/breeds/spaniel-japanese/n02085782_435.jpg"
+   "https://images.dog.ceo/breeds/spaniel-japanese/n02085782_3052.jpg"
   ]
  },
  "ESSP": {
   "api": "springer/english",
   "urls": [
+   "https://images.dog.ceo/breeds/springer-english/n02102040_6846.jpg",
    "https://images.dog.ceo/breeds/springer-english/n02100735_216.jpg",
    "https://images.dog.ceo/breeds/springer-english/n02102040_2764.jpg",
-   "https://images.dog.ceo/breeds/springer-english/n02102040_4250.jpg",
-   "https://images.dog.ceo/breeds/springer-english/n02102040_6763.jpg"
+   "https://images.dog.ceo/breeds/springer-english/n02102040_4250.jpg"
   ]
  },
  "STBD": {
@@ -819,28 +819,28 @@
  "AMST": {
   "api": "terrier/american",
   "urls": [
+   "https://images.dog.ceo/breeds/terrier-american/n02093428_19652.jpg",
    "https://images.dog.ceo/breeds/terrier-american/n02093428_10164.jpg",
    "https://images.dog.ceo/breeds/terrier-american/n02093428_14706.jpg",
-   "https://images.dog.ceo/breeds/terrier-american/n02093428_2576.jpg",
-   "https://images.dog.ceo/breeds/terrier-american/n02093428_5165.jpg"
+   "https://images.dog.ceo/breeds/terrier-american/n02093428_2576.jpg"
   ]
  },
  "AUST": {
   "api": "terrier/australian",
   "urls": [
+   "https://images.dog.ceo/breeds/terrier-australian/n02096294_2580.jpg",
    "https://images.dog.ceo/breeds/terrier-australian/fb_img_1596625396617.jpg",
    "https://images.dog.ceo/breeds/terrier-australian/n02096294_2432.jpg",
-   "https://images.dog.ceo/breeds/terrier-australian/n02096294_4492.jpg",
-   "https://images.dog.ceo/breeds/terrier-australian/n02096294_6931.jpg"
+   "https://images.dog.ceo/breeds/terrier-australian/n02096294_4492.jpg"
   ]
  },
  "BEDT": {
   "api": "terrier/bedlington",
   "urls": [
+   "https://images.dog.ceo/breeds/terrier-bedlington/n02093647_1412.jpg",
    "https://images.dog.ceo/breeds/terrier-bedlington/n02093647_1022.jpg",
    "https://images.dog.ceo/breeds/terrier-bedlington/n02093647_172.jpg",
-   "https://images.dog.ceo/breeds/terrier-bedlington/n02093647_2477.jpg",
-   "https://images.dog.ceo/breeds/terrier-bedlington/n02093647_322.jpg"
+   "https://images.dog.ceo/breeds/terrier-bedlington/n02093647_2477.jpg"
   ]
  },
  "BORT": {
@@ -864,10 +864,10 @@
  "WFOX": {
   "api": "terrier/fox",
   "urls": [
+   "https://images.dog.ceo/breeds/terrier-fox/n02095314_963.jpg",
    "https://images.dog.ceo/breeds/terrier-fox/n02095314_1033.jpg",
    "https://images.dog.ceo/breeds/terrier-fox/n02095314_1917.jpg",
-   "https://images.dog.ceo/breeds/terrier-fox/n02095314_2803.jpg",
-   "https://images.dog.ceo/breeds/terrier-fox/n02095314_3451.jpg"
+   "https://images.dog.ceo/breeds/terrier-fox/n02095314_2803.jpg"
   ]
  },
  "IRIT": {
@@ -909,28 +909,28 @@
  "JACK": {
   "api": "terrier/russell",
   "urls": [
+   "https://images.dog.ceo/breeds/terrier-russell/iguet5.jpg",
    "https://images.dog.ceo/breeds/terrier-russell/iguet1.jpg",
    "https://images.dog.ceo/breeds/terrier-russell/img_0236.jpg",
-   "https://images.dog.ceo/breeds/terrier-russell/img_7632.jpg",
-   "https://images.dog.ceo/breeds/terrier-russell/jack-koda-1.jpg"
+   "https://images.dog.ceo/breeds/terrier-russell/img_7632.jpg"
   ]
  },
  "SCOT": {
   "api": "terrier/scottish",
   "urls": [
+   "https://images.dog.ceo/breeds/terrier-scottish/n02097298_4565.jpg",
    "https://images.dog.ceo/breeds/terrier-scottish/n02097298_1007.jpg",
    "https://images.dog.ceo/breeds/terrier-scottish/n02097298_2583.jpg",
-   "https://images.dog.ceo/breeds/terrier-scottish/n02097298_4640.jpg",
-   "https://images.dog.ceo/breeds/terrier-scottish/n02097298_8101.jpg"
+   "https://images.dog.ceo/breeds/terrier-scottish/n02097298_4640.jpg"
   ]
  },
  "SILK": {
   "api": "terrier/silky",
   "urls": [
+   "https://images.dog.ceo/breeds/terrier-silky/n02097658_2329.jpg",
    "https://images.dog.ceo/breeds/terrier-silky/n02097658_10020.jpg",
    "https://images.dog.ceo/breeds/terrier-silky/n02097658_1910.jpg",
-   "https://images.dog.ceo/breeds/terrier-silky/n02097658_366.jpg",
-   "https://images.dog.ceo/breeds/terrier-silky/n02097658_6672.jpg"
+   "https://images.dog.ceo/breeds/terrier-silky/n02097658_366.jpg"
   ]
  },
  "TIBT": {
@@ -945,19 +945,19 @@
  "WHWT": {
   "api": "terrier/westhighland",
   "urls": [
+   "https://images.dog.ceo/breeds/terrier-westhighland/n02098286_1591.jpg",
    "https://images.dog.ceo/breeds/terrier-westhighland/0b8855bd-51dd-48db-b39e-14510b379441.jpg",
    "https://images.dog.ceo/breeds/terrier-westhighland/n02098286_238.jpg",
-   "https://images.dog.ceo/breeds/terrier-westhighland/n02098286_3995.jpg",
-   "https://images.dog.ceo/breeds/terrier-westhighland/n02098286_5472.jpg"
+   "https://images.dog.ceo/breeds/terrier-westhighland/n02098286_3995.jpg"
   ]
  },
  "SCWT": {
   "api": "terrier/wheaten",
   "urls": [
+   "https://images.dog.ceo/breeds/terrier-wheaten/n02098105_2256.jpg",
    "https://images.dog.ceo/breeds/terrier-wheaten/clementine.jpg",
    "https://images.dog.ceo/breeds/terrier-wheaten/n02098105_1789.jpg",
-   "https://images.dog.ceo/breeds/terrier-wheaten/n02098105_2744.jpg",
-   "https://images.dog.ceo/breeds/terrier-wheaten/n02098105_3865.jpg"
+   "https://images.dog.ceo/breeds/terrier-wheaten/n02098105_2744.jpg"
   ]
  },
  "YORK": {
@@ -972,19 +972,19 @@
  "TURV": {
   "api": "tervuren",
   "urls": [
+   "https://images.dog.ceo/breeds/tervuren/yoda_in_garden.jpg",
    "https://images.dog.ceo/breeds/tervuren/maverick.jpg",
    "https://images.dog.ceo/breeds/tervuren/shadow_and_frisbee.jpg",
-   "https://images.dog.ceo/breeds/tervuren/yoda_in_car.jpg",
-   "https://images.dog.ceo/breeds/tervuren/yoda_in_sofa.jpg"
+   "https://images.dog.ceo/breeds/tervuren/yoda_in_car.jpg"
   ]
  },
  "BELS": {
   "api": "groenendael",
   "urls": [
+   "https://images.dog.ceo/breeds/groenendael/n02105056_3322.jpg",
    "https://images.dog.ceo/breeds/groenendael/n02105056_1050.jpg",
    "https://images.dog.ceo/breeds/groenendael/n02105056_3348.jpg",
-   "https://images.dog.ceo/breeds/groenendael/n02105056_4766.jpg",
-   "https://images.dog.ceo/breeds/groenendael/n02105056_6363.jpg"
+   "https://images.dog.ceo/breeds/groenendael/n02105056_4766.jpg"
   ]
  },
  "VIZS": {
@@ -1008,10 +1008,10 @@
  "WHIP": {
   "api": "whippet",
   "urls": [
+   "https://images.dog.ceo/breeds/whippet/n02091134_10242.jpg",
    "https://images.dog.ceo/breeds/whippet/n02091134_10107.jpg",
    "https://images.dog.ceo/breeds/whippet/n02091134_13467.jpg",
-   "https://images.dog.ceo/breeds/whippet/n02091134_16794.jpg",
-   "https://images.dog.ceo/breeds/whippet/n02091134_39.jpg"
+   "https://images.dog.ceo/breeds/whippet/n02091134_16794.jpg"
   ]
  },
  "IWOF": {
@@ -1026,10 +1026,10 @@
  "BMD": {
   "api": "mountain/bernese",
   "urls": [
+   "https://images.dog.ceo/breeds/mountain-bernese/n02107683_1244.jpg",
    "https://images.dog.ceo/breeds/mountain-bernese/img_20190828_122716.jpg",
    "https://images.dog.ceo/breeds/mountain-bernese/n02107683_2734.jpg",
-   "https://images.dog.ceo/breeds/mountain-bernese/n02107683_4183.jpg",
-   "https://images.dog.ceo/breeds/mountain-bernese/n02107683_5363.jpg"
+   "https://images.dog.ceo/breeds/mountain-bernese/n02107683_4183.jpg"
   ]
  },
  "GSMD": {

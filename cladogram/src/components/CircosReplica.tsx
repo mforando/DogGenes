@@ -78,7 +78,7 @@ export default function CircosReplica({ embedded = false }: { embedded?: boolean
                 the same order as the family tree. A ribbon connects two breeds from different
                 family groups that share an unusually big amount of DNA, a sign that they were
                 crossed in the last couple of centuries. Wider ribbons mean more shared DNA.{" "}
-                {embedded ? <a href="#c-blocks">Back to the walkthrough ↑</a> : <Link href="/#c-blocks">Walk me through it →</Link>}
+                {embedded ? <a href="#c-blocks">Back to the walkthrough ↑</a> : <Link href="/tree#c-blocks">Walk me through it →</Link>}
               </p>
               <p className="replica-orig">
                 Original title and caption: &ldquo;Haplotype sharing between breeds from different phylogenetic clades. The circos plot is ordered and colored to match the

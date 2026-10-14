@@ -73,14 +73,15 @@ export function Specimens({
 }
 
 const PAGES = [
-  { href: "/history", label: "The history of dogs" },
-  { href: "/", label: "Family tree & DNA web" },
+  { href: "/", label: "The history of dogs" },
+  { href: "/tree", label: "Family tree & DNA web" },
   { href: "/purpose", label: "Bred for purpose" },
   { href: "/geography", label: "Where they came from" },
   { href: "/explorer", label: "Breed Explorer" },
   { href: "/health", label: "Health & heredity" },
   { href: "/names", label: "How we name our dogs" },
   { href: "/popularity", label: "Most popular breeds" },
+  { href: "/game", label: "Dog Breed Game" },
 ];
 
 export function SiteNav() {

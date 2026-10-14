@@ -15,6 +15,12 @@ const PER_BREED = 4;
 
 /** study breed code → Dog CEO "breed" or "breed/sub-breed" (shared with build-explorer.py) */
 const MAP = JSON.parse(readFileSync(join(root, "scripts/dogceo-map.json"), "utf8"));
+/**
+ * Hand-checked first photos (study code → file in the breed's folder): picked so the whole
+ * dog shows in the chart tooltips' wide crop (using the Stanford Dogs bounding boxes where
+ * available, by eye otherwise). The first photo is the one shown everywhere.
+ */
+const FIRST = JSON.parse(readFileSync(join(root, "scripts/photo-overrides.json"), "utf8"));
 
 const out = {};
 const missing = [];
@@ -35,7 +41,9 @@ for (const [code, path] of Object.entries(MAP)) {
   // Evenly spaced picks keep the selection stable between runs.
   const step = urls.length / PER_BREED;
   const picks = [...new Set(Array.from({ length: Math.min(PER_BREED, urls.length) }, (_, i) => urls[Math.floor(i * step)]))];
-  out[code] = { api: path, urls: picks };
+  const first = FIRST[code] ? `https://images.dog.ceo/breeds/${path.replace("/", "-")}/${FIRST[code]}` : null;
+  const ordered = first ? [first, ...picks.filter((u) => u !== first)].slice(0, PER_BREED) : picks;
+  out[code] = { api: path, urls: ordered };
 }
 
 writeFileSync(join(root, "src/data/photos.json"), JSON.stringify(out, null, 1));

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { TermCard, type TermId } from "./Primer";
+import LevelToggle from "./LevelToggle";
 
 /**
  * A red "?" fixed in the top-right corner while the glossary or the scroller is on screen.
@@ -13,23 +14,30 @@ export default function GlossaryButton({ terms, watch }: { terms: TermId[]; watc
   const btn = useRef<HTMLButtonElement>(null);
   const closeBtn = useRef<HTMLButtonElement>(null);
 
-  // Show it while any watched section (the glossary, the scroller) is in view.
+  // Show it from the moment the glossary's top enters the screen until the scroller's
+  // bottom leaves it, computed straight from scroll position on every frame that scrolls.
   useEffect(() => {
-    const els = watch.map((sel) => document.querySelector(sel)).filter((e): e is Element => !!e);
-    const onScreen = new Set<Element>();
-    const io = new IntersectionObserver(
-      (entries) => {
-        for (const e of entries) {
-          if (e.isIntersecting) onScreen.add(e.target);
-          else onScreen.delete(e.target);
-        }
-        setVisible(onScreen.size > 0);
-      },
-      // A section only counts once it's 80px into the screen (not just touching an edge).
-      { rootMargin: "-80px 0px -80px 0px" },
-    );
-    els.forEach((el) => io.observe(el));
-    return () => io.disconnect();
+    const first = document.querySelector(watch[0]);
+    const last = document.querySelector(watch[watch.length - 1]);
+    if (!first || !last) return;
+    let raf = 0;
+    const check = () => {
+      raf = 0;
+      const top = first.getBoundingClientRect().top;
+      const bottom = last.getBoundingClientRect().bottom;
+      setVisible(top < window.innerHeight - 80 && bottom > 80);
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(check);
+    };
+    check();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
   }, [watch]);
 
   // While open: Escape closes, the page behind doesn't scroll, and focus moves into the dialog.
@@ -53,6 +61,7 @@ export default function GlossaryButton({ terms, watch }: { terms: TermId[]; watc
   return (
     <>
       <div className={`gloss${visible ? " on" : ""}`}>
+        <LevelToggle className="level-fixed" />
         <button
           ref={btn}
           type="button"

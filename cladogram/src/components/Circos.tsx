@@ -35,6 +35,8 @@ const INK = "#e9e2d0";
 /** Sister groups up to this many breeds get white lines all the way to their blocks. */
 const RELATIVE_LIMIT = 6;
 const DIM = "#2c3430";
+/** Labels of breeds that share DNA with the selected breed (full chart). */
+const CYAN = "#5fd3e2";
 const W = CGEOM.size;
 const mb = (v: number) => `${(v / 1e6).toFixed(1)} Mb`;
 const pol = (a: number, r: number): [number, number] => [r * Math.sin(a), -r * Math.cos(a)];
@@ -220,7 +222,10 @@ export default function Circos({
     let hoverRibbon: CLink | null = null;
 
     /** Trace tree paths: a breed back to the grey wolf, or two breeds to their meeting point. */
+    /** Breeds (tree codes) on white relative lines of the traced breed's path to the wolf. */
+    let relatives = new Set<string>();
     function drawTreePaths(v: CircosView) {
+      relatives = new Set();
       type Seg = { key: string; n: CTNode; color: string; w: number; stub?: boolean };
       const segs: Seg[] = [];
       const marks: { key: string; n: CTNode; label: string }[] = [];
@@ -260,6 +265,7 @@ export default function Circos({
                   segs.push({ key: `w${sis.data.id}`, n: sis, color: INK, w: 1, stub: true });
                   continue;
                 }
+                kin.forEach((c) => relatives.add(c));
                 for (const n of sis.descendants() as CTNode[]) {
                   if (codesOf(n).every((c) => skip.has(c))) continue;
                   segs.push({ key: `w${n.data.id}`, n, color: INK, w: 1 });
@@ -339,15 +345,26 @@ export default function Circos({
       const isEnd = (d: CNode) => hasFocus && !on(d) && ends.has(d.code);
       // Hovering a block keeps its partners' blocks in color, as before.
       segSel.transition(T).attr("fill", (d) => (on(d) || (hoverOn && !spot && isEnd(d)) ? d.color : DIM));
-      labelSel
-        .classed("hi", (d) => hasFocus && on(d))
-        .transition(T)
-        .attr("fill", (d) => (on(d) ? (hasFocus ? "#fffaf0" : "#b9b3a3") : isEnd(d) ? "#ffffff" : "#4a524c"))
-        .attr("fill-opacity", (d) => (isEnd(d) ? 0.6 : 1));
       gClade.transition(T).attr("opacity", v.cladeRing ? 1 : 0);
       cladeHits.attr("pointer-events", v.cladeRing ? null : "none");
       gTree.transition(T).attr("opacity", v.tree ? 1 : 0);
       drawTreePaths(v);
+
+      // With one breed selected on the full chart (tree drawn): its DNA partners in other
+      // families are cyan, and the relatives along its family line back to the wolf are white.
+      const selBreed = v.tree ? (hoverOn ? h : v.treePath ?? null) : null;
+      const partners = new Set(selBreed ? partnersOf(selBreed).map((p) => p.code) : []);
+      const isPartner = (d: CNode) => !!selBreed && partners.has(d.code);
+      const isKin = (d: CNode) => !!selBreed && d.code !== selBreed && !isPartner(d) && relatives.has(treeCodeOf(d.code));
+      labelSel
+        .classed("hi", (d) => (hasFocus && on(d)) || isPartner(d) || isKin(d))
+        .classed("partner", isPartner)
+        .classed("kin", isKin)
+        .transition(T)
+        .attr("fill", (d) =>
+          isPartner(d) ? CYAN : isKin(d) ? "#fffaf0" : on(d) ? (hasFocus ? "#fffaf0" : "#b9b3a3") : isEnd(d) ? "#ffffff" : "#4a524c",
+        )
+        .attr("fill-opacity", (d) => (isPartner(d) || isKin(d) ? 1 : isEnd(d) ? 0.6 : 1));
       gStart.transition(T).attr("opacity", v.start ? 1 : 0);
 
       const many = shown.length > 40;
@@ -440,40 +457,50 @@ export default function Circos({
       place(ev);
     }
 
-    segSel
-      .on("pointerenter focus", (ev, d) => {
-        if (current.frozen) return;
-        showSegTip(ev, d);
-        onHoverRef.current?.({ kind: "breed", code: d.code });
-        if (current.interactive) {
-          hover = d.code;
-          render();
-        }
-      })
-      .on("pointermove", (ev, d) => showSegTip(ev, d))
-      .on("pointerleave blur", () => {
-        tip.classed("on", false);
-        if (current.frozen) return;
-        onHoverRef.current?.(null);
-        if (current.interactive && hover) {
-          hover = null;
-          render();
-        }
-      });
+    // Blocks and their name labels respond alike: hover for details, click to lock.
+    function enterBreed(ev: PointerEvent | FocusEvent, d: CNode) {
+      if (current.frozen) return;
+      showSegTip(ev, d);
+      onHoverRef.current?.({ kind: "breed", code: d.code });
+      if (current.interactive) {
+        hover = d.code;
+        render();
+      }
+    }
+    function leaveBreed() {
+      tip.classed("on", false);
+      if (current.frozen) return;
+      onHoverRef.current?.(null);
+      if (current.interactive && hover) {
+        hover = null;
+        render();
+      }
+    }
+    function clickBreed(ev: MouseEvent, d: CNode) {
+      if (!onBreedClickRef.current) return;
+      ev.stopPropagation();
+      onBreedClickRef.current(d.code);
+    }
 
-    // Click a block to lock onto it; click again (anywhere on the chart) to go back.
     segSel
-      .on("click", (ev: MouseEvent, d) => {
-        if (!onBreedClickRef.current) return;
-        ev.stopPropagation();
-        onBreedClickRef.current(d.code);
-      })
+      .on("pointerenter focus", enterBreed)
+      .on("pointermove", (ev, d) => showSegTip(ev, d))
+      .on("pointerleave blur", leaveBreed)
+      // Click a block to lock onto it; click again (anywhere on the chart) to go back.
+      .on("click", clickBreed)
       .on("keydown", (ev: KeyboardEvent, d) => {
         if ((ev.key === "Enter" || ev.key === " ") && onBreedClickRef.current) {
           ev.preventDefault();
           onBreedClickRef.current(d.code);
         }
       });
+    // Labels: pointer only (the block already gives keyboard users a tab stop).
+    labelSel
+      .classed("clickable", () => !!onBreedClickRef.current || !!onHoverRef.current)
+      .on("pointerenter", enterBreed)
+      .on("pointermove", (ev, d) => showSegTip(ev, d))
+      .on("pointerleave", leaveBreed)
+      .on("click", clickBreed);
     svg.on("click", () => onBgClickRef.current?.());
 
     api.current = {

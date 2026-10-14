@@ -7,6 +7,7 @@ import type { GeometryCollection, Topology } from "topojson-specification";
 import world from "world-atlas/countries-110m.json";
 import { PINS, type Pin } from "@/lib/origins";
 import { data } from "@/lib/tree";
+import { photoOf } from "@/lib/photos";
 
 export type FlyTarget = { lat: number; lon: number; k: number; id: number };
 
@@ -17,6 +18,8 @@ type Props = {
   selected: string | null;
   onSelect: (code: string | null) => void;
   fly: FlyTarget | null;
+  /** Hovering (or focusing) a dot reports its breed; leaving reports null. */
+  onHover?: (code: string | null) => void;
 };
 
 const topo = world as unknown as Topology<{ countries: GeometryCollection }>;
@@ -25,7 +28,9 @@ const borders = mesh(topo, topo.objects.countries, (a, b) => a !== b);
 const graticule = d3.geoGraticule10();
 
 /** A draggable, zoomable 3D globe (orthographic projection) with one dot per breed. */
-export default function Globe({ colorOf, highlight, selected, onSelect, fly }: Props) {
+export default function Globe({ colorOf, highlight, selected, onSelect, fly, onHover }: Props) {
+  const onHoverRef = useRef(onHover);
+  onHoverRef.current = onHover;
   const host = useRef<HTMLDivElement>(null);
   const api = useRef<{
     style: (p: Pick<Props, "colorOf" | "highlight" | "selected">) => void;
@@ -79,9 +84,12 @@ export default function Globe({ colorOf, highlight, selected, onSelect, fly }: P
       .attr("tabindex", 0)
       .attr("role", "button")
       .attr("aria-label", (d) => `${data.breeds[d.code].name}, from ${d.place}, ${d.country}`)
+      .on("pointerenter.report focus.report", (_, d) => onHoverRef.current?.(d.code))
       .on("pointerenter pointermove", (ev: PointerEvent, d) => {
+        const photo = photoOf(d.code);
         tip.html(
-          `<div class="tip-name">${data.breeds[d.code].name}</div>
+          `${photo ? `<img class="tip-photo" src="${photo}" alt="" referrerpolicy="no-referrer" />` : ""}
+           <div class="tip-name">${data.breeds[d.code].name}</div>
            <div class="tip-sub">${d.place}${d.place === d.country ? "" : ` · ${d.country}`}</div>`,
         ).classed("on", true);
         const box = el.getBoundingClientRect();
@@ -89,7 +97,10 @@ export default function Globe({ colorOf, highlight, selected, onSelect, fly }: P
         tip.style("left", `${Math.min(ev.clientX - box.left + 14, box.width - t.offsetWidth - 6)}px`)
           .style("top", `${Math.min(ev.clientY - box.top + 14, box.height - t.offsetHeight - 6)}px`);
       })
-      .on("pointerleave blur", () => tip.classed("on", false))
+      .on("pointerleave blur", () => {
+        tip.classed("on", false);
+        onHoverRef.current?.(null);
+      })
       .on("click", (ev: MouseEvent, d) => {
         ev.stopPropagation();
         onSelectRef.current(d.code);

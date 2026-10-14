@@ -35,6 +35,9 @@ The license summary at the end explains what those licenses mean for reusing thi
 
 ## 3. Dog photos
 
+The wolf-to-dog face morph on the history page uses the grey wolf portrait "[Loup gris (Canis lupus)](https://commons.wikimedia.org/wiki/File:Loup_gris_(Canis_lupus_).jpg)" by Clément Bardot (**CC BY-SA 4.0**, cropped to the face, `cladogram/public/faces/grey-wolf.jpg`) and ten Dog CEO photos cropped to the face. The morph video (`cladogram/public/faces/evolution.mp4`, rendered by `cladogram/scripts/face-morph/`) adapts the wolf portrait, so it is shared under the same **CC BY-SA 4.0** license.
+
+
 | Source | Used for | License |
 |---|---|---|
 | [Dog CEO API](https://dog.ceo/dog-api/) — image repository [jigsawpieces/dog-api-images](https://github.com/jigsawpieces/dog-api-images) | All dog photos: breed cards, tooltips, galleries, the Breed Explorer (18,006 photos as thumbnails in `cladogram/public/explorer/`) | Repository: **GPL-3.0**. Its images come from the Stanford Dogs Dataset plus user submissions. |
@@ -184,6 +187,15 @@ Photos are shown as published (scaled and cropped to circles or squares on the s
 | American Kennel Club, "Most Popular Dog Breeds" announcements for [2021](https://www.akc.org/expert-advice/dog-breeds/most-popular-dog-breeds-of-2021/), [2022](https://www.akc.org/expert-advice/news/most-popular-dog-breeds-2022/), [2023](https://www.akc.org/expert-advice/news/most-popular-dog-breeds-2023/), [2024](https://www.akc.org/expert-advice/news/most-popular-dog-breeds-2024/) and [2025](https://www.akc.org/expert-advice/news/most-popular-dog-breeds-2025/) | Full breed rankings 2021–2025 (`cladogram/src/data/akc.json`) | Rankings are facts; AKC web pages © American Kennel Club |
 | K. Kakey, [dog_traits_AKC](https://github.com/kkakey/dog_traits_AKC), via R4DS [TidyTuesday 2022-02-01](https://github.com/rfordatascience/tidytuesday/tree/main/data/2022/2022-02-01) (`breed_rank.csv`) | Breed rankings 2013–2020 (AKC registration statistics) | Repository **CC0 1.0**; underlying data from the AKC |
 | AKC, "[Top Ten Breeds of the 1940s](https://www.akc.org/expert-advice/lifestyle/did-you-know/top-ten-breeds-of-the-1940s/)"; Wikipedia contributors, "[Beagle](https://en.wikipedia.org/wiki/Beagle)", "[Poodle](https://en.wikipedia.org/wiki/Poodle)", "[American Cocker Spaniel](https://en.wikipedia.org/wiki/American_Cocker_Spaniel)" | Years each breed held #1, 1936–2012 (sources differ by a year on the Cocker Spaniel's second run) | Facts; Wikipedia **CC BY-SA 4.0** |
+
+## 6b. Dog Breed Game
+
+| Source | Used for | License |
+|---|---|---|
+| [Dog CEO API](https://dog.ceo/dog-api/) photos, mostly from the [Stanford Dogs Dataset](http://vision.stanford.edu/aditya86/ImageNetDogs/) (Khosla et al. 2011, built from ImageNet) | Quiz photos (8 per breed, `cladogram/src/data/game.json`, built by `cladogram/scripts/build-dog-game.py`) | ImageNet terms: **non-commercial research and education** |
+| He, K. et al. (2016), "Deep Residual Learning for Image Recognition" — ResNet-50 with [torchvision](https://pytorch.org/vision/stable/models/generated/torchvision.models.resnet50.html) `IMAGENET1K_V2` pretrained weights | The AI's top-3 breed guesses for every quiz photo, computed ahead of time | torchvision code **BSD-3-Clause**; weights trained on ImageNet (non-commercial research terms) |
+| American Kennel Club 2025 rankings (see section 6) | Easy (top 30) and Medium (top 60) breed pools | Facts |
+| Parker et al. 2017 clades and haplotype sharing (section 1) | Harder wrong answers: a breed from the same clade and one from another clade that shares DNA | **CC BY 4.0** |
 
 ## 7. Maps
 

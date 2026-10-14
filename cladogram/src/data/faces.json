@@ -1,0 +1,212 @@
+{
+ "video": "faces/evolution.mp4",
+ "poster": "faces/grey-wolf.jpg",
+ "duration": 66,
+ "credit": {
+  "author": "Clément Bardot",
+  "license": "CC BY-SA 4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Loup_gris_(Canis_lupus_).jpg"
+ },
+ "segments": [
+  {
+   "start": 0,
+   "kind": "hold",
+   "name": "Grey wolf"
+  },
+  {
+   "start": 1,
+   "kind": "morph",
+   "name": "Golden Retriever"
+  },
+  {
+   "start": 3,
+   "kind": "hold",
+   "name": "Golden Retriever"
+  },
+  {
+   "start": 4.6,
+   "kind": "morph",
+   "name": "Grey wolf"
+  },
+  {
+   "start": 6.6,
+   "kind": "hold",
+   "name": "Grey wolf"
+  },
+  {
+   "start": 7.6,
+   "kind": "morph",
+   "name": "German Shepherd"
+  },
+  {
+   "start": 9.6,
+   "kind": "hold",
+   "name": "German Shepherd"
+  },
+  {
+   "start": 11.2,
+   "kind": "morph",
+   "name": "Grey wolf"
+  },
+  {
+   "start": 13.2,
+   "kind": "hold",
+   "name": "Grey wolf"
+  },
+  {
+   "start": 14.2,
+   "kind": "morph",
+   "name": "Siberian Husky"
+  },
+  {
+   "start": 16.2,
+   "kind": "hold",
+   "name": "Siberian Husky"
+  },
+  {
+   "start": 17.8,
+   "kind": "morph",
+   "name": "Grey wolf"
+  },
+  {
+   "start": 19.8,
+   "kind": "hold",
+   "name": "Grey wolf"
+  },
+  {
+   "start": 20.8,
+   "kind": "morph",
+   "name": "Beagle"
+  },
+  {
+   "start": 22.8,
+   "kind": "hold",
+   "name": "Beagle"
+  },
+  {
+   "start": 24.4,
+   "kind": "morph",
+   "name": "Grey wolf"
+  },
+  {
+   "start": 26.4,
+   "kind": "hold",
+   "name": "Grey wolf"
+  },
+  {
+   "start": 27.4,
+   "kind": "morph",
+   "name": "Pug"
+  },
+  {
+   "start": 29.4,
+   "kind": "hold",
+   "name": "Pug"
+  },
+  {
+   "start": 31,
+   "kind": "morph",
+   "name": "Grey wolf"
+  },
+  {
+   "start": 33,
+   "kind": "hold",
+   "name": "Grey wolf"
+  },
+  {
+   "start": 34,
+   "kind": "morph",
+   "name": "Border Collie"
+  },
+  {
+   "start": 36,
+   "kind": "hold",
+   "name": "Border Collie"
+  },
+  {
+   "start": 37.6,
+   "kind": "morph",
+   "name": "Grey wolf"
+  },
+  {
+   "start": 39.6,
+   "kind": "hold",
+   "name": "Grey wolf"
+  },
+  {
+   "start": 40.6,
+   "kind": "morph",
+   "name": "Boxer"
+  },
+  {
+   "start": 42.6,
+   "kind": "hold",
+   "name": "Boxer"
+  },
+  {
+   "start": 44.2,
+   "kind": "morph",
+   "name": "Grey wolf"
+  },
+  {
+   "start": 46.2,
+   "kind": "hold",
+   "name": "Grey wolf"
+  },
+  {
+   "start": 47.2,
+   "kind": "morph",
+   "name": "Pembroke Welsh Corgi"
+  },
+  {
+   "start": 49.2,
+   "kind": "hold",
+   "name": "Pembroke Welsh Corgi"
+  },
+  {
+   "start": 50.8,
+   "kind": "morph",
+   "name": "Grey wolf"
+  },
+  {
+   "start": 52.8,
+   "kind": "hold",
+   "name": "Grey wolf"
+  },
+  {
+   "start": 53.8,
+   "kind": "morph",
+   "name": "Rottweiler"
+  },
+  {
+   "start": 55.8,
+   "kind": "hold",
+   "name": "Rottweiler"
+  },
+  {
+   "start": 57.4,
+   "kind": "morph",
+   "name": "Grey wolf"
+  },
+  {
+   "start": 59.4,
+   "kind": "hold",
+   "name": "Grey wolf"
+  },
+  {
+   "start": 60.4,
+   "kind": "morph",
+   "name": "Bernese Mountain Dog"
+  },
+  {
+   "start": 62.4,
+   "kind": "hold",
+   "name": "Bernese Mountain Dog"
+  },
+  {
+   "start": 64,
+   "kind": "morph",
+   "name": "Grey wolf"
+  }
+ ]
+}

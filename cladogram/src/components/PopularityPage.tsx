@@ -460,7 +460,7 @@ export default function PopularityPage() {
               <strong>Booms can narrow the gene pool.</strong> When demand surges, many puppies
               can come from relatively few breeding dogs, especially sought-after sires. That
               concentrates whatever they carry, including hidden disease variants (see{" "}
-              <Link href="/history#lineages">natural selection vs. breeding</Link>).
+              <Link href="/#lineages">natural selection vs. breeding</Link>).
             </li>
             <li>
               <strong>Looks in fashion are often genetic extremes.</strong> The French Bulldog and

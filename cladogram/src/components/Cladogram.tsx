@@ -11,6 +11,8 @@ type Props = {
   view: View;
   selected: string | null;
   onSelect: (code: string | null) => void;
+  /** Hovering (or focusing) a breed's wedge reports it; leaving reports null. */
+  onHover?: (code: string | null) => void;
 };
 
 type Pt = { a: number; r: number };
@@ -126,7 +128,9 @@ function cladeSpans(leaves: TNode[]) {
 const partnersOf = (code: string) =>
   data.links.filter(([a, b]) => a === code || b === code).map(([a, b, v]) => [a === code ? b : a, v] as const);
 
-export default function Cladogram({ view, selected, onSelect }: Props) {
+export default function Cladogram({ view, selected, onSelect, onHover }: Props) {
+  const onHoverRef = useRef(onHover);
+  onHoverRef.current = onHover;
   const host = useRef<HTMLDivElement>(null);
   const api = useRef<{ update: (v: View, sel: string | null) => void } | null>(null);
   const onSelectRef = useRef(onSelect);
@@ -283,7 +287,13 @@ export default function Cladogram({ view, selected, onSelect }: Props) {
     hitSel
       .on("pointermove", (ev, d) => showTip(ev, d))
       .on("focus", (ev, d) => showTip(ev, d))
-      .on("pointerleave blur", () => tip.classed("on", false))
+      .on("pointerenter.report focus.report", (_, d) => {
+        if (isLeaf(d) && d.data.code !== ANCESTOR) onHoverRef.current?.(d.data.code);
+      })
+      .on("pointerleave blur", () => {
+        tip.classed("on", false);
+        onHoverRef.current?.(null);
+      })
       .on("click", (_, d) => {
         if (!current.explore || !isLeaf(d)) return;
         onSelectRef.current(currentSel === d.data.code ? null : d.data.code);

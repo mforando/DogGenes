@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect } from "react";
+import FaceMorph from "./FaceMorph";
 import Timeline from "./Timeline";
 import { CITATION, SiteNav, useActiveStep } from "./shared";
 import { HISTORY_STEPS } from "@/lib/steps";
@@ -8,12 +10,21 @@ import { HISTORY_STEPS } from "@/lib/steps";
 /** The history of dogs: 40,000 years of domestication on a scroll-driven timeline. */
 export default function HistoryStory() {
   const { active, stepRef } = useActiveStep();
+  // The family tree used to be the home page: send old links to its sections
+  // (/#full-chart, /#breed-pairs, /#c-blocks, ...) on to /tree.
+  useEffect(() => {
+    const id = decodeURIComponent(window.location.hash.slice(1));
+    if (id && !document.getElementById(id)) {
+      window.location.replace(`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/tree/#${id}`);
+    }
+  }, []);
   const step = HISTORY_STEPS[active];
 
   return (
     <>
       <SiteNav />
       <header className="hero hero-history">
+        <FaceMorph />
         <div className="hero-inner">
           <p className="eyebrow">The history of dogs</p>
           <h1>
@@ -67,7 +78,7 @@ export default function HistoryStory() {
       </main>
 
       <section className="appendix history-next">
-        <Link href="/" className="history-cta">
+        <Link href="/tree" className="history-cta">
           <span className="history-cta-kicker">Next</span>
           <span className="history-cta-label">Learn more about the genetic history of dogs →</span>
         </Link>
