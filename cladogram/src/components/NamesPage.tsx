@@ -30,7 +30,7 @@ const TABS: { id: keyof typeof D.groups; label: string; blurb: string }[] = [
   { id: "size", label: "Size", blurb: "Typical adult weight of each dog's breed." },
   { id: "family", label: "Family group", blurb: "Family groups from this site's family tree. Breeds outside the study use their closest relative's group." },
   { id: "job", label: "Original job", blurb: "What each breed was first bred to do (from the Bred for purpose tab)." },
-  { id: "region", label: "Region of origin", blurb: "Where each breed was developed (from the Where they came from tab)." },
+  { id: "region", label: "Region of origin", blurb: "Where each breed was developed (from the breed origins globe on the Family tree tab)." },
 ];
 const NAMES = Object.keys(D.lookup).sort();
 const MORE = [...D.more_breeds].sort((a, b) => a.group.localeCompare(b.group));

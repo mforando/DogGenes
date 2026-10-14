@@ -116,7 +116,6 @@ const BY_PAGE: Record<string, Cite[]> = {
   "/": [C.wolfPhoto, C.wikiDomestication, C.wikiGlacial, C.wikiBonn, C.wikiPaleo, C.wikiBreeds, C.breedHistories, C.parker, C.parker2004, C.rosenberg, C.boyko, C.yengo, C.dogceo, C.commons, C.naturalEarth],
   "/tree": [C.parker, C.breedHistories, C.dogceo, C.commons, C.silhouettes],
   "/purpose": [C.parker, C.breedHistories, C.dogceo, C.commons],
-  "/geography": [C.breedHistories, C.parker, C.naturalEarth, C.dogceo, C.commons],
   "/explorer": [C.dogceo, C.commons, C.parker, C.breedHistories, C.naturalEarth, C.pudding],
   "/health": [C.parker, C.omia, C.donner, C.brown, C.marchant, C.karmi, C.dogwellnet, C.dap, C.dogceo, C.commons],
   "/names": [C.nyc, C.toronto, C.torontoCensus, C.acsAncestry, C.monroe, C.parker, C.dogceo, C.commons],

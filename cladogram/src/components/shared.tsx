@@ -76,7 +76,6 @@ const PAGES = [
   { href: "/", label: "The history of dogs" },
   { href: "/tree", label: "Family tree & DNA web" },
   { href: "/purpose", label: "Bred for purpose" },
-  { href: "/geography", label: "Where they came from" },
   { href: "/explorer", label: "Breed Explorer" },
   { href: "/health", label: "Health & heredity" },
   { href: "/names", label: "How we name our dogs" },

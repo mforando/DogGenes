@@ -10,7 +10,7 @@ const IDLE = "#b9b3a3";
 const DIM = "#4a5450";
 
 /**
- * The "Where they came from" globe, with one twist: clicking any breed's dot picks its whole
+ * The breed origins globe, with one twist: clicking any breed's dot picks its whole
  * continent, and the story's circle chart highlights every breed from there.
  */
 export default function ContinentGlobe({

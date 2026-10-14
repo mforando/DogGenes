@@ -1,7 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import Cladogram from "./Cladogram";
+import JobMap from "./JobMap";
 import { MixingBars, PurposeMatrix } from "./PurposeCharts";
 import { SiteNav } from "./shared";
 import { data } from "@/lib/tree";
@@ -19,6 +20,16 @@ export default function PurposePage() {
   const purpose = PURPOSES.find((p) => p.id === sel)!;
   const s = SUMMARIES.find((x) => x.id === sel)!;
   const view = useMemo<View>(() => ({ color: "clade", codes: s.codes, cladeRing: true }), [s]);
+  // A breed hovered on the map or in the photo gallery; each lights it up in the other.
+  const [hovered, setHovered] = useState<string | null>(null);
+  // Leaving one breed only clears the hover if nothing else has been entered since (the map's
+  // and the gallery's enter/leave events can arrive in either order).
+  const hover = useCallback((c: string, on: boolean) => setHovered((h) => (on ? c : h === c ? null : h)), []);
+  const famColor = (f: string) => (f === "_none" ? "#7d847e" : cladeColor(f));
+  const colorOf = useCallback(
+    (c: string) => famColor(s.families.find((f) => s.byFamily[f].includes(c))!),
+    [s],
+  );
 
   return (
     <>
@@ -65,7 +76,10 @@ export default function PurposePage() {
                 role="tab"
                 aria-selected={p.id === sel}
                 className={p.id === sel ? "on" : ""}
-                onClick={() => setSel(p.id)}
+                onClick={() => {
+                  setSel(p.id);
+                  setHovered(null);
+                }}
               >
                 {p.name}
               </button>
@@ -99,18 +113,28 @@ export default function PurposePage() {
                   {s.topPair.pct < 1 ? s.topPair.pct.toFixed(1) : Math.round(s.topPair.pct)}% of their DNA.
                 </p>
               )}
+              <div className="job-map-wrap">
+                <h4>Where they come from</h4>
+                <JobMap codes={s.codes} colorOf={colorOf} hovered={hovered} onHover={hover} />
+              </div>
             </div>
             <div className="job-gallery" aria-label={`${purpose.name} breeds by family`}>
-              {s.families.map((f) => (
+              <div className="job-masonry">
+              {[...s.families].sort((a, b) => s.byFamily[b].length - s.byFamily[a].length).map((f) => (
                 <section key={f}>
                   <h4>
-                    <i style={{ background: f === "_none" ? "#7d847e" : cladeColor(f) }} />
+                    <i style={{ background: famColor(f) }} />
                     {FAMILIES.find((x) => x.id === f)!.name}
                     <b>{s.byFamily[f].length}</b>
                   </h4>
                   <ul>
                     {s.byFamily[f].map((c) => (
-                      <li key={c}>
+                      <li
+                        key={c}
+                        className={hovered === c ? "is-on" : undefined}
+                        onPointerEnter={() => hover(c, true)}
+                        onPointerLeave={() => hover(c, false)}
+                      >
                         {photoOf(c) ? (
                           <img src={photoOf(c)} alt="" loading="lazy" referrerPolicy="no-referrer" />
                         ) : (
@@ -122,6 +146,7 @@ export default function PurposePage() {
                   </ul>
                 </section>
               ))}
+              </div>
             </div>
           </div>
         </section>

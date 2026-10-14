@@ -1,6 +1,6 @@
 import { ORIGINS } from "./origins";
 
-/** The world regions on the "Where they came from" tab (its fly-to buttons). `lat`/`lon`/`k` frame each one. */
+/** World regions (originally the fly-to buttons of the retired "Where they came from" tab). `lat`/`lon`/`k` frame each one. */
 export const REGIONS: { name: string; lat: number; lon: number; k: number }[] = [
   { name: "Whole world", lat: 25, lon: 10, k: 1 },
   { name: "British Isles", lat: 54.5, lon: -4, k: 6 },

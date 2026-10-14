@@ -716,7 +716,24 @@ body::before {
 .job-explore { width: 100vw; margin-left: calc(50% - 50vw); padding: 0 var(--gutter); box-sizing: border-box; --job-h: min(calc(100svh - 110px), 920px); }
 .job-panel { display: grid; grid-template-columns: minmax(0, var(--job-h)) minmax(260px, 1fr) minmax(220px, 0.9fr); gap: clamp(1rem, 2vw, 2.2rem); align-items: start; }
 .job-tree { position: relative; height: var(--job-h); display: flex; flex-direction: column; }
-.job-info { max-height: var(--job-h); overflow-y: auto; scrollbar-width: thin; }
+.job-info { min-width: 0; }
+.job-map-wrap { margin-top: 1.2rem; }
+.job-map-wrap h4 { margin: 0 0 0.4rem; font: 500 0.66rem var(--font-label); letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); }
+.job-map { position: relative; }
+.job-map svg { display: block; width: 100%; height: auto; overflow: visible; }
+.job-map .tip { max-width: 200px; min-width: 160px; }
+.jm-sphere { fill: #121816; stroke: var(--rule); }
+.jm-grat { fill: none; stroke: rgba(236, 229, 211, 0.05); }
+.jm-land { fill: #26302c; stroke: #0d1110; stroke-width: 0.4; }
+.jm-lead { stroke: rgba(236, 229, 211, 0.35); stroke-width: 0.7; }
+.jm-dot { cursor: pointer; }
+.jm-hit { fill: transparent; }
+.jm-pt { stroke: #0d1110; stroke-width: 1; transition: opacity .15s ease; }
+.jm-dot.is-dim .jm-pt { opacity: 0.35; }
+.jm-dot.is-on .jm-pt { stroke: var(--ink); stroke-width: 2; r: 6.5px; }
+.job-gallery li { transition: opacity .15s ease; }
+.job-gallery:has(li.is-on) li:not(.is-on) { opacity: 0.45; }
+.job-gallery li.is-on img { filter: none; outline: 2px solid var(--gold); outline-offset: -2px; }
 .job-tree .cladogram { flex: 1; min-height: 0; }
 .job-tree .cladogram svg { max-height: 100%; }
 .job-tree-cap { font-family: var(--font-label); font-size: 0.82rem; color: var(--ink-3); text-align: center; margin: 0.4rem 0 0; }
@@ -734,15 +751,21 @@ body::before {
 .job-fams span { grid-column: 2; color: var(--ink-3); line-height: 1.4; }
 .job-pair { font-size: 0.95rem; color: var(--ink-2); margin: 0 0 1rem; }
 .job-pair strong { color: var(--ink); }
-.job-gallery { height: var(--job-h); overflow-y: auto; padding-right: 6px; display: grid; gap: 1rem; align-content: start; scrollbar-width: thin; }
-.job-gallery h4 { display: flex; align-items: center; gap: 0.45rem; margin: 0 0 0.45rem; font: 500 0.72rem var(--font-label); letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink); }
-.job-gallery h4 i { width: 9px; height: 9px; border-radius: 2px; flex: none; }
-.job-gallery h4 b { font-weight: 400; color: var(--ink-3); }
-.job-gallery ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(58px, 1fr)); gap: 5px; }
-.job-gallery li { background: var(--bg-raise); border: 1px solid var(--rule); padding: 3px 3px 0; min-width: 0; }
+/* Masonry: one card per family, sized to its photos (biggest families first). Cards flow down
+   CSS columns, and small cards sit side by side inside a column, so there are few gaps. */
+.job-gallery { --thumb: 52px; height: var(--job-h); overflow-x: hidden; overflow-y: auto; padding-right: 4px; scrollbar-width: thin; }
+/* The columns live on an inner box with no height limit, so extra cards flow downward (and
+   scroll vertically) instead of spilling into new columns off to the right. */
+.job-masonry { columns: 170px; column-gap: 6px; }
+.job-gallery section { display: inline-block; vertical-align: top; break-inside: avoid; max-width: calc(100% - 6px); min-width: 84px; margin: 0 6px 6px 0; padding: 6px 6px 2px; background: var(--bg-raise); border: 1px solid var(--rule); box-sizing: border-box; }
+.job-gallery h4 { contain: inline-size; display: flex; align-items: center; gap: 0.35rem; margin: 0 0 0.4rem; font: 500 0.62rem/1.2 var(--font-label); letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink); }
+.job-gallery h4 i { width: 8px; height: 8px; border-radius: 2px; flex: none; }
+.job-gallery h4 b { margin-left: auto; padding-left: 0.3rem; font-weight: 400; color: var(--ink-3); }
+.job-gallery ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 5px; }
+.job-gallery li { width: var(--thumb); }
 .job-gallery img, .job-nophoto { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; background: #1a211e; filter: sepia(0.2) saturate(0.9); }
 .job-gallery li:hover img { filter: none; }
-.job-gallery li > span:last-child { font-family: var(--font-label); font-size: 0.64rem; line-height: 1.2; color: var(--ink-2); padding: 0.22rem 0.05rem 0.28rem; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; min-height: 2.5em; }
+.job-gallery li > span:last-child { font-family: var(--font-label); font-size: 0.6rem; line-height: 1.2; color: var(--ink-2); padding: 0.2rem 0 0.25rem; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; min-height: 2.4em; }
 .mixing-bars svg { display: block; width: 100%; max-width: 900px; height: auto; }
 .mb-name { font-family: var(--font-label); font-size: 14px; }
 .mb-val, .mb-tick { font-family: var(--font-label); font-size: 12.5px; font-variant-numeric: tabular-nums; }
@@ -758,14 +781,14 @@ body::before {
 @media (max-width: 1180px) and (min-width: 901px) {
   .job-panel { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); }
   .job-gallery { grid-column: 1 / -1; height: auto; overflow: visible; }
-  .job-gallery ul { grid-template-columns: repeat(auto-fill, minmax(76px, 1fr)); }
+  .job-gallery { --thumb: 64px; } .job-masonry { columns: 230px; }
 }
 @media (max-width: 900px) {
   .purpose { padding: 72px 16px 3rem; }
   .job-panel { grid-template-columns: 1fr; }
   .job-tree { height: 92vw; }
   .job-info, .job-gallery { max-height: none; height: auto; overflow: visible; }
-  .job-gallery ul { grid-template-columns: repeat(auto-fill, minmax(68px, 1fr)); }
+  .job-gallery { --thumb: 58px; } .job-masonry { columns: 160px; }
   .job-stats { grid-template-columns: repeat(2, 1fr); }
 }
 
