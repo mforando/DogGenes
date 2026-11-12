@@ -6,7 +6,7 @@ import FaceMorph from "./FaceMorph";
 import { HintProvider } from "./Hints";
 import Timeline from "./Timeline";
 import { CITATION, RotateHint, SiteNav, useActiveStep } from "./shared";
-import { HISTORY_STEPS } from "@/lib/steps";
+import { HISTORY_STEPS, STEP_ALIASES } from "@/lib/steps";
 import { HISTORY_LEVEL_BODIES } from "@/lib/historyLevels";
 import { Lv, useReadingLevel } from "@/lib/readingLevel";
 
@@ -18,6 +18,13 @@ export default function HistoryStory() {
   // (/#full-chart, /#breed-pairs, /#c-blocks, ...) on to /tree.
   useEffect(() => {
     const id = decodeURIComponent(window.location.hash.slice(1));
+    // Steps merged into others (/#where) land on the step that holds their text now.
+    const to = STEP_ALIASES[id];
+    if (to && document.getElementById(to)) {
+      history.replaceState(null, "", `#${to}`);
+      document.getElementById(to)!.scrollIntoView();
+      return;
+    }
     if (id && !document.getElementById(id)) {
       window.location.replace(`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/tree/#${id}`);
     }
@@ -41,22 +48,21 @@ export default function HistoryStory() {
             <Lv
               puppy={
                 <>
-                  Dogs were the very first animals people ever tamed, way before farms, towns or
-                  writing. Scroll down to travel back 40,000 years: where dogs came from, how a wolf
-                  turned into a dog, and the oldest dog bones ever found.
+                  Dogs were the first animals people ever tamed, long before farms or towns. Scroll
+                  down to travel back 40,000 years and meet the very first dogs.
                 </>
               }
               pro={
                 <>
-                  The dog was the first domesticated species, predating agriculture, sedentism and
-                  writing. Scroll through 40,000 years: the contested origin of domestic dogs, the
-                  genomic signatures of domestication, and the earliest archaeological evidence.
+                  The dog was the first domesticate, predating agriculture by millennia. Scroll
+                  through 40,000 years: the contested origin, the genomic signatures of
+                  domestication and the earliest archaeological evidence.
                 </>
               }
             >
-              Dogs were the first animal people ever tamed, long before farming, cities or
-              writing. Scroll through 40,000 years of history: where dogs came from, how a wolf
-              becomes a dog, and the oldest dogs ever found.
+              Dogs were the first animal people domesticated, thousands of years before anyone
+              planted a crop. Their story begins with a wolf that no longer exists. Scroll back
+              through 40,000 years of evidence.
             </Lv>
           </p>
           <RotateHint />
@@ -105,7 +111,7 @@ export default function HistoryStory() {
       <section className="appendix history-next">
         <Link href="/tree" className="history-cta">
           <span className="history-cta-kicker">Next</span>
-          <span className="history-cta-label">Learn more about the genetic history of dogs →</span>
+          <span className="history-cta-label">Next: how 161 breeds are related →</span>
         </Link>
         <footer>
           <p>

@@ -54,6 +54,8 @@ export type Step = {
   timeline?: TimelineView;
   /** "DNA web" steps show the chord (circos) diagram instead of the cladogram. */
   circos?: CircosView;
+  /** Hold back the view's `flip` this many ms after the step opens, so the rotation plays out. */
+  flipDelay?: number;
 };
 
 const dogs = data.stats.dogs.toLocaleString("en-US");
@@ -72,27 +74,23 @@ export const HISTORY_STEPS: Step[] = [
     body: (
       <>
         <p>
-          Start close to home. In the 1800s, dog breeding became a hobby and a business.
-          The first dog show was held in Newcastle, England in 1859, the Kennel Club followed
-          in 1873, and the American Kennel Club in 1884. Breeders wrote standards, kept
-          pedigrees, and closed each breed&rsquo;s family book. The study behind this site calls
-          it the Victorian-era breed explosion.
+          Most of today&rsquo;s breeds were invented in Victorian Britain. The first dog show was
+          held in Newcastle in 1859; the Kennel Club followed in 1873 and the American Kennel Club
+          in 1884. Breeders wrote standards, recorded pedigrees and closed each breed to outsiders.
         </p>
         <p>
-          The timeline shows breeds from the study with a known founding date, from the <B c="JACK">Jack
-          Russell terrier</B> (1819) to the <B c="AHRT">American hairless terrier</B> (1972). Hover over a photo to
-          read its story.
+          The timeline shows the study&rsquo;s breeds with a known founding date, from the <B c="JACK">Jack Russell terrier</B>{" "}
+          (1819) to the <B c="AHRT">American hairless terrier</B> (1972).
         </p>
         <div className="hx-stats">
           <div>
             <span className="hx-num">{DATED}</span>
-            <span>breeds with a known or approximate founding date</span>
+            <span>breeds with a known founding date</span>
           </div>
           <div>
             <span className="hx-num muted">{STUDY_BREEDS - DATED}</span>
             <span>
-              of the study&rsquo;s {STUDY_BREEDS} breeds have <strong>no recorded starting point</strong>.
-              They grew slowly out of older local dogs, long before anyone kept records.
+              have <strong>no recorded start</strong>; they grew out of older local dogs
             </span>
           </div>
         </div>
@@ -108,15 +106,14 @@ export const HISTORY_STEPS: Step[] = [
     body: (
       <>
         <p>
-          Now zoom out about 60 times, back to the start of farming 11,400 years ago. Those
-          two centuries of breeds shrink to a sliver at the far right. Dogs were the{" "}
-          <strong>first animal people ever domesticated</strong>, long before cows, sheep or
-          wheat, and they were already living alongside people when farming began.
+          Pull back to the dawn of farming, about 11,400 years ago, and two centuries of breeds
+          shrink to a sliver on the right. Dogs were the <strong>first animal people domesticated</strong>.
+          They lived with humans before there were cattle, sheep or fields of wheat.
         </p>
         <p>
-          Most breeds are a recent invention, but a handful are far older, though: types of dog that hunted,
-          herded and kept people company for centuries before anyone wrote a breed standard. The ones with a
-          rough age sit on the timeline; five more have no agreed date at all.
+          A few breeds are much older than the Victorian era: types of dog that hunted, herded and
+          kept people company for centuries before anyone wrote a standard. Those with an
+          approximate age appear on the timeline; five have no agreed date.
         </p>
         <AncientBreeds />
       </>
@@ -126,54 +123,33 @@ export const HISTORY_STEPS: Step[] = [
   },
   {
     id: "wolves",
-    kicker: "Wolf ancestors",
+    kicker: "Origins",
     title: "Not from today’s wolves",
     body: (
       <>
         <p>
-          Zoom out again, past the farming era and into the last Ice Age. Here&rsquo;s the
-          twist: dogs don&rsquo;t come from the <B c="WOLF">grey wolves</B> alive today.
-          They come from an <strong>Ice Age wolf population that has since died out</strong>.
-          The dog and wolf families split somewhere between 40,000 and 27,000 years ago.
+          Go back into the last Ice Age, and the story takes a turn: dogs did not descend from the{" "}
+          <B c="WOLF">gray wolves</B> alive today. Their ancestor was an <strong>Ice Age wolf population that has
+          since died out</strong>. The two lineages split between 40,000 and 27,000 years ago.
         </p>
         <p>
-          About 25,000 years ago, at the coldest point of the Ice Age, wolves crashed to a
-          few survivors. They later spread back out from Beringia, the old land bridge
-          between Siberia and Alaska, replacing the other wolves. So the <B c="WOLF">grey wolf</B> in our
-          family tree is a cousin, not a grandparent.
-        </p>
-        <blockquote>
-          &ldquo;We&rsquo;re very surprised that they&rsquo;re not.&rdquo;
-          <cite>Biologist Robert K. Wayne, on dogs not coming from today&rsquo;s wolves</cite>
-        </blockquote>
-      </>
-    ),
-    view: { color: "ink" },
-    timeline: { show: ["farming", "breeds", "split", "lgm"], focus: ["split", "lgm"] },
-  },
-  {
-    id: "where",
-    kicker: "The birthplace",
-    title: "Where? Nobody’s sure",
-    body: (
-      <>
-        <p>
-          Scientists still argue about where it happened. Different <Term id="dna">DNA</Term> studies point to{" "}
-          <strong>East Asia</strong>, <strong>Siberia</strong>, or <strong>Europe</strong>.
+          About 25,000 years ago, at the coldest point of the Ice Age, wolf numbers crashed.
+          Survivors spread out from Beringia, the land bridge between Siberia and Alaska, and
+          replaced wolves elsewhere. Today&rsquo;s <B c="WOLF">gray wolf</B> is the dog&rsquo;s cousin, not its
+          grandparent.
         </p>
         <p>
-          One recent study read the DNA of 72 ancient wolves. It found that dogs everywhere
-          carry ancestry from an eastern wolf population. Dogs in West Asia, Africa, and
-          southern Europe also carry extra ancestry from Middle Eastern wolves. There is
-          still &ldquo;no firm consensus&rdquo; on when, where, or how many wolf groups were
-          involved.
+          Where domestication happened is still disputed. Studies have pointed to <strong>East
+          Asia</strong>, <strong>Siberia</strong> and <strong>Europe</strong>. A 2022 analysis of 72 ancient wolf genomes found
+          that all dogs carry ancestry from an eastern wolf population, and that dogs in West
+          Asia, Africa and southern Europe carry extra ancestry from Middle Eastern wolves.
         </p>
       </>
     ),
     view: { color: "ink" },
     timeline: {
       show: ["farming", "breeds", "split", "lgm", "eastasia", "europe", "siberia"],
-      focus: ["eastasia", "europe", "siberia"],
+      focus: ["split", "lgm", "eastasia", "europe", "siberia"],
     },
   },
   {
@@ -183,18 +159,17 @@ export const HISTORY_STEPS: Step[] = [
     body: (
       <>
         <p>
-          The oldest bones everyone agrees are a dog come from <strong>Erralla, Spain</strong>,
-          about 17,500 years ago. At <strong>Bonn-Oberkassel</strong> in Germany, a puppy was
-          buried alongside two people about 14,200 years ago, the oldest known shared grave of
-          people and a dog. Pick a site to see what was found.
+          The oldest bones that scientists agree came from a dog were found at <strong>Erralla,
+          Spain</strong>, and are about 17,500 years old. At <strong>Bonn-Oberkassel</strong> in Germany, a puppy was
+          buried with two people about 14,200 years ago, the oldest known grave shared by people
+          and a dog. The puppy had survived distemper, which suggests someone nursed it.
         </p>
         <DigSites />
         <p>
-          Older finds from Goyet in Belgium (36,000 years) and Siberia&rsquo;s Altai
-          Mountains (33,300 years) have dog-like skulls, but they&rsquo;re hotly debated. <Term id="dna">DNA</Term>{" "}
-          puts the Goyet animal on a side branch, most likely an extinct population of wolves
-          rather than an ancestor of today&rsquo;s dogs. Skulls with a clearly dog-shaped
-          profile turn up around 11,000 years ago.
+          Older dog-like skulls from Goyet, Belgium (36,000 years) and Siberia&rsquo;s Altai
+          Mountains (33,300 years) remain disputed; <Term id="dna">DNA</Term> suggests the Goyet animal belonged to an
+          extinct wolf population. Skulls with an unmistakably dog-like shape appear about 11,000
+          years ago.
         </p>
       </>
     ),
@@ -211,18 +186,17 @@ export const HISTORY_STEPS: Step[] = [
     body: (
       <>
         <p>
-          There are a few ideas, and they may all be partly right. Calmer, less skittish
-          wolves could have scavenged around human camps. Wolves following reindeer herds
-          may have teamed up with people doing the same. Or in harsh Ice Age winters,
-          people had more lean meat than they could eat, and shared it.
+          Scientists have several explanations, and more than one may be right. Bolder, calmer
+          wolves may have scavenged around human camps. Wolves and people may have teamed up while
+          following the same reindeer herds. Or, in hard winters, people may have shared surplus
+          lean meat with wolves.
         </p>
         <p>
-          Either way, the <Term id="dna">DNA</Term> shows what changed most: <strong>behavior</strong>. Genes for
-          brain function, stress hormones like adrenaline, and digesting fat and starch were
-          all reshaped. Changes near the genes linked to Williams-Beuren syndrome, which
-          makes people unusually friendly, are tied to dogs&rsquo; sociability. Even today,
-          when a dog and its owner look into each other&rsquo;s eyes, both get a boost of
-          oxytocin, the bonding hormone.
+          The <Term id="dna">DNA</Term> shows what changed most: <strong>behavior</strong>. Domestication reshaped genes involved in
+          brain development, the adrenaline stress response and the digestion of fat and starch.
+          Variants near the genes behind Williams-Beuren syndrome, a human condition marked by
+          unusual friendliness, are linked to dogs&rsquo; sociability. When dogs and their owners
+          gaze at each other, oxytocin rises in both.
         </p>
       </>
     ),
@@ -236,23 +210,18 @@ export const HISTORY_STEPS: Step[] = [
     body: (
       <>
         <p>
-          By the time the Ice Age ended, 11,700 years ago, dogs had already split into at
-          least <strong>five lineages</strong>. We know them from ancient dogs found in the
-          Levant (the eastern <Clade id="Mediterranean">Mediterranean</Clade>), Karelia (northwest Russia), Lake Baikal
-          (Siberia), and the ancient Americas, plus the New Guinea singing dog, which is
-          still alive today. Dogs likely reached the Americas with the very first people.
+          By the end of the Ice Age, 11,700 years ago, dogs had divided into at least <strong>five
+          lineages</strong>. They are known from ancient remains in the Levant (the eastern <Clade id="Mediterranean">Mediterranean</Clade>),
+          northwest Russia, Siberia&rsquo;s Lake Baikal region and the early Americas, and from the
+          New Guinea singing dog, which survives today. Dogs most likely reached the Americas with
+          the first people.
         </p>
         <p>
-          Today&rsquo;s breeds are far younger. Most were shaped in the last couple of
-          centuries out of that much older regional stock.
-        </p>
-        <p>
-          And they were shaped differently. For tens of thousands of years, dogs changed the
-          way wild animals do: the world around them decided which pups survived. Breeds were
-          made by <strong>people choosing which dogs had puppies</strong>, aiming at a few
-          traits and then closing the studbooks. That leaves a very different mark on their{" "}
-          <Term id="dna">DNA</Term>, and it means geneticists can&rsquo;t read breeds the way they read the
-          evolution of species. Watch the difference play out:
+          Modern breeds were carved from that regional stock, mostly in the last two centuries,
+          and by a different process. For most of their history, dogs changed the way wild
+          animals do. Breeds were made by <strong>people choosing which dogs had puppies</strong>, selecting for a
+          few traits and then closing the studbooks. That leaves a distinct mark in their <Term id="dna">DNA</Term>. The
+          simulation below shows the difference.
         </p>
         <SelectionExplainer />
       </>
@@ -262,45 +231,25 @@ export const HISTORY_STEPS: Step[] = [
   },
 ];
 
+/** Part 1: reading the family tree. */
 const BREED_STEPS: Step[] = [
   {
     id: "ring",
-    kicker: "The big picture",
-    title: `${dogs} dogs in one circle`,
-    body: (
-      <>
-        <p>
-          Every sliver around the edge is a group of real dogs whose <Term id="dna">DNA</Term> was tested. The
-          lines inside connect dogs by how similar their DNA is. The more two dogs have in
-          common, the closer together they sit.
-        </p>
-        <p>
-          It&rsquo;s a <strong><Term id="cladogram">cladogram</Term></strong>: a family tree that shows who split off
-          from whom. It doesn&rsquo;t show dates, so don&rsquo;t read anything into how long
-          the lines are.
-        </p>
-      </>
-    ),
-    view: { color: "ink" },
-  },
-  {
-    id: "root",
     photos: ["BSJI"],
-    kicker: "Where to start",
-    title: "Start in the middle",
+    kicker: "The big picture",
+    title: "Read it from the center out",
     body: (
       <>
         <p>
-          The very center is the <strong>root</strong>, the oldest split in the whole tree.
-          To anchor it, the researchers included the <strong><B c="GDJK">golden jackal</B></strong>, a wild
-          cousin of dogs. Because we know it branched off long ago, it tells us which end of
-          the tree is the old end.
+          Each sliver on the rim is a group of dogs whose <Term id="dna">DNA</Term> was tested, {dogs} in all. Lines
+          connect them by genetic similarity: the more alike two dogs&rsquo; DNA, the closer they
+          sit. The chart is a <strong><Term id="cladogram">cladogram</Term></strong>, a family tree that shows the order in which groups
+          split apart, but not when. Line lengths carry no meaning.
         </p>
         <p>
-          Next come <strong><B c="WOLF">grey wolves</B></strong>, dogs&rsquo; closest living relatives
-          (cousins, not ancestors: dogs come from an Ice Age wolf population that has since died out), then the <strong><B c="BSJI">basenji</B></strong>, an ancient
-          African breed. Every other breed is further out. The rule of thumb: the
-          closer to the edge, the more recent the split.
+          The center is the oldest split, anchored by the <B c="GDJK">golden jackal</B>, a wild relative. Next
+          come <B c="WOLF">gray wolves</B>, dogs&rsquo; closest living relatives, then the <B c="BSJI">basenji</B>, an ancient
+          African breed. The farther a branch sits from the center, the more recent the split.
         </p>
       </>
     ),
@@ -314,13 +263,9 @@ const BREED_STEPS: Step[] = [
     body: (
       <>
         <p>
-          Meet the <strong><B c="BOX">boxers</B></strong>. All ten boxers in the study have such similar <Term id="dna">DNA</Term>{" "}
-          that they always clump together, so they&rsquo;re drawn as one wedge. Each little
-          dot is one dog. Wider wedges mean more dogs were tested.
-        </p>
-        <p>
-          That&rsquo;s true for almost every breed: 146 of 161 form their own tidy wedge.
-          Breeds really are distinct genetic groups, like little islands.
+          The 10 <B c="BOX">boxers</B> in the study have <Term id="dna">DNA</Term> so similar that they always cluster, so they are
+          drawn as one wedge; each dot is a dog. Nearly every breed behaves the same way: 146 of
+          161 form their own tidy wedge. Breeds, in other words, are genetic islands.
         </p>
       </>
     ),
@@ -334,14 +279,13 @@ const BREED_STEPS: Step[] = [
     body: (
       <>
         <p>
-          Want to know how closely two breeds are related? Trace each one inward until their
-          lines join. That join is their shared ancestor. The sooner the lines meet, the
-          closer the relatives.
+          To see how closely two breeds are related, trace each one inward until their lines meet.
+          That junction is their most recent shared ancestor; the sooner the lines meet, the
+          closer the relationship.
         </p>
         <p>
-          The <strong><B c="GOLD">golden retriever</B></strong>&rsquo;s closest relative here is the{" "}
-          <strong><B c="FCR">flat-coated retriever</B></strong>. Next comes the <strong><B c="LAB">Labrador</B></strong>,
-          and a bit further back the <strong><B c="NEWF">Newfoundland</B></strong>.
+          The <B c="GOLD">golden retriever</B>&rsquo;s nearest relative here is the <B c="FCR">flat-coated retriever</B>, followed by the{" "}
+          <B c="LAB">Labrador</B> and, further back, the <B c="NEWF">Newfoundland</B>.
         </p>
       </>
     ),
@@ -356,38 +300,18 @@ const BREED_STEPS: Step[] = [
     id: "neighbors",
     photos: ["DACH", "AFGH"],
     kicker: "Watch out",
-    title: "Next-door neighbors can be strangers",
+    title: "Neighbors aren’t necessarily family",
     body: (
       <>
         <p>
-          The <strong><B c="DACH">dachshund</B></strong> and the <strong><B c="AFGH">Afghan hound</B></strong> sit side by
-          side on the edge, and both are called &ldquo;hounds.&rdquo; Easy to assume
-          they&rsquo;re close family, right?
+          The <B c="DACH">dachshund</B> and the <B c="AFGH">Afghan hound</B> sit side by side on the rim, and both are called hounds. But
+          their lines don&rsquo;t meet until deep in the tree.
         </p>
         <p>
-          Nope. Trace them inward and their lines don&rsquo;t meet until deep in the tree.
-          Sitting next to each other on the edge means nothing. Only where the lines join
-          counts.
-        </p>
-      </>
-    ),
-    view: { color: "ink", codes: ["DACH", "AFGH"], paths: [["DACH", "AFGH"]] },
-  },
-  {
-    id: "rotate",
-    kicker: "Why that happens",
-    title: "Every fork can spin",
-    body: (
-      <>
-        <p>
-          Think of the tree as a hanging mobile. You can spin any branch around its hook and
-          nothing about who&rsquo;s related to whom changes. Watch: we just spun the fork
-          joining the <B c="DACH">dachshund</B> and <B c="AFGH">Afghan hound</B>.
-        </p>
-        <p>
-          Now they&rsquo;re on opposite sides of the circle, but their path to the shared
-          ancestor is exactly the same. The order around the edge is a drawing choice.
-          The branching is the real information.
+          Think of the tree as a hanging mobile: any branch can spin on its hook without changing
+          who is related to whom. Spin this one and the two breeds land on opposite sides of the
+          circle, with exactly the same path to their common ancestor. The order around the rim is
+          a drawing choice. Only the branching counts.
         </p>
       </>
     ),
@@ -397,6 +321,7 @@ const BREED_STEPS: Step[] = [
       paths: [["DACH", "AFGH"]],
       flip: [["DACH", "AFGH"]],
     },
+    flipDelay: 1600,
   },
   {
     id: "support",
@@ -405,18 +330,17 @@ const BREED_STEPS: Step[] = [
     body: (
       <>
         <p>
-          The researchers double-checked their tree by <strong><Term id="bootstrap">bootstrapping</Term></strong>: they
-          reshuffled the data and rebuilt the tree 100 times. Each marker shows how often a
-          fork came out the same way:
+          The researchers rebuilt the tree 100 times from resampled data, a test called <strong><Term id="bootstrap">bootstrapping</Term></strong>.
+          Each marker shows how often a fork came out the same way:
         </p>
         <ul className="legend-list" aria-label="Bootstrap marker legend">
           <li><span className="mk mk-gold" aria-hidden /> 90–100 times out of 100: rock solid</li>
-          <li><span className="mk mk-star" aria-hidden /> 70–89 times: pretty sure</li>
-          <li><span className="mk mk-hollow" aria-hidden /> 50–69 times: a decent hunch</li>
+          <li><span className="mk mk-star" aria-hidden /> 70–89 times: fairly sure</li>
+          <li><span className="mk mk-hollow" aria-hidden /> 50–69 times: a reasonable guess</li>
         </ul>
         <p>
-          No marker means it showed up less than half the time. Most of those are deep near
-          the center, so take the oldest splits with a grain of salt.
+          Unmarked forks appeared less than half the time. Most sit near the center, so the oldest
+          splits are the least certain.
         </p>
       </>
     ),
@@ -424,67 +348,51 @@ const BREED_STEPS: Step[] = [
   },
   {
     id: "clades",
+    photos: ["SALU", "GPYR", "GREY", "COLL"],
     kicker: "Family groups",
-    title: "23 big family groups",
+    title: "Breeds fall into 23 families",
     body: (
       <>
         <p>
-          Zoom out and the breeds clump into bigger branches called <strong><Term id="clade">clades</Term></strong>:
-          a shared ancestor plus all its descendants. Almost every breed (150 of them) falls
-          into one of 23 clades, each holding 2 to 18 breeds.
+          Pull back, and breeds group into larger branches called <strong><Term id="clade">clades</Term></strong>: a shared ancestor
+          and all of its descendants. Almost every breed, 150 in all, falls into one of 23 clades of
+          two to 18 breeds. The gray wedges are loners that fit no group.
         </p>
         <p>
-          Most make intuitive sense: terriers with terriers, retrievers with retrievers.
-          The gray wedges are loners that didn&rsquo;t reliably fit into any group.
+          Most groupings are intuitive: terriers with terriers, retrievers with retrievers. Some
+          are not. The <strong><Clade id="Mediterranean">Mediterranean</Clade></strong> clade pairs sighthounds like the <B c="SALU">saluki</B> with livestock guardians
+          like the <B c="GPYR">Great Pyrenees</B>; the <strong><Clade id="UKRural">UK Rural</Clade></strong> clade pairs <B c="GREY">greyhounds</B> with <B c="COLL">collies</B>. The likely
+          explanation is that each region bred its hunting dogs and its farm dogs from the same
+          local stock. Origin mattered more than job.
         </p>
       </>
     ),
-    view: { color: "clade", cladeRing: true },
+    view: { color: "clade", clades: ["Mediterranean", "UKRural"], cladeRing: true },
   },
   {
     id: "geography",
-    photos: ["SALU", "GPYR", "GREY", "BORD"],
+    photos: ["KELP", "BORD"],
     kicker: "A surprise",
-    title: "Where they’re from beats what they do",
+    title: "Why so many breeds are European",
     body: (
       <>
         <p>
-          Some families look like odd couples. The <strong><Clade id="Mediterranean">Mediterranean</Clade></strong> group puts
-          speedy, skinny sighthounds like the <B c="SALU">saluki</B> next to giant sheep guards like the{" "}
-          <B c="GPYR">Great Pyrenees</B>. The <strong><Clade id="UKRural">UK Rural</Clade></strong> group pairs <B c="GREY">greyhounds</B> with <B c="COLL">collies</B>.
+          About <strong>70 percent</strong> of the populations on the globe (115 of 164) are European. That
+          reflects history more than biology. The idea of a breed, with a written standard and a
+          closed studbook, began in Victorian Britain and spread through kennel clubs in Europe and
+          North America, and the study drew mostly on breeds those clubs recognize. Most of the
+          world&rsquo;s dogs are village dogs that belong to no breed.
         </p>
         <p>
-          The likely story: each region bred its own hunting dogs and its own farm dogs from
-          the same local stock. Home turf mattered more than the job.
-        </p>
-        <p>
-          Why does Europe dominate? About <strong>70%</strong> of the breeds on the globe below
-          (115 of 164) are European, and that says more about history than about dogs. The idea
-          of a breed, with a written standard and a closed studbook, was invented in Victorian
-          Britain: the first dog show was held in 1859 and the Kennel Club was founded in 1873,
-          and kennel clubs across Europe and North America followed. Owners there turned their
-          local working dogs into named breeds, so Europe&rsquo;s regional dogs were recorded and
-          kept apart. Elsewhere, most dogs were, and still are, free-roaming village dogs that
-          belong to no breed at all. The study also drew mostly on breeds recognized by
-          European and North American kennel clubs, so it reflects which dogs were registered,
-          not where dogs live.
-        </p>
-        <p>
-          Shared <Term id="dna">DNA</Term> follows the map too. About <strong>three-quarters</strong> of all the DNA
-          that breeds share in the study links breeds from the same continent. Partly
-          that&rsquo;s because most breeds are European, but Asia&rsquo;s keep to themselves as
-          well: more than half of their sharing is with other Asian breeds, like the <B c="SHIH">Shih Tzu</B>,{" "}
-          <B c="LHSA">Lhasa Apso</B> and <B c="PEKE">Pekingese</B>. Breeds from the rest of the world mostly point back to
-          Europe, because many were built from dogs that settlers brought with them. Only about
-          a fifth of North America&rsquo;s sharing stays on the continent, and less for
-          Australia and Africa: the Australian <B c="KELP">kelpie</B>&rsquo;s closest relative is the <B c="BORD">border
-          collie</B>, and South Africa&rsquo;s <B c="BOER">boerboel</B>&rsquo;s is the <B c="BULM">bullmastiff</B>. Pick a continent
-          to light up its breeds.
+          Shared <Term id="dna">DNA</Term> follows the map, too: about <strong>three-quarters</strong> of it links breeds from the same
+          continent. Asian breeds keep largely to themselves. Breeds from the Americas, Australia
+          and Africa trace back mostly to European dogs brought by settlers; the Australian <B c="KELP">kelpie</B>&rsquo;s
+          closest relative is the <B c="BORD">border collie</B>. Select a continent to see its breeds.
         </p>
       </>
     ),
     continentGlobe: true,
-    view: { color: "clade", clades: ["Mediterranean", "UKRural"], cladeRing: true },
+    view: { color: "clade", cladeRing: true },
   },
   {
     id: "split",
@@ -494,108 +402,43 @@ const BREED_STEPS: Step[] = [
     body: (
       <>
         <p>
-          A few breeds are scattered across more than one wedge. Some are newer breeds still
-          settling down. Others depend on where the dogs came from: <B c="CANE">cane corsos</B> from Italy
-          stick together, while American ones sit beside <B c="NEAP">Neapolitan mastiffs</B>.
+          A few breeds are scattered across more than one wedge. Some are new breeds still taking
+          shape. Others split by origin: <B c="CANE">cane corsos</B> from Italy cluster together, while American ones sit
+          beside <B c="NEAP">Neapolitan mastiffs</B>.
         </p>
         <p>
-          The <strong><B c="XOLO">Xoloitzcuintli</B></strong> (Mexican hairless dog) and the{" "}
-          <strong><B c="INCA">Peruvian hairless dog</B></strong> are split across distant branches. Some of
-          them sit right next to the <B c="GSD">German shepherd</B>, a hint of old mixing with European
-          herding dogs.
+          The <B c="XOLO">Xoloitzcuintli</B> (Mexican hairless dog) and the <B c="INCA">Peruvian hairless dog</B> are spread across distant
+          branches, some beside the <B c="GSD">German shepherd</B>, a sign of past mixing with European herding dogs.
         </p>
       </>
     ),
     view: { color: "clade", split: true },
   },
-];
-
-/** Part 3: the same connections drawn as bundled edges along the family tree, then exploring. */
-const BUNDLE_STEPS: Step[] = [
-  {
-    id: "bundle",
-    photos: ["CHOW", "KEES", "SAMO"],
-    kicker: "Ribbons meet the tree",
-    title: "Routing the connections through the tree",
-    body: (
-      <>
-        <p>
-          The circle chart drew each connection as a ribbon straight across the middle. Here is
-          another way to draw the very same data, called <strong>edge bundling</strong>: each
-          curve leaves one breed, follows the family tree&rsquo;s branches in toward the two
-          breeds&rsquo; shared ancestor, then travels back out to the other breed.
-        </p>
-        <p>
-          Take the <strong><B c="EURA">Eurasier</B></strong> again. A tree can only split, but this breed was
-          made by joining three: in the 1970s breeders crossed the <B c="CHOW">chow chow</B>, <B c="KEES">keeshond</B> and{" "}
-          <B c="SAMO">samoyed</B>. Its three curves follow the tree to each parent, which is why it ends up
-          in a wedge of its own somewhere between them.
-        </p>
-      </>
-    ),
-    view: {
-      color: "clade",
-      codes: ["EURA", "CHOW", "KEES", "SAMO"],
-      links: { codes: ["EURA"] },
-    },
-  },
-  {
-    id: "crossings",
-    kicker: "The hidden web",
-    title: "Every crossing, bundled",
-    body: (
-      <>
-        <p>
-          Now every connection between breeds from <em>different</em> families at once. Curves
-          that travel the same branches merge into thick bundles, like cables in a wall. A
-          bundle shows a lot of mixing between two parts of the tree; a lone thin curve is a
-          one-off cross.
-        </p>
-        <p>
-          Bundling trades the circle chart&rsquo;s exact widths for structure: you can see the
-          old family tree and the last 200 years of crossbreeding in a single picture. In all,
-          117 breeds show this kind of recent mixing.
-        </p>
-      </>
-    ),
-    view: { color: "clade", links: "cross" },
-  },
   {
     id: "missing-links",
     kicker: "Gaps in the record",
-    title: "The missing links",
+    title: "The missing link",
     body: (
       <>
         <p>
-          Every fork in this tree is an ancestor nobody has ever seen. The researchers only had{" "}
-          <Term id="dna">DNA</Term> from dogs alive today, so the forks are worked out backwards from their
-          descendants. In human evolution these unseen ancestors are called{" "}
-          <strong>missing links</strong>: the ape that humans and gorillas both descend from,
-          for example, has never been found.
+          Every fork in the tree is an ancestor no one has seen. The researchers had <Term id="dna">DNA</Term> only from
+          living dogs and inferred each fork from its descendants. In human evolution, such
+          ancestors are called <strong>missing links</strong>.
         </p>
         <figure className="ml-fig">
           <MissingLinkFigure />
           <figcaption>
-            Humans didn&rsquo;t evolve from gorillas: both descend from an ape that lived
-            roughly 8–10 million years ago. That shared ancestor is the &ldquo;missing
-            link&rdquo;, and no fossil of it has been found. On the human side, fossils fill in
-            later steps: <em>Australopithecus</em> (about 4–2 million years ago) and{" "}
-            <em>Homo erectus</em> (about 2 million to 100,000 years ago), before modern humans
-            about 300,000 years ago. Figures are simplified icons. Silhouettes: The Nature Box,{" "}
+            Humans did not evolve from gorillas; both descend from an ape that lived 8 million to
+            10 million years ago, and no fossil of it has been found. Figures are simplified icons.
+            Silhouettes: The Nature Box,{" "}
             <a href="https://commons.wikimedia.org/wiki/File:Comparison_of_size_of_western_gorilla_(Gorilla_gorilla)_and_human.svg">CC BY-SA 4.0</a>,
             rearranged.
           </figcaption>
         </figure>
         <p>
-          Dogs have a missing link too. The <strong><B c="WOLF">grey wolf</B></strong> and the{" "}
-          <strong><B c="BSJI">basenji</B></strong> share an ancestor: the Ice Age wolf population dogs came from,
-          which has since died out. Watch the chart: if DNA from that population were found, it
-          would join the tree right at the fork where dogs part from wolves, between the wolf
-          and the basenji. Every breed shifts over to make room, but in this simple picture
-          none changes places: a sample of that ancestor fills in its fork rather than
-          rearranging the branches that grew from it. What it would add is a real, dated dog at
-          that fork, instead of one inferred from its descendants. (In practice, ancient DNA can
-          also reveal old mixing that redraws parts of a tree.)
+          Dogs have one, too: the extinct Ice Age wolf population they came from. If its DNA were
+          found, it would join the tree at the fork where dogs part from wolves. Watch the chart:
+          the breeds shift to make room, but none changes place.
         </p>
       </>
     ),
@@ -603,31 +446,57 @@ const BUNDLE_STEPS: Step[] = [
   },
 ];
 
+/** Part 3: the same connections drawn as bundled edges along the family tree. */
+const BUNDLE_STEPS: Step[] = [
+  {
+    id: "bundle",
+    kicker: "The hidden web",
+    title: "The web, routed through the tree",
+    body: (
+      <>
+        <p>
+          Here is the same data, drawn another way. In <strong>edge bundling</strong>, each connection leaves one
+          breed, follows the tree&rsquo;s branches in toward the two breeds&rsquo; shared ancestor,
+          then travels out to the other. Connections that share branches merge into thick
+          bundles; a lone thin curve is a one-off cross.
+        </p>
+        <p>
+          The picture combines the ancient family tree with two centuries of crossbreeding: 117
+          breeds show recent mixing with other families. It also shows why a tree can mislead. The{" "}
+          <B c="EURA">Eurasier</B> lands in a wedge of its own between its three parent breeds, because a tree can only
+          split, not merge.
+        </p>
+      </>
+    ),
+    view: { color: "clade", links: "cross" },
+  },
+];
+
 /** Part 2: the chord diagram (the paper's Figure 4) explains shared DNA. */
 const strip = (k: string) => k.replace(/^\d+ · /, "");
-const CHORD_STEPS: Step[] = CIRCOS_STEPS.filter((c) => c.id !== "explore").map((c, i) => ({
+const CHORD_STEPS: Step[] = CIRCOS_STEPS.filter((c) => c.id !== "explore").map((c) => ({
   id: `c-${c.id}`,
   kicker: `The DNA web · ${strip(c.kicker)}`,
   title: c.title,
   photos: c.photos,
-  body:
-    i === 0 ? (
-      <>
-        <p>
-          <strong>Part two.</strong> The family tree shows how breeds branched apart. But
-          breeders also mix breeds back together, and that leaves long shared stretches of <Term id="dna">DNA</Term>{" "}
-          behind. The paper drew those as a <em>chord diagram</em>: a ring of breeds tied
-          together by ribbons. Here&rsquo;s how to read it.
-        </p>
-        {c.body}
-      </>
-    ) : (
-      c.body
-    ),
+  body: c.body,
   // Behind the chord diagram, keep the tree in its clade colours for the hand-off back.
   view: { color: "clade", cladeRing: true },
   circos: c.view,
 }));
 
-// The bundled-edge steps end with "Go exploring", the hand-off to the interactive tree.
 export const STEPS: Step[] = [...BREED_STEPS, ...CHORD_STEPS, ...BUNDLE_STEPS];
+
+/**
+ * Step ids retired when steps were merged, and the step that now holds their text, so old
+ * links (/tree/#rotate, /#where, ...) still land in the right place.
+ */
+export const STEP_ALIASES: Record<string, string> = {
+  where: "wolves",
+  root: "ring",
+  rotate: "neighbors",
+  "c-order": "c-blocks",
+  "c-threshold": "c-ribbon",
+  "c-color": "c-hubs",
+  crossings: "bundle",
+};

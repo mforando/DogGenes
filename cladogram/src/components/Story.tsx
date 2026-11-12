@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState, useRef } from "react";
 import Cladogram from "./Cladogram";
-import { STEPS } from "@/lib/steps";
+import { STEPS, STEP_ALIASES } from "@/lib/steps";
 import { data, ringOrder } from "@/lib/tree";
 import { CLADE_COLOR, cladeColor } from "@/lib/palette";
 import { PHOTOS } from "@/lib/photos";
@@ -55,21 +55,43 @@ function StoryBody() {
     setTextBreed(null);
     setTextClade(null);
   }, [active]);
+  // A step with a delayed spin ("neighbors aren't necessarily family") shows the plain view
+  // first, then rotates the fork once the reader has had a moment to see where the breeds sit.
+  const [flipOn, setFlipOn] = useState(false);
+  useEffect(() => {
+    setFlipOn(false);
+    if (!step.flipDelay) return;
+    const t = setTimeout(() => setFlipOn(true), step.flipDelay);
+    return () => clearTimeout(t);
+  }, [step]);
+  // Links to steps that were merged into others (/tree/#rotate) land on the step that holds them now.
+  useEffect(() => {
+    const go = () => {
+      const to = STEP_ALIASES[decodeURIComponent(window.location.hash.slice(1))];
+      if (!to) return;
+      history.replaceState(null, "", `#${to}`);
+      document.getElementById(to)?.scrollIntoView();
+    };
+    go();
+    window.addEventListener("hashchange", go);
+    return () => window.removeEventListener("hashchange", go);
+  }, []);
   const pointed = photoHover ?? textBreed ?? (step.continentGlobe ? globeHover : null);
   const sel = pointed && !step.circos ? pointed : null;
   // While a photo is hovered, the step's own highlights step aside so only that breed shows.
   const treeView = useMemo(() => {
+    const view = step.flipDelay && !flipOn ? { ...step.view, flip: undefined } : step.view;
     if (textClade && !pointed && !step.circos) {
-      const { codes, clades, paths, outgroup, split, links, ...rest } = step.view;
+      const { codes, clades, paths, outgroup, split, links, ...rest } = view;
       void codes; void clades; void paths; void outgroup; void split; void links;
       return { ...rest, color: "clade" as const, clades: [textClade] };
     }
     const focus = pointed ? [pointed] : step.continentGlobe && continent ? CONTINENT_BREEDS[continent] : null;
-    if (!focus || step.circos) return step.view;
-    const { codes, clades, paths, outgroup, split, links, ...rest } = step.view;
+    if (!focus || step.circos) return view;
+    const { codes, clades, paths, outgroup, split, links, ...rest } = view;
     void codes; void clades; void paths; void outgroup; void split;
     return { ...rest, codes: focus, ...(links ? { links: { codes: focus } } : {}) };
-  }, [pointed, continent, step, textClade]);
+  }, [pointed, continent, step, textClade, flipOn]);
   // The chord diagram keeps the nearest chord step's view while it fades in or out.
   const idx = STEPS.indexOf(step);
   const lastCircos =
@@ -116,13 +138,13 @@ function StoryBody() {
           </h1>
           <p className="dek">
             <Lv
-              puppy={<>In 2017, scientists checked the DNA of {data.stats.dogs.toLocaleString("en-US")} dogs from 161 breeds. Then they drew one giant family tree that shows how all the breeds are related. It&rsquo;s beautiful, but it&rsquo;s tricky to read. Scroll down and we&rsquo;ll go through it step by step.</>}
+              puppy={<>In 2017, scientists checked the DNA of {data.stats.dogs.toLocaleString("en-US")} dogs from 161 breeds. Then they drew one giant family tree of all the breeds. It&rsquo;s tricky to read, so we&rsquo;ll go step by step.</>}
               pro={<>Parker et&nbsp;al. (2017) genotyped {data.stats.dogs.toLocaleString("en-US")} dogs from 161 breeds at ~150,000 SNPs and inferred a bootstrapped neighbor-joining phylogeny, then quantified pairwise haplotype sharing to detect recent admixture. Scroll for a step-by-step reading of the tree and the sharing network.</>}
             >
-              In 2017, scientists tested the DNA of {data.stats.dogs.toLocaleString("en-US")}{" "}
-              dogs from 161 breeds and drew one giant family tree showing how they&rsquo;re all
-              related. It&rsquo;s gorgeous, and very easy to misread. Scroll down and
-              we&rsquo;ll walk through it one step at a time. No science background needed.
+              In 2017, scientists analyzed the DNA of {data.stats.dogs.toLocaleString("en-US")} dogs
+              from 161 breeds and drew a single family tree showing how the breeds are related. It
+              is elegant, and easy to misread. Here is how to read it, one step at a time. No
+              science background needed.
             </Lv>
           </p>
           <p className="cite">{CITATION}</p>
@@ -138,11 +160,11 @@ function StoryBody() {
         intro={
           <p>
             <Lv
-              puppy="The chart uses a few science words. Here’s what they mean. You can come back here anytime, or tap the ? button."
+              puppy="Here are a few science words you’ll see. Tap any underlined word to see what it means."
               pro="Key terms as used in the study. Each card has a schematic; the ? button reopens them anytime."
             >
-              The chart uses a few science words. Here&rsquo;s what they mean in plain
-              English. You can come back here anytime.
+              A few terms come up often. Hover over or tap any underlined word to see its
+              definition again.
             </Lv>
           </p>
         }
@@ -169,7 +191,7 @@ function StoryBody() {
             </div>
             {/* Chart tooltips show here, in a fixed panel, instead of following the pointer. */}
             <aside ref={tipDock} className="tip-dock" aria-live="polite">
-              <p className="tip-dock-empty">Hover over a breed on the chart to see its photo, family and history here.</p>
+              <p className="tip-dock-empty">Hover over or tap a breed on the chart to see its photo, family and history here.</p>
             </aside>
           </div>
           {phone && chips.shown.length > 0 && (
@@ -239,13 +261,12 @@ function StoryBody() {
           <p>
             <Lv
               puppy={<>Where this comes from: the family tree and shared-DNA data from a 2017 study by Parker and other scientists. Dogs of the same breed that group together are drawn as one wedge. We picked the colors ourselves.</>}
-              pro={<>Data: the neighbor-joining tree and pairwise IBD-sharing matrix from Parker et&nbsp;al. 2017. Following their figure, monophyletic groups of conspecific breed samples are collapsed to one wedge; for polyphyletic breeds only the largest fragment is labeled. The palette is ours.</>}
+              pro={<>Data: the neighbor-joining tree and pairwise IBD-sharing matrix from Parker et&nbsp;al. 2017. Following their figure, monophyletic groups of conspecific breed samples are collapsed to one wedge; for polyphyletic breeds only the largest fragment is labeled. Allele-sharing (IBS) distances were preferred over frequency-based statistics because the CanineHD SNPs were ascertained largely in the boxer, inflating its minor allele frequencies (MAF 0.351 versus 0.260 overall). The palette is ours.</>}
             >
             Where this comes from: the family tree and DNA-sharing data published by Parker
-            et&nbsp;al. in 2017. As in their chart, dogs of the same breed that cluster
-            together are drawn as one wedge. When a breed is split up, only its biggest piece
-            gets a label (hover over the others to see what they are). We picked our own
-            colors.
+            et&nbsp;al. in 2017. As in their chart, dogs of one breed that cluster together are
+            drawn as a single wedge; when a breed is split, only its largest piece is labeled. Colors
+            are ours.
             </Lv> Dog photos for the {Object.keys(PHOTOS).length} breeds it covers come from
             the free <a href="https://dog.ceo/dog-api/">Dog CEO API</a>.
           </p>

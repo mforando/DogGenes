@@ -82,10 +82,10 @@ export default function CircosReplica({ embedded = false }: { embedded?: boolean
                   puppy={<><strong>What it shows:</strong> each colored block is a breed, in the same order as the family tree. A ribbon joins two breeds from different families that share a lot of <Term id="dna">DNA</Term>. That means people mixed them together in the last 200 years or so. Wider ribbons mean more shared DNA.</>}
                   pro={<><strong>Reading the figure:</strong> segments are breeds in phylogenetic order, colored by clade. Ribbons join cross-clade breed pairs whose median pairwise <Term id="haplotype">IBD sharing</Term> exceeds the 95th percentile of all cross-clade sharing, i.e. evidence of recent admixture; ribbon width scales with shared length.</>}
                 >
-                  <strong>In plain English:</strong> each colored block is a breed, arranged in
-                  the same order as the family tree. A ribbon connects two breeds from different
-                  family groups that share an unusually big amount of <Term id="dna">DNA</Term>, a sign that they were
-                  crossed in the last couple of centuries. Wider ribbons mean more shared DNA.
+                  <strong>In plain English:</strong> each block is a breed, in family-tree order.
+                  Ribbons join breeds from different families that share unusually long stretches
+                  of <Term id="dna">DNA</Term>, a sign of crossing in the last two centuries. Wider ribbons mean more
+                  sharing.
                 </Lv>{" "}
                 {embedded ? <a href="#c-blocks">Back to the walkthrough ↑</a> : <Link href="/tree#c-blocks">Walk me through it →</Link>}
               </p>
