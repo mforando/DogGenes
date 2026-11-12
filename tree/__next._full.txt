@@ -1,26 +1,30 @@
 1:"$Sreact.fragment"
-2:"/DogGenes/_next/static/chunks/07d08iov2yj4w.js"
-3:I[39756,["$2"],"default"]
-4:I[37457,["$2"],"default"]
-5:I[8745,["$2"],"default"]
-6:I[79520,["$2"],""]
-a:"/DogGenes/_next/static/chunks/2bvvth78vo0-l.js"
-b:"/DogGenes/_next/static/chunks/21cnqu7yfo3nh.js"
-c:"/DogGenes/_next/static/chunks/206_k3xi2q0y_.js"
-d:"/DogGenes/_next/static/chunks/214-n7nk5fldg.js"
-e:"/DogGenes/_next/static/chunks/0bdbelfugimjc.js"
-f:"/DogGenes/_next/static/chunks/0d06cua6og_cw.js"
-10:"/DogGenes/_next/static/chunks/0sr6n4tv71p0j.js"
-11:"/DogGenes/_next/static/chunks/1ylp-g8223nde.js"
-12:I[32456,["$2","$a","$b","$c","$d","$e","$f","$10","$11"],"default"]
-13:I[97367,["$2"],"OutletBoundary"]
-14:"$Sreact.suspense"
-16:"ViewportBoundary"
-17:I[97367,["$2"],"$16"]
-19:"MetadataBoundary"
+2:"/DogGenes/_next/static/chunks/1h_45_5t-ialv.js"
+3:"ReadingLevelProvider"
+4:I[83039,["$2"],"$3"]
+5:I[39756,["$2"],"default"]
+6:I[37457,["$2"],"default"]
+7:I[8745,["$2"],"default"]
+8:I[79520,["$2"],""]
+c:"/DogGenes/_next/static/chunks/1-a3cbdy3pjqe.js"
+d:"/DogGenes/_next/static/chunks/10-d_jwt41hbk.js"
+e:"/DogGenes/_next/static/chunks/214-n7nk5fldg.js"
+f:"/DogGenes/_next/static/chunks/21cnqu7yfo3nh.js"
+10:"/DogGenes/_next/static/chunks/0o0d1-5a4a52g.js"
+11:"/DogGenes/_next/static/chunks/2uytlcds60e87.js"
+12:"/DogGenes/_next/static/chunks/1u710qp21fupc.js"
+13:"/DogGenes/_next/static/chunks/2xs3ghek_dchb.js"
+14:"/DogGenes/_next/static/chunks/1fs2k6mbdgloz.js"
+15:I[32456,["$2","$c","$d","$e","$f","$10","$11","$12","$13","$14"],"default"]
+16:I[97367,["$2"],"OutletBoundary"]
+17:"$Sreact.suspense"
+19:"ViewportBoundary"
 1a:I[97367,["$2"],"$19"]
-1c:I[68027,["$2"],"default",1]
-:HL["/DogGenes/_next/static/chunks/3q3ugkcm7myt6.css","style"]
+1c:"MetadataBoundary"
+1d:I[97367,["$2"],"$1c"]
+1f:I[68027,["$2"],"default",1]
+:HL["/DogGenes/_next/static/chunks/25b04_0byg49r.css","style"]
+:HL["/DogGenes/_next/static/chunks/3-y9-mehtxjqg.css","style"]
 :HL["/DogGenes/_next/static/media/4e8cb63bdfc89443-s.p.0-zxmgh6g2ro_.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
 :HL["/DogGenes/_next/static/media/52b5d5098cb87ddd-s.p.3r2y_bth_sjsm.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
 :HL["/DogGenes/_next/static/media/9346dec8b3acbbe6-s.p.28g3plnrcjyh3.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
@@ -32,12 +36,12 @@ f:"/DogGenes/_next/static/chunks/0d06cua6og_cw.js"
 :HL["/DogGenes/_next/static/media/c77846bcb3371a93-s.p.17l2q2xazf7qv.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
 :HL["/DogGenes/_next/static/media/d273130dc90e6d8b-s.p.2f8v_r0u-86a-.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
 :HL["/DogGenes/_next/static/media/f577e48814abc562-s.p.32qtc5gvtu4f4.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
-8:X
-9:[["children",{"s":"__PAGE__","h":512,"d":{"r":["$","$1","c",{"children":[["$","$L12",null,{}],[["$","script","script-0",{"src":"/DogGenes/_next/static/chunks/2bvvth78vo0-l.js","async":true,"nonce":"$undefined"}],["$","script","script-1",{"src":"/DogGenes/_next/static/chunks/21cnqu7yfo3nh.js","async":true,"nonce":"$undefined"}],["$","script","script-2",{"src":"/DogGenes/_next/static/chunks/206_k3xi2q0y_.js","async":true,"nonce":"$undefined"}],["$","script","script-3",{"src":"/DogGenes/_next/static/chunks/214-n7nk5fldg.js","async":true,"nonce":"$undefined"}],["$","script","script-4",{"src":"/DogGenes/_next/static/chunks/0bdbelfugimjc.js","async":true,"nonce":"$undefined"}],["$","script","script-5",{"src":"/DogGenes/_next/static/chunks/0d06cua6og_cw.js","async":true,"nonce":"$undefined"}],["$","script","script-6",{"src":"/DogGenes/_next/static/chunks/0sr6n4tv71p0j.js","async":true,"nonce":"$undefined"}],["$","script","script-7",{"src":"/DogGenes/_next/static/chunks/1ylp-g8223nde.js","async":true,"nonce":"$undefined"}]],["$","$L13",null,{"children":["$","$14",null,{"name":"Next.MetadataOutlet","children":"$@15"}]}]]}],"p":false,"v":null}}]]
-7:[["children",{"s":"tree","h":512,"d":{"r":["$","$1","c",{"children":[null,["$","$L3",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L4",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}],"p":false,"v":"$8"},"c":"$Q9"}]]
-0:{"P":null,"c":["","tree",""],"q":"","i":false,"t":{"t":{"s":"","h":528,"d":{"r":["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/DogGenes/_next/static/chunks/3q3ugkcm7myt6.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}],["$","script","script-0",{"src":"/DogGenes/_next/static/chunks/07d08iov2yj4w.js","async":true,"nonce":"$undefined"}]],["$","html",null,{"lang":"en","className":"iJ-pAG_variable PbtS4q_variable _24soKW_variable","children":["$","body",null,{"children":[["$","$L3",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L4",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":[[["$","title",null,{"children":"404: This page could not be found."}],["$","div",null,{"style":{"fontFamily":"system-ui,\"Segoe UI\",Roboto,Helvetica,Arial,sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\"","height":"100vh","textAlign":"center","display":"flex","flexDirection":"column","alignItems":"center","justifyContent":"center"},"children":["$","div",null,{"children":[["$","style",null,{"dangerouslySetInnerHTML":{"__html":"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}"}}],["$","h1",null,{"className":"next-error-h1","style":{"display":"inline-block","margin":"0 20px 0 0","padding":"0 23px 0 0","fontSize":24,"fontWeight":500,"verticalAlign":"top","lineHeight":"49px"},"children":404}],["$","div",null,{"style":{"display":"inline-block"},"children":["$","h2",null,{"style":{"fontSize":14,"fontWeight":400,"lineHeight":"49px","margin":0},"children":"This page could not be found."}]}]]}]}]],[]],"forbidden":"$undefined","unauthorized":"$undefined"}],["$","$L5",null,{}],["$","$L6",null,{"src":"https://www.googletagmanager.com/gtag/js?id=G-C0J6DE3KL8","strategy":"afterInteractive"}],["$","$L6",null,{"id":"google-analytics","strategy":"afterInteractive","children":"\n            window.dataLayer = window.dataLayer || [];\n            function gtag(){dataLayer.push(arguments);}\n            gtag('js', new Date());\n\n            gtag('config', 'G-C0J6DE3KL8');\n          "}]]}]}]]}],"p":false,"v":null},"c":"$Q7"},"h":{"r":["$","$1","h",{"children":[null,["$","$L17",null,{"children":"$L18"}],["$","$L1a",null,{"children":[["$","div",null,{"hidden":true,"children":["$","$14",null,{"name":"Next.Metadata","children":"$L1b"}]}],null]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}],"p":false,"v":null}},"m":"$undefined","G":["$1c",[["$","link","0",{"rel":"stylesheet","href":"/DogGenes/_next/static/chunks/3q3ugkcm7myt6.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}]]],"S":true,"r":"$undefined","s":"$undefined","a":"$undefined","l":"$undefined","p":"$undefined","d":"$undefined","b":"UbIq4oxSiHrqPlYQNKVi3"}
-8:C
-18:[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}],["$","meta","2",{"name":"theme-color","content":"#0d1110"}]]
-1d:I[27201,["$2"],"IconMark"]
-15:null
-1b:[["$","title","0",{"children":"Reading the Dog Family Tree"}],["$","meta","1",{"name":"description","content":"A scrollytelling guide to the 161-breed dog cladogram and DNA-sharing web from Parker et al., Cell Reports 2017."}],["$","link","2",{"rel":"icon","href":"/DogGenes/icon.svg?icon.0u8y5wcsqj8af.svg","sizes":"any","type":"image/svg+xml"}],["$","$L1d","3",{}]]
+a:X
+b:[["children",{"s":"__PAGE__","h":512,"d":{"r":["$","$1","c",{"children":[["$","$L15",null,{}],[["$","script","script-0",{"src":"/DogGenes/_next/static/chunks/1-a3cbdy3pjqe.js","async":true,"nonce":"$undefined"}],["$","script","script-1",{"src":"/DogGenes/_next/static/chunks/10-d_jwt41hbk.js","async":true,"nonce":"$undefined"}],["$","script","script-2",{"src":"/DogGenes/_next/static/chunks/214-n7nk5fldg.js","async":true,"nonce":"$undefined"}],["$","script","script-3",{"src":"/DogGenes/_next/static/chunks/21cnqu7yfo3nh.js","async":true,"nonce":"$undefined"}],["$","script","script-4",{"src":"/DogGenes/_next/static/chunks/0o0d1-5a4a52g.js","async":true,"nonce":"$undefined"}],["$","script","script-5",{"src":"/DogGenes/_next/static/chunks/2uytlcds60e87.js","async":true,"nonce":"$undefined"}],["$","script","script-6",{"src":"/DogGenes/_next/static/chunks/1u710qp21fupc.js","async":true,"nonce":"$undefined"}],["$","script","script-7",{"src":"/DogGenes/_next/static/chunks/2xs3ghek_dchb.js","async":true,"nonce":"$undefined"}],["$","script","script-8",{"src":"/DogGenes/_next/static/chunks/1fs2k6mbdgloz.js","async":true,"nonce":"$undefined"}]],["$","$L16",null,{"children":["$","$17",null,{"name":"Next.MetadataOutlet","children":"$@18"}]}]]}],"p":false,"v":null}}]]
+9:[["children",{"s":"tree","h":512,"d":{"r":["$","$1","c",{"children":[null,["$","$L5",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L6",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}],"p":false,"v":"$a"},"c":"$Qb"}]]
+0:{"P":null,"c":["","tree",""],"q":"","i":false,"t":{"t":{"s":"","h":528,"d":{"r":["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/DogGenes/_next/static/chunks/25b04_0byg49r.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}],["$","link","1",{"rel":"stylesheet","href":"/DogGenes/_next/static/chunks/3-y9-mehtxjqg.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}],["$","script","script-0",{"src":"/DogGenes/_next/static/chunks/1h_45_5t-ialv.js","async":true,"nonce":"$undefined"}]],["$","html",null,{"lang":"en","className":"iJ-pAG_variable PbtS4q_variable _24soKW_variable","children":["$","body",null,{"children":[["$","$L4",null,{"children":[["$","$L5",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L6",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":[[["$","title",null,{"children":"404: This page could not be found."}],["$","div",null,{"style":{"fontFamily":"system-ui,\"Segoe UI\",Roboto,Helvetica,Arial,sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\"","height":"100vh","textAlign":"center","display":"flex","flexDirection":"column","alignItems":"center","justifyContent":"center"},"children":["$","div",null,{"children":[["$","style",null,{"dangerouslySetInnerHTML":{"__html":"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}"}}],["$","h1",null,{"className":"next-error-h1","style":{"display":"inline-block","margin":"0 20px 0 0","padding":"0 23px 0 0","fontSize":24,"fontWeight":500,"verticalAlign":"top","lineHeight":"49px"},"children":404}],["$","div",null,{"style":{"display":"inline-block"},"children":["$","h2",null,{"style":{"fontSize":14,"fontWeight":400,"lineHeight":"49px","margin":0},"children":"This page could not be found."}]}]]}]}]],[]],"forbidden":"$undefined","unauthorized":"$undefined"}],["$","$L7",null,{}]]}],["$","$L8",null,{"src":"https://www.googletagmanager.com/gtag/js?id=G-C0J6DE3KL8","strategy":"afterInteractive"}],["$","$L8",null,{"id":"google-analytics","strategy":"afterInteractive","children":"\n            window.dataLayer = window.dataLayer || [];\n            function gtag(){dataLayer.push(arguments);}\n            gtag('js', new Date());\n\n            gtag('config', 'G-C0J6DE3KL8');\n          "}]]}]}]]}],"p":false,"v":null},"c":"$Q9"},"h":{"r":["$","$1","h",{"children":[null,["$","$L1a",null,{"children":"$L1b"}],["$","$L1d",null,{"children":[["$","div",null,{"hidden":true,"children":["$","$17",null,{"name":"Next.Metadata","children":"$L1e"}]}],null]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}],"p":false,"v":null}},"m":"$undefined","G":["$1f",[["$","link","0",{"rel":"stylesheet","href":"/DogGenes/_next/static/chunks/25b04_0byg49r.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}],["$","link","1",{"rel":"stylesheet","href":"/DogGenes/_next/static/chunks/3-y9-mehtxjqg.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}]]],"S":true,"r":"$undefined","s":"$undefined","a":"$undefined","l":"$undefined","p":"$undefined","d":"$undefined","b":"PBZt7jCwvCrHn6H6DphE1"}
+a:C
+1b:[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}],["$","meta","2",{"name":"theme-color","content":"#0d1110"}]]
+20:I[27201,["$2"],"IconMark"]
+18:null
+1e:[["$","title","0",{"children":"Reading the Dog Family Tree"}],["$","meta","1",{"name":"description","content":"A scrollytelling guide to the 161-breed dog cladogram and DNA-sharing web from Parker et al., Cell Reports 2017."}],["$","link","2",{"rel":"icon","href":"/DogGenes/icon.svg?icon.0u8y5wcsqj8af.svg","sizes":"any","type":"image/svg+xml"}],["$","$L20","3",{}]]

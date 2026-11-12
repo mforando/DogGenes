@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import raw from "@/data/game.json";
 import { SiteNav } from "./shared";
+import { Lv } from "@/lib/readingLevel";
 
 type Photo = { u: string; ai: [string, number][]; ok: boolean };
 type Breed = {
@@ -128,7 +129,14 @@ function AiPanel({ q }: { q: Question }) {
         ))}
       </ol>
       {!q.breed.aiKnows && (
-        <p className="dg-ai-note">The AI was never taught the {q.breed.name}, so it couldn&rsquo;t get this one right.</p>
+        <p className="dg-ai-note">
+          <Lv
+            puppy={<>Nobody ever taught the AI what a {q.breed.name} looks like, so it had no chance on this one.</>}
+            pro={<>{q.breed.name} is not among the classifier&rsquo;s 120 ImageNet dog classes, so a correct top-1 prediction was impossible.</>}
+          >
+            The AI was never taught the {q.breed.name}, so it couldn&rsquo;t get this one right.
+          </Lv>
+        </p>
       )}
     </div>
   );
@@ -209,8 +217,13 @@ export default function GamePage() {
           <p className="eyebrow">Dog Breed Game</p>
           <h1>Can you beat the AI?</h1>
           <p className="pairs-lede">
-            Name the breed in each photo. After every answer you&rsquo;ll see what an image-recognition
-            AI guessed for the same photo. Twenty dogs per round, picked at random for you.
+            <Lv
+              puppy={<>Guess the breed in each photo! After you answer, you&rsquo;ll see what a computer program (an AI) guessed for the same picture. Each round has 20 dogs, picked at random just for you.</>}
+              pro={<>Classify the breed in each image, then compare with a pretrained convolutional image classifier&rsquo;s top-3 predictions for the same image. Twenty images per round, sampled at random.</>}
+            >
+              Name the breed in each photo. After every answer you&rsquo;ll see what an image-recognition
+              AI guessed for the same photo. Twenty dogs per round, picked at random for you.
+            </Lv>
           </p>
           <div className="dg-controls">
             <Toggle label="Difficulty" value={level} options={LEVELS.map((l) => ({ ...l, label: `${l.label} · ${l.hint}` }))} onChange={(l) => setLevel(l)} />

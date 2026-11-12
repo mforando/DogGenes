@@ -6,6 +6,8 @@ import { data } from "@/lib/tree";
 import { cladeColor } from "@/lib/palette";
 import { PHOTOS } from "@/lib/photos";
 import { cousinPairs, crossPairs, lineagePairs, type PairRow } from "@/lib/pairs";
+import { Term } from "./Hints";
+import { Lv } from "@/lib/readingLevel";
 
 type SortKey = "a" | "b" | "pct" | "steps" | "note";
 const PAGE = 12;
@@ -161,11 +163,16 @@ export default function BreedPairs() {
   return (
     <div className="pairs-embed">
       <p className="pairs-lede">
-        When dogs of two breeds carry the same <strong>long, unbroken chunks of DNA</strong>,
-        they had common ancestors not long ago. Below are the pairs that share the most, in
-        three flavors. The percent is how much DNA a typical dog from each breed has in common
-        in those long chunks. The most closely tied pair in the study shares about{" "}
-        {Math.round(maxPct)}%, and even 1% between two breeds is a lot.
+        <Lv
+          puppy={<>When dogs from two breeds have the same <strong>long pieces of <Term id="dna">DNA</Term></strong>, they had shared relatives not long ago. Here are the pairs that share the most, in three kinds of lists. The percent is how much DNA they share in those long pieces. The closest pair shares about {Math.round(maxPct)}%, and even 1% is a lot!</>}
+          pro={<>Breed pairs ranked by median pairwise sharing of long <Term id="haplotype">IBD haplotypes</Term>, in three classes. Percentages express shared IBD length as a fraction of the ~2.4 Gb genome; the maximum in the study is ~{Math.round(maxPct)}%, and ≥1% between breeds indicates substantial recent shared ancestry.</>}
+        >
+          When dogs of two breeds carry the same <strong>long, unbroken chunks of <Term id="dna">DNA</Term></strong>,
+          they had common ancestors not long ago. Below are the pairs that share the most, in
+          three flavors. The percent is how much DNA a typical dog from each breed has in common
+          in those long chunks. The most closely tied pair in the study shares about{" "}
+          {Math.round(maxPct)}%, and even 1% between two breeds is a lot.
+        </Lv>
       </p>
       <nav className="pairs-jump" aria-label="Breed pair lists">
         <a href="#pairs-cousins">Close cousins</a>
@@ -177,9 +184,14 @@ export default function BreedPairs() {
       <section id="pairs-cousins" className="pairs-section" aria-labelledby="pairs-cousins-h">
         <h3 id="pairs-cousins-h">Close cousins</h3>
         <p>
+          <Lv
+            puppy={<>Breeds from the <strong>same family</strong> that share the most DNA. Many of them were one breed not long ago, and people later split them up by size, fur, or where they lived.</>}
+            pro={<>Within-clade pairs with the highest sharing: often recently split populations, such as size or coat varieties and regional types separated by registries.</>}
+          >
           Breeds from the <strong>same family group</strong> that share the most DNA. They come
           from the same ancestors and, in many cases, were one breed not long ago: size
           varieties, coat varieties, or local types that registries later split apart.
+          </Lv>
         </p>
         <PairTable rows={cousinPairs} labels={["Breed", "Breed"]} caption="Same-family breed pairs ranked by shared DNA" />
       </section>
@@ -187,10 +199,15 @@ export default function BreedPairs() {
       <section id="pairs-founders" className="pairs-section" aria-labelledby="pairs-founders-h">
         <h3 id="pairs-founders-h">Parent and child breeds</h3>
         <p>
+          <Lv
+            puppy={<>Breeds where history tells us one was <strong>made from the other</strong>. The DNA can&rsquo;t tell which came first (both are alive today), so that part comes from history books. But the DNA <em>does</em> show how much of the older breed the newer one still has.</>}
+            pro={<>Pairs with a <strong>documented founder</strong> relationship. Directionality cannot be inferred from IBD between two extant populations, so it is taken from breed histories; the sharing quantifies the founder&rsquo;s residual contribution.</>}
+          >
           Breeds with a <strong>documented founder</strong>: the newer breed was created from the
           older one. The DNA can&rsquo;t say which came first, since both are breeds alive today,
           so the direction comes from written breed histories. What the DNA <em>does</em> show
           is how much of the founder each newer breed still carries.
+          </Lv>
         </p>
         <PairTable
           rows={lineagePairs}
@@ -203,10 +220,15 @@ export default function BreedPairs() {
       <section id="pairs-across" className="pairs-section" aria-labelledby="pairs-across-h">
         <h3 id="pairs-across-h">Closest across families</h3>
         <p>
+          <Lv
+            puppy={<>Pairs from <strong>different families</strong>. They shouldn&rsquo;t share much DNA, but they do! That&rsquo;s a clue that people mixed them, by making a new breed from very different parents or by mixing a popular breed into others.</>}
+            pro={<>Cross-clade pairs with high sharing, unexpected under the tree alone: signatures of admixture, from composite breeds with distant parental breeds or from introgression of popular breeds. Note the topological distance separating many of them.</>}
+          >
           Pairs from <strong>different family groups</strong>, which shouldn&rsquo;t share much at
           all, but do. These are the fingerprints of crossbreeding: a breed built from far-apart
           parents, or a popular breed mixed into others. Notice how many tree branches can sit
           between them.
+          </Lv>
         </p>
         <PairTable rows={crossPairs} labels={["Breed", "Breed"]} caption="Breed pairs from different families ranked by shared DNA" />
       </section>

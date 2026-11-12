@@ -7,8 +7,10 @@ import CircosDetails from "./CircosDetails";
 import LineageTree from "./LineageTree";
 import Modal from "./Modal";
 import BreedPairs from "./BreedPairs";
-import { SiteNav } from "./shared";
+import { PHONE, SiteNav, useMedia } from "./shared";
 import { circosData, cladeArcs, links, nodeByCode, nodes } from "@/lib/circos";
+import { Term } from "./Hints";
+import { Lv } from "@/lib/readingLevel";
 
 const withRibbons = nodes.filter((n) => n.degree > 0).length;
 
@@ -43,6 +45,8 @@ export default function CircosReplica({ embedded = false }: { embedded?: boolean
     pairsRef.current.scrollIntoView();
   }, []);
   const [hover, setHover] = useState<CircosHover>(null);
+  // Phones: crop the chart to its ring; the names are in the details panel a tap opens.
+  const phone = useMedia(PHONE);
   // The selected breed's family tree, in a pop-up.
   const [treeFor, setTreeFor] = useState<string | null>(null);
   // Family-group legend: hover previews a group, click locks it.
@@ -74,14 +78,19 @@ export default function CircosReplica({ embedded = false }: { embedded?: boolean
               <p className="eyebrow">Recreated from Parker et al. 2017, Figure 4</p>
               <h1>Which dog breeds have been mixed together?</h1>
               <p className="replica-caption">
-                <strong>In plain English:</strong> each colored block is a breed, arranged in
-                the same order as the family tree. A ribbon connects two breeds from different
-                family groups that share an unusually big amount of DNA, a sign that they were
-                crossed in the last couple of centuries. Wider ribbons mean more shared DNA.{" "}
+                <Lv
+                  puppy={<><strong>What it shows:</strong> each colored block is a breed, in the same order as the family tree. A ribbon joins two breeds from different families that share a lot of <Term id="dna">DNA</Term>. That means people mixed them together in the last 200 years or so. Wider ribbons mean more shared DNA.</>}
+                  pro={<><strong>Reading the figure:</strong> segments are breeds in phylogenetic order, colored by clade. Ribbons join cross-clade breed pairs whose median pairwise <Term id="haplotype">IBD sharing</Term> exceeds the 95th percentile of all cross-clade sharing, i.e. evidence of recent admixture; ribbon width scales with shared length.</>}
+                >
+                  <strong>In plain English:</strong> each colored block is a breed, arranged in
+                  the same order as the family tree. A ribbon connects two breeds from different
+                  family groups that share an unusually big amount of <Term id="dna">DNA</Term>, a sign that they were
+                  crossed in the last couple of centuries. Wider ribbons mean more shared DNA.
+                </Lv>{" "}
                 {embedded ? <a href="#c-blocks">Back to the walkthrough ↑</a> : <Link href="/tree#c-blocks">Walk me through it →</Link>}
               </p>
               <p className="replica-orig">
-                Original title and caption: &ldquo;Haplotype sharing between breeds from different phylogenetic clades. The circos plot is ordered and colored to match the
+                Original title and caption: &ldquo;<Term id="haplotype">Haplotype</Term> sharing between breeds from different phylogenetic <Term id="clade">clades</Term>. The circos plot is ordered and colored to match the
                 tree in Figure&nbsp;1. Ribbons connecting breeds indicate a median haplotype
                 sharing between all dogs of each breed in excess of 95% of all haplotype
                 sharing across clades.&rdquo;
@@ -151,6 +160,7 @@ export default function CircosReplica({ embedded = false }: { embedded?: boolean
           </aside>
           <div className="replica-figure">
             <Circos
+              compact={phone}
               view={view}
               onHover={setHover}
               // First click locks onto a breed; a second click returns to the default view.
@@ -190,7 +200,8 @@ export default function CircosReplica({ embedded = false }: { embedded?: boolean
           </Modal>
         )}
 
-        <details id="breed-pairs" className="ribbon-table" ref={pairsRef}>
+        {/* A link to something inside makes the browser open this before React loads; that's fine. */}
+        <details id="breed-pairs" className="ribbon-table" ref={pairsRef} suppressHydrationWarning>
           <summary>Which breeds share the most DNA? See the breed pairs</summary>
           <BreedPairs />
         </details>

@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type RefObject } from "react";
 import * as d3 from "d3";
 import { CGEOM, circosData, cladeArcs, layoutLinks, links, nodeByCode, nodes, partnersOf, rawLinkByKey, type CEnd, type CLink, type CNode } from "@/lib/circos";
 import { photoOf } from "@/lib/photos";
+import { factsHtml } from "@/lib/breedFacts";
 import { circosTree, elbow, treeCodeOf, type CTNode } from "@/lib/circosTree";
 import { descendantsOf } from "@/lib/pairs";
 
@@ -65,6 +66,8 @@ export default function Circos({
   onBreedClick,
   onBackgroundClick,
   spotlight = null,
+  tipDock,
+  compact = false,
 }: {
   view: CircosView;
   ariaLabel?: string;
@@ -76,6 +79,10 @@ export default function Circos({
   onBackgroundClick?: () => void;
   /** Breed highlighted from outside the chart (e.g. hovering its photo), shown like a hover. */
   spotlight?: string | null;
+  /** Show the tooltip in this element (a fixed panel beside the chart) instead of at the pointer. */
+  tipDock?: RefObject<HTMLElement | null>;
+  /** Phone-size screens: crop to the ring of breed blocks (no name labels or family band). */
+  compact?: boolean;
 }) {
   const onBreedClickRef = useRef(onBreedClick);
   onBreedClickRef.current = onBreedClick;
@@ -114,7 +121,7 @@ export default function Circos({
     const gSegs = svg.append("g").attr("class", "segs");
     const gLabels = svg.append("g").attr("class", "codes");
     const gClade = svg.append("g").attr("class", "clade-ring").attr("opacity", 0);
-    const tip = d3.select(el).append("div").attr("class", "tip").attr("role", "status");
+    const tip = d3.select(tipDock?.current ?? el).append("div").attr("class", "tip").attr("role", "status");
 
     const arc = d3.arc<{ a0: number; a1: number }>()
       .innerRadius(CGEOM.rIn + 2).outerRadius(CGEOM.rOut)
@@ -433,7 +440,9 @@ export default function Circos({
     function showSegTip(ev: PointerEvent | FocusEvent, d: CNode) {
       if (onHoverRef.current) return;
       const ps = partnersOf(d.code);
-      const photo = photoOf(d.code === "CHTM" ? "TIBM" : d.code === "COOS" ? "SALU" : d.code === "ITCC" ? "CANE" : d.code);
+      // A second sampled population (e.g. Italian cane corsos) uses its breed's photo and facts.
+      const breed = d.code === "CHTM" ? "TIBM" : d.code === "COOS" ? "SALU" : d.code === "ITCC" ? "CANE" : d.code;
+      const photo = photoOf(breed);
       tip.html(
         `${photo ? `<img class="tip-photo" src="${photo}" alt="" referrerpolicy="no-referrer" />` : ""}
          <div class="tip-name">${d.name}</div>
@@ -442,7 +451,8 @@ export default function Circos({
            ? `<div class="tip-sub">Shares big chunks of DNA with ${ps.length} breed${ps.length === 1 ? "" : "s"} from other families</div>
               <dl>${ps.slice(0, 6).map((p) => `<dt>${nodeByCode.get(p.code)!.name}</dt><dd>${mb(p.value)}</dd>`).join("")}</dl>
               ${ps.length > 6 ? `<div class="tip-more">+ ${ps.length - 6} more</div>` : ""}`
-           : `<div class="tip-note">No big DNA overlap with breeds from other families.</div>`}`,
+           : `<div class="tip-note">No big DNA overlap with breeds from other families.</div>`}
+         ${factsHtml(breed)}`,
       ).classed("on", true);
       place(ev);
     }
@@ -520,6 +530,7 @@ export default function Circos({
     };
     return () => {
       d3.select(el).selectAll("*").remove();
+      tip.remove();
       api.current = null;
     };
   }, [ariaLabel]);
@@ -532,5 +543,10 @@ export default function Circos({
     api.current?.spot(spotlight);
   }, [spotlight]);
 
-  return <div ref={host} className="circos" />;
+  useEffect(() => {
+    const half = compact ? CGEOM.rOut + 4 : W / 2;
+    d3.select(host.current).select("svg").attr("viewBox", `${-half} ${-half} ${half * 2} ${half * 2}`);
+  }, [compact, ariaLabel]);
+
+  return <div ref={host} className={`circos${compact ? " compact" : ""}`} />;
 }

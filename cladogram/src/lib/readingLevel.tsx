@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 
-/** Reading levels for the family tree story: same steps and visuals, different words. */
+/** Reading levels for the whole site: same pages and visuals, different words. */
 export type ReadingLevel = "puppy" | "adult" | "pro";
 
 export const LEVELS: { id: ReadingLevel; label: string; hint: string }[] = [
@@ -36,3 +36,15 @@ export function ReadingLevelProvider({ children }: { children: ReactNode }) {
 }
 
 export const useReadingLevel = () => useContext(Ctx);
+
+/**
+ * Text at the reader's level: `<Lv puppy={…} pro={…}>adult text</Lv>`. Puppy is about a
+ * 5th-grade reading level; "pro" (Albert Pawstein) uses the study's scientific terms. A level
+ * that isn't given falls back to the adult text.
+ */
+export function Lv({ children, puppy, pro }: { children: ReactNode; puppy?: ReactNode; pro?: ReactNode }) {
+  const { level } = useContext(Ctx);
+  if (level === "puppy" && puppy !== undefined) return <>{puppy}</>;
+  if (level === "pro" && pro !== undefined) return <>{pro}</>;
+  return <>{children}</>;
+}

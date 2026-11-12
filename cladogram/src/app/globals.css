@@ -20,7 +20,7 @@
   --step-2: clamp(1.75rem, 1.3rem + 1.8vw, 2.7rem);
   --step-hero: clamp(2.8rem, 1.6rem + 6vw, 7.2rem);
 
-  --gutter: clamp(16px, 4vw, 56px);
+  --gutter: clamp(16px, 3vw, 40px);
   color-scheme: dark;
 }
 
@@ -591,7 +591,7 @@ body::before {
 
 /* ---------- breed pairs page ---------- */
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-.pairs { padding: 84px var(--gutter) 4rem; max-width: 1240px; margin: 0 auto; }
+.pairs { padding: 84px var(--gutter) 4rem; max-width: 1340px; margin: 0 auto; }
 .pairs-head { max-width: 50rem; margin-bottom: 2.5rem; }
 .pairs-head h1 { font-family: var(--font-display); font-weight: 500; font-size: var(--step-2); line-height: 1.08; margin: 0 0 1rem; }
 .pairs-lede { color: var(--ink-2); font-size: var(--step-0); margin: 0 0 1.2rem; }
@@ -665,7 +665,7 @@ body::before {
 }
 
 /* ---------- bred for purpose ---------- */
-.purpose { padding: 84px var(--gutter) 4rem; max-width: 1240px; margin: 0 auto; }
+.purpose { padding: 84px var(--gutter) 4rem; max-width: 1340px; margin: 0 auto; }
 .matrix-wrap { position: relative; overflow-x: auto; border: 1px solid var(--rule); background: var(--bg-raise); padding: 0.5rem 0.5rem 0.2rem; }
 .purpose-matrix { position: relative; min-width: 860px; }
 .purpose-matrix svg { display: block; width: 100%; height: auto; }
@@ -793,7 +793,7 @@ body::before {
 }
 
 /* ---------- geography / globe ---------- */
-.geo { padding: 84px var(--gutter) 4rem; max-width: 1280px; margin: 0 auto; }
+.geo { padding: 84px var(--gutter) 4rem; max-width: 1440px; margin: 0 auto; }
 .geo-grid { display: grid; grid-template-columns: minmax(0, 1fr) 21rem; gap: clamp(1rem, 3vw, 2.5rem); align-items: start; }
 .geo-globe { display: flex; justify-content: center; }
 .globe-wrap { position: relative; width: 100%; max-width: 760px; }
@@ -944,8 +944,9 @@ body::before {
   position: absolute; top: 0; left: 0; pointer-events: none; z-index: 5; opacity: 0;
   background: rgba(10, 13, 12, 0.95); border: 1px solid var(--rule); border-top: 2px solid var(--gold);
   padding: 0.45rem 0.65rem; font-family: var(--font-label); font-size: 0.8rem; color: var(--ink-3);
-  display: grid; gap: 0.1rem; transition: opacity .1s ease; white-space: nowrap;
+  display: grid; gap: 0.1rem; transition: opacity .1s ease; white-space: nowrap; max-width: 270px;
 }
+.ex-tip .bf { white-space: normal; }
 .ex-tip.on { opacity: 1; }
 .ex-tip strong { font-family: var(--font-display); font-weight: 500; font-size: 1.05rem; color: var(--ink); }
 .ex-canvas { will-change: transform; }
@@ -1511,3 +1512,308 @@ body::before {
 .face-ring video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
 .face-name { margin: 0; font-family: var(--font-label); font-size: 0.8rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); text-align: center; min-height: 1.3em; }
 @media (max-width: 760px) { .face-morph { width: 46vw; top: 30vmax; opacity: 0.4; } .face-name { display: none; } }
+
+/* ---------- interactive words in the text (components/Hints.tsx) ---------- */
+.hint { cursor: help; border-bottom: 1px dotted var(--gold-dim); text-decoration: none; transition: color .15s ease, border-color .15s ease, background-color .15s ease; outline: none; border-radius: 1px; }
+.hint:hover, .hint:focus-visible { color: var(--gold); border-bottom-color: var(--gold); }
+.hint:focus-visible { background: rgba(232, 183, 74, 0.12); }
+.hint-term { border-bottom-style: dashed; }
+.hint-pop {
+  position: fixed; z-index: 60; pointer-events: none; width: 230px;
+  background: rgba(10, 13, 12, 0.97); border: 1px solid var(--rule); border-top: 2px solid var(--gold);
+  padding: 0.65rem 0.8rem; font-family: var(--font-label); font-size: 0.82rem; line-height: 1.4; color: var(--ink-2);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45); animation: hint-in .14s ease-out;
+}
+@keyframes hint-in { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .hint-pop { animation: none; } }
+.hint-pop-term { width: 300px; }
+.hint-photo { display: block; width: 100%; height: 140px; object-fit: cover; margin-bottom: 0.5rem; background: #1a211e; }
+.hint-fam { display: flex; align-items: center; gap: 0.4rem; color: var(--ink-3); }
+.hint-fam i, .hint-swatch { width: 9px; height: 9px; border-radius: 2px; display: inline-block; flex: none; }
+.hint-swatch { margin-right: 0.4rem; vertical-align: 0.1em; }
+.hint-fig svg { display: block; width: 100%; height: auto; background: #101614; border-radius: 2px; margin-bottom: 0.5rem; }
+.hint-def p { margin: 0.35rem 0 0; font-family: var(--font-body, inherit); font-size: 0.85rem; color: var(--ink-2); }
+.hint-def strong, .hint-def em { color: var(--ink); }
+.hint-pop .say { font-family: var(--font-label); font-size: 0.72rem; color: var(--ink-3); }
+.hint-thumbs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-top: 0.45rem; }
+.hint-thumbs img { width: 100%; aspect-ratio: 1; object-fit: cover; background: #1a211e; }
+
+/* A breed named in the text and hovered: its timeline photo stays lit, the others dim. */
+.timeline g.mb, .timeline .tl-unknown > g { transition: opacity .2s ease; }
+.timeline g.mb.is-dim, .timeline .tl-unknown > g.is-dim { opacity: 0.18; }
+.timeline g.mb.is-spot .tl-mb-name { fill: var(--gold); }
+.timeline g.mb.is-spot .ph > circle:first-child { stroke: var(--gold); stroke-width: 3.5; }
+
+/* ---------- breed history and facts in tooltips (lib/breedFacts.tsx) ---------- */
+.bf { margin-top: 0.55rem; padding-top: 0.5rem; border-top: 1px solid var(--rule); font-family: var(--font-label); font-size: 0.76rem; line-height: 1.4; color: var(--ink-2); text-align: left; }
+.bf-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); gap: 0.4rem; margin-bottom: 0.45rem; }
+.bf-row span { display: flex; flex-direction: column; min-width: 0; color: var(--ink); font-size: 0.78rem; line-height: 1.25; overflow-wrap: anywhere; }
+.bf-row b { font-weight: 500; font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 0.1rem; }
+.bf-row i { font-style: normal; font-size: 0.68rem; color: var(--ink-3); }
+.bf p { margin: 0 0 0.35rem; }
+.bf p b { font-weight: 500; font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); margin-right: 0.25rem; }
+.bf-src { font-size: 0.62rem; color: var(--ink-3); opacity: 0.8; }
+.hint-pop-breed { width: 260px; }
+
+/* ---------- family tree scroller: chart centred, tooltips in a fixed panel on the right ---------- */
+/* A narrower text column on this page leaves the most room for the (width-limited) circle. */
+@media (min-width: 901px) { .scrolly:has(.figure-stage.docked) { grid-template-columns: minmax(300px, 0.56fr) 1.44fr; gap: 0 clamp(16px, 2vw, 32px); } }
+.figure-stage.docked { gap: clamp(10px, 1vw, 18px); }
+.stage-chart { position: relative; flex: 1 1 auto; min-width: 0; min-height: 0; display: flex; }
+.tip-dock {
+  flex: 0 0 clamp(220px, 17vw, 260px); align-self: center; display: grid; max-height: calc(100svh - 120px);
+  overflow: hidden; position: relative;
+}
+.tip-dock > * { grid-area: 1 / 1; min-width: 0; }
+.tip-dock .tip { position: relative; left: auto !important; top: auto !important; max-width: none; min-width: 0; width: 100%; transform: translateY(4px); }
+.tip-dock .tip.on { transform: none; }
+.tip-dock .tip:not(.on) { visibility: hidden; transition: opacity .15s ease, transform .15s ease, visibility 0s .15s; }
+.tip-dock-empty {
+  margin: 0; padding: 0.9rem 1rem; border: 1px dashed var(--rule); color: var(--ink-3);
+  font-family: var(--font-label); font-size: 0.8rem; line-height: 1.45; transition: opacity .15s ease; align-self: start;
+}
+.tip-dock:has(.tip.on) .tip-dock-empty { opacity: 0; }
+@media (max-width: 1180px) and (min-width: 901px) {
+  /* Mid-size screens: no room for a side column, so the panel floats in the chart's corner. */
+  .tip-dock { position: absolute; right: 0; bottom: 0; z-index: 4; width: 250px; pointer-events: none; }
+  .tip-dock-empty { display: none; }
+}
+@media (max-width: 900px) {
+  /* Phones: the chart takes the full width; the panel floats in its corner, only while in use. */
+  .tip-dock { position: absolute; right: 0; bottom: 0; z-index: 4; width: min(220px, 60vw); max-height: 100%; pointer-events: none; }
+  .tip-dock-empty { display: none; }
+  .tip-dock .tip { max-height: 50svh; overflow: hidden; }
+  .tip-dock .tip .bf { display: none; }
+}
+
+/* ---------- reading level on every page (SiteNav) ---------- */
+.site-nav .level-nav { margin-left: auto; align-self: center; letter-spacing: 0; text-transform: none; box-shadow: none; flex: none; }
+.level-pin { position: fixed; top: 14px; right: 16px; z-index: 30; opacity: 0; pointer-events: none; transform: translateY(-6px); transition: opacity .25s ease, transform .25s ease; }
+.level-pin.on { opacity: 1; pointer-events: auto; transform: none; }
+.level-pin .level-toggle { letter-spacing: 0; text-transform: none; }
+@media (max-width: 900px) {
+  /* Phones: the reading level gets its own row under the swipeable page links. */
+  .site-nav { flex-wrap: wrap; row-gap: 8px; }
+  .site-nav > ul { flex: 1 1 100%; }
+  .site-nav .level-nav { margin-left: 0; }
+  .purpose, .pairs, .geo, .replica:not(.embedded), .explorer { padding-top: 112px; }
+}
+
+/* =====================================================================================
+   Phones. Two layouts: upright (portrait, <= 900px wide) and sideways (landscape, a
+   screen that is wide but at most 520px tall). The first two pages have dense charts and
+   prompt the reader to turn the phone; both orientations are laid out to work.
+   ===================================================================================== */
+
+/* ---------- "turn your phone" prompt (upright phones only) ---------- */
+.rotate-hint { display: none; }
+@media (max-width: 900px) and (orientation: portrait) {
+  .rotate-hint {
+    display: flex; align-items: center; gap: 0.8rem; margin: 1.1rem 0 0; padding: 0.6rem 0.9rem 0.6rem 0.6rem; max-width: 22rem;
+    border: 1px solid var(--gold-dim); border-radius: 12px; background: rgba(232, 183, 74, 0.07);
+    font-family: var(--font-label); font-size: 0.86rem; line-height: 1.35; color: var(--ink-2);
+  }
+  .rotate-hint strong { color: var(--ink); font-weight: 600; }
+  .rotate-hint svg { width: 48px; height: 48px; flex: none; overflow: visible; }
+  .rh-phone { fill: none; stroke: var(--gold); stroke-width: 2.6; stroke-linecap: round; transform-box: fill-box; transform-origin: center; animation: rh-turn 3.4s cubic-bezier(.5, 0, .3, 1) infinite; }
+  .rh-arc, .rh-arrow { fill: none; stroke: var(--ink-3); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; animation: rh-fade 3.4s ease-in-out infinite; }
+  @keyframes rh-turn { 0%, 18% { transform: rotate(0deg); } 52%, 86% { transform: rotate(-90deg); } 100% { transform: rotate(0deg); } }
+  @keyframes rh-fade { 0%, 18% { opacity: 1; } 52%, 86% { opacity: 0.15; } 100% { opacity: 1; } }
+}
+@media (prefers-reduced-motion: reduce) { .rh-phone, .rh-arc, .rh-arrow { animation: none !important; } }
+
+/* ---------- highlighted-breeds caption under the compact charts ---------- */
+.hi-chips { list-style: none; margin: 0; padding: 4px 0 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 5px; font-family: var(--font-label); font-size: 0.68rem; line-height: 1.2; color: var(--ink-2); }
+.hi-chips li { display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.16rem 0.5rem; border: 1px solid var(--rule); border-radius: 999px; background: rgba(13, 17, 16, 0.88); white-space: nowrap; }
+.hi-chips i { width: 7px; height: 7px; border-radius: 50%; flex: none; }
+.hi-chips .more { color: var(--ink-3); border-style: dashed; }
+
+/* ---------- both orientations ---------- */
+@media (max-width: 900px), (max-height: 520px) and (orientation: landscape) {
+  /* The pinned reading-level pill would cover text on ordinary pages; the scrollers keep it
+     (it sits in the chart's empty top corner). The nav's own toggle is one scroll away. */
+  body:not(:has(main.scrolly)) .level-pin { display: none; }
+  .level-pin .level-toggle button, .gloss .level-toggle button { font-size: 0.7rem; padding: 0.28rem 0.5rem; }
+  .gloss-btn { transform: scale(0.82); transform-origin: right center; }
+  .cladogram.compact svg, .circos.compact svg { overflow: hidden; }
+}
+
+/* ---------- upright ---------- */
+@media (max-width: 900px) and (orientation: portrait) {
+  .figure { height: 54svh; padding-top: 6px; }
+  .figure-meta { padding-bottom: 0.3rem; min-height: 26px; }
+  .cladogram svg { max-height: calc(54svh - 62px); }
+  .figure-stage.docked { gap: 0; }
+}
+
+/* ---------- sideways ---------- */
+@media (max-height: 520px) and (orientation: landscape) {
+  .site-nav { flex-wrap: nowrap; padding: 8px max(16px, env(safe-area-inset-left)); font-size: 0.68rem; }
+  .site-nav > ul { flex: 1 1 0; min-width: 0; }
+  .site-nav .level-nav { margin-left: 0; }
+  .hero { padding: 48px max(16px, env(safe-area-inset-left)) 20px; }
+  .hero h1 { font-size: clamp(1.9rem, 9svh, 2.6rem); margin-bottom: 0.7rem; }
+  .hero .dek { font-size: 0.95rem; margin-bottom: 0.6rem; max-width: 34rem; }
+  .hero .cite, .hero .scroll-cue { display: none; }
+  .hero .eyebrow { margin-bottom: 0.5rem; }
+
+  /* Text on the left, the chart pinned on the right at the full height of the screen. */
+  .scrolly { grid-template-columns: minmax(0, 0.78fr) minmax(0, 1fr); grid-template-areas: "steps figure"; gap: 0 14px; padding: 0 max(12px, env(safe-area-inset-right)) 0 max(12px, env(safe-area-inset-left)); }
+  .figure { height: 100svh; top: 0; padding: 4px 0; background: none; box-shadow: none; z-index: 1; justify-content: center; }
+  .figure-meta { position: absolute; top: 6px; left: 0; z-index: 2; border: 0; padding: 0; }
+  .figure-title { display: none; }
+  .cladogram svg { max-height: calc(100svh - 8px); }
+  .steps { padding: 12svh 0 30svh; }
+  .step { min-height: 100svh; align-items: center; }
+  .card { padding: 0.9rem 1rem 0.8rem; font-size: 0.92rem; line-height: 1.5; max-width: none; border: 1px solid var(--rule); border-left: 2px solid var(--rule); transform: none; background: var(--bg-raise); }
+  .step.is-active .card { border-left-color: var(--gold); }
+  .card h2 { font-size: 1.35rem; margin-bottom: 0.6rem; }
+  .card .kicker { margin-bottom: 0.5rem; font-size: 0.66rem; }
+  .card p { margin-bottom: 0.65rem; }
+  .hi-chips { position: absolute; left: 0; bottom: 4px; max-width: 46%; justify-content: flex-start; z-index: 2; pointer-events: none; }
+  .tip-dock { position: absolute; right: 0; bottom: 0; top: auto; z-index: 4; width: 210px; max-height: 96svh; pointer-events: none; }
+  .tip-dock-empty { display: none; }
+  .tip-dock .tip .bf { display: none; }
+  .tip-dock .tip .tip-photo { height: 84px; }
+  .primer { padding: 28px max(16px, env(safe-area-inset-left)); }
+}
+
+/* Compact charts: the ring is the whole picture, so drop the name labels and family band that
+   would otherwise poke into the corners, and keep the square inside its box. */
+.circos.compact .codes, .circos.compact .clade-ring { display: none; }
+.stage-circos .circos.compact svg { max-height: 100%; max-width: 100%; }
+.stage-circos .circos.compact { min-height: 0; height: 100%; }
+@media (max-width: 900px) and (orientation: portrait) {
+  /* Two nav rows sit over the top of the hero; start the intro below them. */
+  .hero { padding-top: 104px; }
+  .circos svg { max-height: calc(54svh - 62px); }
+}
+
+/* Phones: the chart tooltip is a slim bar along the bottom of the chart (thumbnail left, text
+   right) so a tap never hides the chart it describes. */
+@media (max-width: 900px), (max-height: 520px) and (orientation: landscape) {
+  .tip-dock { position: absolute; left: 0; right: 0; bottom: 0; top: auto; width: auto; max-height: none; z-index: 4; pointer-events: none; display: grid; overflow: visible; }
+  .tip-dock-empty { display: none; }
+  .tip-dock .tip { display: grid; grid-template-columns: 62px minmax(0, 1fr); column-gap: 10px; align-content: center; padding: 6px 10px 6px 6px; max-height: none; font-size: 0.74rem; box-shadow: 0 -8px 20px rgba(0, 0, 0, 0.45); }
+  .tip-dock .tip > * { grid-column: 2; }
+  .tip-dock .tip .tip-photo { grid-column: 1; grid-row: 1 / span 5; width: 62px; height: 62px; margin: 0; align-self: center; }
+  .tip-dock .tip .tip-name { font-size: 0.98rem; margin-bottom: 0; }
+  .tip-dock .tip .tip-clade { margin-bottom: 0.1rem; }
+  .tip-dock .tip dl { gap: 0 0.6rem; }
+  .tip-dock .tip .bf, .tip-dock .tip .tip-note, .tip-dock .tip .tip-more { display: none; }
+  .tip-dock .tip dl dt:nth-of-type(n+4), .tip-dock .tip dl dd:nth-of-type(n+4) { display: none; }
+}
+@media (max-height: 520px) and (orientation: landscape) {
+  .tip-dock { left: auto; width: min(300px, 62%); }
+}
+
+/* ---------- phones: the history timeline ---------- */
+@media (max-width: 900px), (max-height: 520px) and (orientation: landscape) {
+  /* Fit it to the chart area's height so nothing is cut off; upright it is then wider than the
+     screen and scrolls sideways (the component scrolls to each step's events). */
+  .stage-timeline { align-items: stretch; }
+  .stage-timeline .timeline { height: 100%; max-height: none; overflow-x: auto; overflow-y: hidden; overscroll-behavior-x: contain; scrollbar-width: none; }
+  .stage-timeline .timeline::-webkit-scrollbar { display: none; }
+  .stage-timeline .timeline svg { height: 100%; width: auto; min-width: 0; max-width: none; max-height: none; aspect-ratio: 5 / 4; }
+  /* Bigger text relative to the drawing, since the whole drawing is scaled down. */
+  .tl-tick, .tl-sub { font-size: 19px; }
+  .tl-axis-label { font-size: 15px; }
+  .tl-era { font-size: 21px; }
+  .tl-label { font-size: 22px; }
+  .tl-legend { font-size: 19px; }
+  .tl-ice-label { font-size: 17.5px; }
+  .tl-mb-name { font-size: 17.5px; }
+  .tl-mb-year, .tl-unk-h { font-size: 16px; }
+  .tl-ms { font-size: 17.5px; }
+}
+@media (max-width: 900px), (max-height: 520px) and (orientation: landscape) {
+  /* The "origin unknown" strip packs five names side by side; keep those at the original size. */
+  .tl-unknown .tl-mb-name { font-size: 12.5px; }
+}
+
+/* ---------- phones: matrices, bar charts and tables on the other pages ---------- */
+.pm-fam { font-family: var(--font-label); font-size: 13.5px; fill: var(--ink-2); }
+.purpose-matrix.tall { min-width: 0; }
+.purpose-matrix.tall .pm-name { font-size: 14.5px; }
+@media (max-width: 640px) {
+  .matrix-wrap { overflow-x: visible; padding: 0.3rem 0.2rem 0.2rem; }
+  .matrix-wrap .tip { max-width: min(300px, 88vw); }
+  .tip.tip-group:has(.tip-groups.two) { max-width: min(300px, 88vw); }
+  .mixing-bars svg { max-width: none; }
+  .mb-name { font-size: 15px; }
+  .mb-val, .mb-tick { font-size: 13.5px; }
+  /* The jobs table: six columns fit when the padding and type tighten up. */
+  .job-table { min-width: 0; font-size: 0.78rem; }
+  .job-table th, .job-table td { padding: 0.5rem 0.35rem; }
+  .job-table th .th-pad { letter-spacing: 0.04em; font-size: 0.62rem; }
+  .job-table td:first-child, .job-table th:first-child { padding-left: 0.55rem; }
+}
+
+/* ---------- phones: most popular breeds ---------- */
+.swipe-note { display: none; }
+.pop-eralist { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.5rem; }
+.pop-eralist li { display: flex; align-items: center; gap: 0.7rem; background: var(--bg-raise); border: 1px solid var(--rule); padding: 0.45rem 0.6rem 0.45rem 0.45rem; }
+.pop-eralist .pop-photo { width: 52px; height: 52px; border-radius: 50%; }
+.pop-eralist li > div { display: grid; gap: 0.12rem; min-width: 0; flex: 1; font-family: var(--font-label); }
+.pop-erabar { display: block; height: 6px; background: #1c2420; border-radius: 3px; overflow: hidden; margin-top: 0.15rem; }
+.pop-erabar i { display: block; height: 100%; border-radius: 3px; }
+@media (max-width: 640px) {
+  /* The top 20 as two tight columns instead of twenty full-width cards. */
+  .pop-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.4rem; }
+  .pop-tiles li { min-height: 60px; }
+  .pop-tiles .pop-photo { width: 52px; min-height: 60px; }
+  .pop-ttext { padding: 0.35rem 0.45rem; }
+  .pop-rank { font-size: 0.95rem; }
+  .pop-tname { font-size: 0.86rem; }
+  .pop-tmeta { font-size: 0.66rem; }
+  .pop-tclade { font-size: 0.66rem; }
+  .swipe-note { display: block; margin: 0 0 0.4rem; font-family: var(--font-label); font-size: 0.74rem; color: var(--ink-3); }
+  .swipe-note::before { content: "↔ "; color: var(--gold); }
+}
+
+/* ---------- sideways phones: the pages below the two scrollers ---------- */
+@media (max-height: 520px) and (orientation: landscape) {
+  .purpose, .pairs, .geo, .replica:not(.embedded), .explorer { padding-top: 56px; }
+  /* Explore panels: the tree beside its text, each a screen tall, instead of a tree wider
+     than the screen is high. */
+  .job-explore, .job-panel { --job-h: calc(100svh - 16px); }
+  .job-panel { grid-template-columns: minmax(0, var(--job-h)) minmax(0, 1fr); gap: 16px; align-items: start; }
+  .job-tree { height: var(--job-h); position: sticky; top: 8px; }
+  .job-tree .cladogram svg { max-height: calc(100svh - 44px); }
+  .job-gallery { grid-column: 1 / -1; height: auto; overflow: visible; }
+  .job-info { max-height: none; }
+  .pairs-head h1, .purpose h1 { font-size: 1.7rem; }
+}
+@media (max-height: 520px) and (orientation: landscape) {
+  /* A sideways phone is wide enough for the full matrices once the minimum width goes. */
+  .purpose-matrix { min-width: 0; }
+  .matrix-wrap { overflow-x: visible; }
+}
+
+/* ---------- phones: breed-pair tables become stacked cards ---------- */
+@media (max-width: 640px) {
+  .pair-table:not(.job-table) { min-width: 0; display: block; }
+  .pair-table:not(.job-table) thead, .pair-table:not(.job-table) tbody { display: block; }
+  .pair-table:not(.job-table) thead tr { display: flex; flex-wrap: wrap; align-items: center; border-bottom: 1px solid var(--rule); }
+  .pair-table:not(.job-table) th { padding: 0.35rem 0.5rem; border: 0; width: auto; }
+  .pair-table:not(.job-table) th.rank, .pair-table:not(.job-table) .col-steps { display: none; }
+  .pair-table:not(.job-table) th br { display: none; }
+  .pair-table:not(.job-table) tbody tr { display: grid; grid-template-columns: 1.4rem minmax(0, 1fr) minmax(0, 1fr); gap: 5px 8px; align-items: center; padding: 0.55rem 0.5rem; border-bottom: 1px solid #1a211e; }
+  .pair-table:not(.job-table) td { padding: 0; border: 0; }
+  .pair-table:not(.job-table) td.rank { grid-row: 1 / span 2; width: auto; padding: 0; align-self: start; padding-top: 0.5rem; }
+  .pair-table:not(.job-table) td.col-share { grid-column: 2 / 4; width: auto; }
+  .pair-table:not(.job-table) td.col-note { grid-column: 2 / 4; min-width: 0; max-width: none; font-size: 0.82rem; }
+  .pair-table:not(.job-table) .arrow { left: -0.75rem; font-size: 0.95rem; }
+  .pair-breed { min-width: 0; gap: 0.45rem; }
+  .pair-breed img, .pair-noimg { width: 38px; height: 38px; }
+  .pair-name { font-size: 0.84rem; line-height: 1.2; }
+  .pair-family { font-size: 0.66rem; }
+  .share-bar { min-width: 3rem; }
+  .share-num { display: flex; align-items: baseline; gap: 0.4rem; min-width: 0; font-size: 0.86rem; }
+}
+@media (max-width: 900px), (max-height: 520px) and (orientation: landscape) {
+  /* The job map's tooltip: facts only (the history line would cover the map on a phone). */
+  .job-map .tip { max-width: 180px; min-width: 150px; }
+  .job-map .tip .tip-photo { height: 84px; }
+  .job-map .tip .bf p, .job-map .tip .bf-src { display: none; }
+}

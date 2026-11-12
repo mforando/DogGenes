@@ -5,6 +5,7 @@ import * as d3 from "d3";
 import { feature } from "topojson-client";
 import type { GeometryCollection, Topology } from "topojson-specification";
 import world from "world-atlas/countries-110m.json";
+import { factsHtml } from "@/lib/breedFacts";
 import { BREEDS, EX, FAMILY_ORDER, JOB_GROUPS, REGIONS, type ExBreed } from "@/lib/explorer";
 import { clusterCells, HUB } from "@/lib/explorerCluster";
 
@@ -468,7 +469,11 @@ export default function ExplorerMosaic({ arrange, tileSize, spotlight, selected,
         return;
       }
       const b = BREEDS[tileBreed[t]];
-      tip.innerHTML = `<strong>${b.name}</strong><span>${b.files.length} photo${b.files.length === 1 ? "" : "s"} · ${b.familyName}</span>`;
+      // Rebuild only when the breed changes, not on every pointer move.
+      if (tip.dataset.breed !== String(b.index)) {
+        tip.dataset.breed = String(b.index);
+        tip.innerHTML = `<strong>${b.name}</strong><span>${b.files.length} photo${b.files.length === 1 ? "" : "s"} · ${b.familyName}</span>${factsHtml(b.code, null, b.name)}`;
+      }
       tip.classList.add("on");
       const r = tip.getBoundingClientRect();
       tip.style.left = `${Math.min(px + 14, W - r.width - 8)}px`;

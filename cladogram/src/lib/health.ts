@@ -142,3 +142,39 @@ export function candidates(v: Variant) {
   }
   return [...hits].map(([code, h]) => ({ code, ...h })).sort((x, y) => y.links - x.links || y.mb - x.mb);
 }
+
+/** Each variant's description and note at the Puppy (5th-grade) and Albert Pawstein (scientist) levels. */
+export const VARIANT_LEVELS: Record<string, Record<"puppy" | "pro", { what: string; note?: string }>> = {
+  cea: {
+    puppy: { what: "The back of the eye doesn’t grow quite right. Some dogs see fine, and some go blind.", note: "Every breed with it got the very same broken piece of DNA from one shared great-great-grandparent dog." },
+    pro: { what: "Developmental anomaly of the posterior segment (choroidal hypoplasia, coloboma, retinal detachment); phenotype ranges from subclinical to blindness. Autosomal recessive.", note: "An identical 7.8 kb intronic deletion in NHEJ1 is identical by descent in every breed tested (Parker et al. 2007)." },
+  },
+  mdr1: {
+    puppy: { what: "Some common medicines, like some worm pills, can make these dogs very sick.", note: "About 1 in 10 German shepherds and about 1 in 7 chinooks carry it." },
+    pro: { what: "Loss-of-function deletion in ABCB1 (MDR1) impairs P-glycoprotein drug efflux at the blood–brain barrier, causing neurotoxicity from ivermectin, loperamide and several chemotherapeutics.", note: "Allele frequency ~10% in German shepherds and ~15% in chinooks (cited in Parker et al. 2017)." },
+  },
+  dm: {
+    puppy: { what: "Older dogs slowly lose control of their back legs. It’s a lot like a disease people can get called ALS." },
+    pro: { what: "Late-onset progressive degeneration of the spinal cord white matter, a model for SOD1-associated amyotrophic lateral sclerosis; SOD1 c.118G>A, incompletely penetrant." },
+  },
+  prcd: {
+    puppy: { what: "The part of the eye that senses light wears out. First the dog can’t see well at night, then it slowly goes blind." },
+    pro: { what: "Progressive rod-cone degeneration: rod photoreceptor loss (nyctalopia) followed by cone loss and blindness; PRCD c.5G>A, autosomal recessive." },
+  },
+  eic: {
+    puppy: { what: "After a few minutes of running really hard, the dog’s legs get wobbly and it falls down." },
+    pro: { what: "Exercise-induced collapse: hind-limb weakness and collapse after 5–15 minutes of strenuous exercise; DNM1 c.767G>T, impairing synaptic vesicle recycling." },
+  },
+  cddy: {
+    puppy: { what: "Short legs, plus cushions in the backbone that wear out early. That makes back problems about 51 times more likely.", note: "These breeds are named in the study. Lots of other small and medium breeds have it too." },
+    pro: { what: "A retrogene insertion of FGF4 on chromosome 12 causes chondrodystrophy and premature intervertebral disc degeneration, increasing the risk of Hansen type I disc herniation ~51-fold.", note: "Breeds named in the paper; the insertion is reported in many more small and medium breeds." },
+  },
+  smoc2: {
+    puppy: { what: "A short, squished face. It can make it hard for the dog to breathe.", note: "In a study in Sweden, every single dog of these four breeds had it." },
+    pro: { what: "A LINE-1 insertion in SMOC2 reduces expression and shortens the facial skeleton, contributing to brachycephaly and brachycephalic obstructive airway syndrome.", note: "Fixed in all four breeds sampled in a Swedish study." },
+  },
+  huu: {
+    puppy: { what: "Too much of a waste chemical (uric acid) in the pee, which makes painful stones in the bladder and kidneys.", note: "Every Dalmatian had it. So in the 1970s, breeders mixed in a pointer to bring back the healthy version." },
+    pro: { what: "SLC2A9 loss of function impairs renal urate reabsorption, causing hyperuricosuria and urate urolithiasis; autosomal recessive.", note: "Fixed in Dalmatians; a 1973 backcross to a pointer reintroduced the wild-type allele (the LUA Dalmatian)." },
+  },
+};

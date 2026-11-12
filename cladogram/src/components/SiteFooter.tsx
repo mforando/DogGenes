@@ -108,19 +108,24 @@ const C = {
     text: "Monroe B.L., Colaresi M.P., Quinn K.M. (2008). Fightin' Words. Political Analysis 16(4):372–403 (method)",
     url: "https://doi.org/10.1093/pan/mpn018",
   },
+  wikiFacts: {
+    text: "Breed history and facts in the tooltips (a short description, a line of history, origin, height and weight): Wikipedia contributors, each breed's English Wikipedia article; quoted and shortened",
+    url: "https://en.wikipedia.org/",
+    license: "CC BY-SA 4.0",
+  },
   pudding: { text: "Layout inspired by The Pudding, “Every Outdoor Basketball Court in the U.S.A.” (2024)", url: "https://pudding.cool/2024/09/courts/" },
 } satisfies Record<string, Cite>;
 
 /** Sources cited on each page (keyed by route, without the base path). */
 const BY_PAGE: Record<string, Cite[]> = {
-  "/": [C.wolfPhoto, C.wikiDomestication, C.wikiGlacial, C.wikiBonn, C.wikiPaleo, C.wikiBreeds, C.breedHistories, C.parker, C.parker2004, C.rosenberg, C.boyko, C.yengo, C.dogceo, C.commons, C.naturalEarth],
-  "/tree": [C.parker, C.breedHistories, C.dogceo, C.commons, C.silhouettes],
-  "/purpose": [C.parker, C.breedHistories, C.dogceo, C.commons],
-  "/explorer": [C.dogceo, C.commons, C.parker, C.breedHistories, C.naturalEarth, C.pudding],
-  "/health": [C.parker, C.omia, C.donner, C.brown, C.marchant, C.karmi, C.dogwellnet, C.dap, C.dogceo, C.commons],
-  "/names": [C.nyc, C.toronto, C.torontoCensus, C.acsAncestry, C.monroe, C.parker, C.dogceo, C.commons],
+  "/": [C.wolfPhoto, C.wikiFacts, C.wikiDomestication, C.wikiGlacial, C.wikiBonn, C.wikiPaleo, C.wikiBreeds, C.breedHistories, C.parker, C.parker2004, C.rosenberg, C.boyko, C.yengo, C.dogceo, C.commons, C.naturalEarth],
+  "/tree": [C.parker, C.breedHistories, C.wikiFacts, C.dogceo, C.commons, C.silhouettes],
+  "/purpose": [C.parker, C.breedHistories, C.wikiFacts, C.dogceo, C.commons],
+  "/explorer": [C.dogceo, C.commons, C.parker, C.breedHistories, C.wikiFacts, C.naturalEarth, C.pudding],
+  "/health": [C.parker, C.omia, C.wikiFacts, C.donner, C.brown, C.marchant, C.karmi, C.dogwellnet, C.dap, C.dogceo, C.commons],
+  "/names": [C.nyc, C.toronto, C.wikiFacts, C.torontoCensus, C.acsAncestry, C.monroe, C.parker, C.dogceo, C.commons],
   "/game": [C.dogceo, C.stanfordDogs, C.resnet, C.akc],
-  "/popularity": [C.akc, C.tidytuesday, C.wikiTopBreeds, C.parker, C.dogceo, C.commons],
+  "/popularity": [C.akc, C.tidytuesday, C.wikiFacts, C.wikiTopBreeds, C.parker, C.dogceo, C.commons],
 };
 
 const SOURCES_URL = "https://github.com/mforando/DogGenes/blob/main/SOURCES.md";

@@ -5,6 +5,7 @@ import * as d3 from "d3";
 import { data } from "@/lib/tree";
 import { cladeColor } from "@/lib/palette";
 import { dnaRelatives, treeRelatives } from "@/lib/relatives";
+import { B, Term } from "./Hints";
 
 const MAX_DNA = 8;
 
@@ -55,10 +56,10 @@ export default function RelatedBreeds({ code, onSelect }: { code: string; onSele
           </ol>
           {dna.length > MAX_DNA && <p className="rel-more">+ {dna.length - MAX_DNA} more breeds with smaller overlaps</p>}
           <p className="rel-note">
-            The percent is how much of their DNA a typical {name} and a typical dog of the other
+            The percent is how much of their <Term id="dna">DNA</Term> a typical {name} and a typical dog of the other
             breed share in long, identical chunks, the kind that only survive a few generations. For scale,
-            the most closely tied pair in the whole study, the bull terrier and miniature bull
-            terrier, share about 17%. Between two separate breeds, even 1% points to a fairly
+            the most closely tied pair in the whole study, the <B c="BULT">bull terrier</B> and <B c="MBLT">miniature bull
+            terrier</B>, share about 17%. Between two separate breeds, even 1% points to a fairly
             recent cross or shared founding dogs.
           </p>
         </>

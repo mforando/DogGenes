@@ -1,18 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import Cladogram from "./Cladogram";
 import { STEPS } from "@/lib/steps";
 import { data, ringOrder } from "@/lib/tree";
 import { CLADE_COLOR, cladeColor } from "@/lib/palette";
 import { PHOTOS } from "@/lib/photos";
-import { CITATION, SiteNav, Specimens, useActiveStep } from "./shared";
+import { CITATION, PHONE, RotateHint, SiteNav, Specimens, useActiveStep, useMedia } from "./shared";
 import Primer, { type TermId } from "./Primer";
 import GlossaryButton from "./GlossaryButton";
 import DnaHelix from "./DnaHelix";
-import LevelToggle from "./LevelToggle";
-import { ReadingLevelProvider, useReadingLevel } from "@/lib/readingLevel";
+import { HintProvider } from "./Hints";
+import { Lv, useReadingLevel } from "@/lib/readingLevel";
 import { LEVEL_BODIES } from "@/lib/levels";
 import Circos from "./Circos";
 import CircosReplica from "./CircosReplica";
@@ -24,11 +24,7 @@ const GLOSSARY: TermId[] = ["dna", "cladogram", "clade", "bootstrap", "haplotype
 const GLOSSARY_WATCH = [".primer", "main.scrolly"];
 
 export default function Story() {
-  return (
-    <ReadingLevelProvider>
-      <StoryBody />
-    </ReadingLevelProvider>
-  );
+  return <StoryBody />;
 }
 
 function StoryBody() {
@@ -44,26 +40,58 @@ function StoryBody() {
   const [globeHover, setGlobeHover] = useState<string | null>(null);
   // ...and hovering a wedge on the circle chart spins the globe to that breed's origin.
   const [treeHover, setTreeHover] = useState<string | null>(null);
+  // Hovering a breed's name or a family's name in the text highlights it on the chart too.
+  const [textBreed, setTextBreed] = useState<string | null>(null);
+  const [textClade, setTextClade] = useState<string | null>(null);
+  const tipDock = useRef<HTMLElement>(null);
+  // Phones: the charts are cropped to their rings (names would be a few pixels tall), so the
+  // breeds or families a step highlights are listed under the chart instead.
+  const phone = useMedia(PHONE);
   useEffect(() => {
     setPhotoHover(null);
     setContinent(null);
     setGlobeHover(null);
     setTreeHover(null);
+    setTextBreed(null);
+    setTextClade(null);
   }, [active]);
-  const pointed = photoHover ?? (step.continentGlobe ? globeHover : null);
+  const pointed = photoHover ?? textBreed ?? (step.continentGlobe ? globeHover : null);
   const sel = pointed && !step.circos ? pointed : null;
   // While a photo is hovered, the step's own highlights step aside so only that breed shows.
   const treeView = useMemo(() => {
+    if (textClade && !pointed && !step.circos) {
+      const { codes, clades, paths, outgroup, split, links, ...rest } = step.view;
+      void codes; void clades; void paths; void outgroup; void split; void links;
+      return { ...rest, color: "clade" as const, clades: [textClade] };
+    }
     const focus = pointed ? [pointed] : step.continentGlobe && continent ? CONTINENT_BREEDS[continent] : null;
     if (!focus || step.circos) return step.view;
     const { codes, clades, paths, outgroup, split, links, ...rest } = step.view;
     void codes; void clades; void paths; void outgroup; void split;
     return { ...rest, codes: focus, ...(links ? { links: { codes: focus } } : {}) };
-  }, [pointed, continent, step]);
+  }, [pointed, continent, step, textClade]);
   // The chord diagram keeps the nearest chord step's view while it fades in or out.
   const idx = STEPS.indexOf(step);
   const lastCircos =
     STEPS.slice(0, idx + 1).filter((s) => s.circos).at(-1)?.circos ?? STEPS.find((s) => s.circos)!.circos!;
+
+  const chips = useMemo(() => {
+    const c = step.circos;
+    const codes = c
+      ? c.focus ?? (typeof c.ribbons === "object" && "codes" in c.ribbons ? c.ribbons.codes : [])
+      : treeView.outgroup
+        ? ["GDJK", "WOLF", ...(treeView.codes ?? [])]
+        : treeView.codes ?? [];
+    const clades = (c ? c.clades : treeView.clades) ?? [];
+    const names = new Map<string, string>();
+    for (const cl of clades) names.set(data.clades[cl], CLADE_COLOR[cl]);
+    for (const code of codes) {
+      const b = data.breeds[code];
+      if (b) names.set(b.name, cladeColor(b.clade, code));
+    }
+    const all = [...names];
+    return { shown: all.slice(0, 6), more: Math.max(0, all.length - 6) };
+  }, [step, treeView]);
 
   const cladeGroups = useMemo(() => {
     const groups = new Map<string, string[]>();
@@ -77,7 +105,7 @@ function StoryBody() {
   }, []);
 
   return (
-    <>
+    <HintProvider onBreed={setTextBreed} onClade={setTextClade}>
       <SiteNav />
       <header className="hero">
         <DnaHelix />
@@ -87,16 +115,18 @@ function StoryBody() {
             How to read <em>the dog&rsquo;s</em> family tree
           </h1>
           <p className="dek">
-            In 2017, scientists tested the DNA of {data.stats.dogs.toLocaleString("en-US")}{" "}
-            dogs from 161 breeds and drew one giant family tree showing how they&rsquo;re all
-            related. It&rsquo;s gorgeous, and very easy to misread. Scroll down and
-            we&rsquo;ll walk through it one step at a time. No science background needed.
+            <Lv
+              puppy={<>In 2017, scientists checked the DNA of {data.stats.dogs.toLocaleString("en-US")} dogs from 161 breeds. Then they drew one giant family tree that shows how all the breeds are related. It&rsquo;s beautiful, but it&rsquo;s tricky to read. Scroll down and we&rsquo;ll go through it step by step.</>}
+              pro={<>Parker et&nbsp;al. (2017) genotyped {data.stats.dogs.toLocaleString("en-US")} dogs from 161 breeds at ~150,000 SNPs and inferred a bootstrapped neighbor-joining phylogeny, then quantified pairwise haplotype sharing to detect recent admixture. Scroll for a step-by-step reading of the tree and the sharing network.</>}
+            >
+              In 2017, scientists tested the DNA of {data.stats.dogs.toLocaleString("en-US")}{" "}
+              dogs from 161 breeds and drew one giant family tree showing how they&rsquo;re all
+              related. It&rsquo;s gorgeous, and very easy to misread. Scroll down and
+              we&rsquo;ll walk through it one step at a time. No science background needed.
+            </Lv>
           </p>
           <p className="cite">{CITATION}</p>
-          <div className="level-hero">
-            <span>Reading level</span>
-            <LevelToggle />
-          </div>
+          <RotateHint />
           <div className="scroll-cue" aria-hidden>
             <span>scroll</span>
           </div>
@@ -107,8 +137,13 @@ function StoryBody() {
         terms={GLOSSARY}
         intro={
           <p>
-            The chart uses a few science words. Here&rsquo;s what they mean in plain
-            English. You can come back here anytime.
+            <Lv
+              puppy="The chart uses a few science words. Here’s what they mean. You can come back here anytime, or tap the ? button."
+              pro="Key terms as used in the study. Each card has a schematic; the ? button reopens them anytime."
+            >
+              The chart uses a few science words. Here&rsquo;s what they mean in plain
+              English. You can come back here anytime.
+            </Lv>
           </p>
         }
       />
@@ -123,14 +158,31 @@ function StoryBody() {
             </span>
             <span className="figure-title">{step.title}</span>
           </div>
-          <div className={`figure-stage${step.circos ? " circos-on" : ""}`}>
-            <div className="stage-circle">
-              <Cladogram view={treeView} selected={sel} onSelect={() => {}} onHover={step.continentGlobe ? setTreeHover : undefined} />
+          <div className={`figure-stage docked${step.circos ? " circos-on" : ""}`}>
+            <div className="stage-chart">
+              <div className="stage-circle">
+                <Cladogram view={treeView} selected={sel} onSelect={() => {}} onHover={step.continentGlobe ? setTreeHover : undefined} tipDock={tipDock} compact={phone} />
+              </div>
+              <div className="stage-circos" aria-hidden={!step.circos}>
+                <Circos view={step.circos ?? lastCircos} spotlight={step.circos ? photoHover ?? textBreed : null} ariaLabel="Chord diagram of DNA shared between dog breeds from different family groups" tipDock={tipDock} compact={phone} />
+              </div>
             </div>
-            <div className="stage-circos" aria-hidden={!step.circos}>
-              <Circos view={step.circos ?? lastCircos} spotlight={step.circos ? photoHover : null} ariaLabel="Chord diagram of DNA shared between dog breeds from different family groups" />
-            </div>
+            {/* Chart tooltips show here, in a fixed panel, instead of following the pointer. */}
+            <aside ref={tipDock} className="tip-dock" aria-live="polite">
+              <p className="tip-dock-empty">Hover over a breed on the chart to see its photo, family and history here.</p>
+            </aside>
           </div>
+          {phone && chips.shown.length > 0 && (
+            <ul className="hi-chips" aria-label="Highlighted on the chart">
+              {chips.shown.map(([name, color]) => (
+                <li key={name}>
+                  <i style={{ background: color }} />
+                  {name}
+                </li>
+              ))}
+              {chips.more > 0 && <li className="more">+{chips.more} more</li>}
+            </ul>
+          )}
         </div>
 
         <div className="steps">
@@ -152,7 +204,7 @@ function StoryBody() {
                   <ContinentGlobe
                     continent={i === active ? continent : null}
                     onPick={i === active ? setContinent : undefined}
-                    spotlight={i === active ? photoHover ?? treeHover : null}
+                    spotlight={i === active ? photoHover ?? textBreed ?? treeHover : null}
                     onHoverBreed={i === active ? setGlobeHover : undefined}
                   />
                 )}
@@ -185,11 +237,16 @@ function StoryBody() {
         </details>
         <footer>
           <p>
+            <Lv
+              puppy={<>Where this comes from: the family tree and shared-DNA data from a 2017 study by Parker and other scientists. Dogs of the same breed that group together are drawn as one wedge. We picked the colors ourselves.</>}
+              pro={<>Data: the neighbor-joining tree and pairwise IBD-sharing matrix from Parker et&nbsp;al. 2017. Following their figure, monophyletic groups of conspecific breed samples are collapsed to one wedge; for polyphyletic breeds only the largest fragment is labeled. The palette is ours.</>}
+            >
             Where this comes from: the family tree and DNA-sharing data published by Parker
             et&nbsp;al. in 2017. As in their chart, dogs of the same breed that cluster
             together are drawn as one wedge. When a breed is split up, only its biggest piece
             gets a label (hover over the others to see what they are). We picked our own
-            colors. Dog photos for the {Object.keys(PHOTOS).length} breeds it covers come from
+            colors.
+            </Lv> Dog photos for the {Object.keys(PHOTOS).length} breeds it covers come from
             the free <a href="https://dog.ceo/dog-api/">Dog CEO API</a>.
           </p>
           <p className="next-page">
@@ -198,6 +255,6 @@ function StoryBody() {
           </p>
         </footer>
       </section>
-    </>
+    </HintProvider>
   );
 }

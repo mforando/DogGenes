@@ -8,6 +8,7 @@ import world from "world-atlas/countries-110m.json";
 import { PINS, type Pin } from "@/lib/origins";
 import { data } from "@/lib/tree";
 import { photoOf } from "@/lib/photos";
+import { factsHtml } from "@/lib/breedFacts";
 
 export type FlyTarget = { lat: number; lon: number; k: number; id: number };
 
@@ -90,14 +91,18 @@ export default function Globe({ colorOf, highlight, selected, onSelect, fly, onH
         tip.html(
           `${photo ? `<img class="tip-photo" src="${photo}" alt="" referrerpolicy="no-referrer" />` : ""}
            <div class="tip-name">${data.breeds[d.code].name}</div>
-           <div class="tip-sub">${d.place}${d.place === d.country ? "" : ` · ${d.country}`}</div>`,
+           <div class="tip-sub">${d.place}${d.place === d.country ? "" : ` · ${d.country}`}</div>
+           ${factsHtml(d.code)}`,
         ).classed("on", true);
         const box = el.getBoundingClientRect();
         const t = tip.node() as HTMLElement;
         tip.style("left", `${Math.min(ev.clientX - box.left + 14, box.width - t.offsetWidth - 6)}px`)
           .style("top", `${Math.min(ev.clientY - box.top + 14, box.height - t.offsetHeight - 6)}px`);
       })
-      .on("pointerleave blur", () => {
+      .on("pointerleave blur", (ev: PointerEvent | FocusEvent) => {
+        // A finger lifting off isn't "leaving": keep a tapped dot's tooltip until the dot
+        // loses focus (a tap anywhere else).
+        if (ev.type === "pointerleave" && (ev as PointerEvent).pointerType !== "mouse") return;
         tip.classed("on", false);
         onHoverRef.current?.(null);
       })

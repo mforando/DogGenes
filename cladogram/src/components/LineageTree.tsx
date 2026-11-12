@@ -6,6 +6,7 @@ import { data } from "@/lib/tree";
 import { cladeColor } from "@/lib/palette";
 import { familyTree, lineage, type FamilyNode } from "@/lib/relatives";
 import { photoOf } from "@/lib/photos";
+import { factsText } from "@/lib/breedFacts";
 
 const INK = "#e9e2d0";
 const MUTED = "#8a8a7f";
@@ -164,13 +165,14 @@ export default function LineageTree({ code, onSelect }: { code: string; onSelect
         .attr("stroke", self ? GOLD : url ? "rgba(233,226,208,0.35)" : cladeColor(data.breeds[c]?.clade ?? null, c))
         .attr("stroke-width", self ? 2 : 1)
         .attr("stroke-dasharray", url ? null : "3 2");
-      ph.append("title").text(nameOf(c));
+      const tipText = [nameOf(c), factsText(c)].filter(Boolean).join("\n");
+      ph.append("title").text(tipText);
       if (!self && c !== "WOLF") ph.style("cursor", "pointer").on("click", () => onSelectRef.current(c));
       const label = t.append("text").attr("transform", `translate(0,${py - (self ? 8 : 5)}) rotate(-90)`)
         .attr("dy", "0.35em")
         .attr("class", self ? "lt-self-tip" : `lt-name${c === "WOLF" ? " wolf" : ""}${sameBreed ? " same" : ""}`)
         .text(clip(nameOf(c)) + (sameBreed ? " (other dogs)" : ""));
-      label.append("title").text(nameOf(c));
+      label.append("title").text(tipText);
       if (!self && c !== "WOLF") {
         label.attr("tabindex", 0).attr("role", "button").attr("aria-label", `Show ${nameOf(c)}`)
           .on("click", () => onSelectRef.current(c))

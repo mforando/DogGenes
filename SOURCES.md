@@ -188,6 +188,12 @@ Photos are shown as published (scaled and cropped to circles or squares on the s
 | K. Kakey, [dog_traits_AKC](https://github.com/kkakey/dog_traits_AKC), via R4DS [TidyTuesday 2022-02-01](https://github.com/rfordatascience/tidytuesday/tree/main/data/2022/2022-02-01) (`breed_rank.csv`) | Breed rankings 2013–2020 (AKC registration statistics) | Repository **CC0 1.0**; underlying data from the AKC |
 | AKC, "[Top Ten Breeds of the 1940s](https://www.akc.org/expert-advice/lifestyle/did-you-know/top-ten-breeds-of-the-1940s/)"; Wikipedia contributors, "[Beagle](https://en.wikipedia.org/wiki/Beagle)", "[Poodle](https://en.wikipedia.org/wiki/Poodle)", "[American Cocker Spaniel](https://en.wikipedia.org/wiki/American_Cocker_Spaniel)" | Years each breed held #1, 1936–2012 (sources differ by a year on the Cocker Spaniel's second run) | Facts; Wikipedia **CC BY-SA 4.0** |
 
+## 6a. Breed history and facts (tooltips)
+
+| Source | Used for | License |
+|---|---|---|
+| Wikipedia contributors, the English Wikipedia article for each breed (219 breeds; the Levriero Meridionale has no English article), via the [MediaWiki API](https://www.mediawiki.org/wiki/API:Main_page) | In every tooltip that shows a single breed: one sentence on what the breed is, one line of its history (from the article's History section), and its origin, height and weight (from the article's infobox). Stored in `cladogram/src/data/breedFacts.json`, built by `cladogram/scripts/fetch-breed-facts.mjs`; each entry keeps its article title | **CC BY-SA 4.0**. The sentences are quoted (shortened) and credited "Wikipedia · CC BY-SA 4.0" in each tooltip and in the page footers; this text is shared under the same license. |
+
 ## 6b. Dog Breed Game
 
 | Source | Used for | License |
@@ -227,7 +233,7 @@ Photos are shown as published (scaled and cropped to circles or squares on the s
 |---|---|---|
 | **CC BY / CC BY-SA (2.0–4.0), CC0, public domain** | Wikimedia Commons breed photos (credits in section 3) | Credit the author and license and link to the file page (done in the credits table). CC BY-SA photos shared in changed form must keep CC BY-SA. |
 | **CC BY 4.0** | Parker et al. 2017 article and its supplementary data (`article.pdf`, `treeFile.pdf`, `haplotypeSharing.xlsx`); Donner et al. 2018; Marchant et al. 2017; Boyko et al. 2010; Yengo et al. 2022; OMIA content | Free to share and adapt, including commercially, **with credit** to the authors and a note of changes. |
-| **CC BY-SA 4.0** | Wikipedia "Domestication of the dog", "Last Glacial Period", "Last Glacial Maximum", "Bonn–Oberkassel dog", "Paleolithic dog", 12 breed articles, and "Beagle", "Poodle", "American Cocker Spaniel" (years at #1) | Credit, **and share-alike**: adaptations of the article's *text* must use the same license. This site paraphrases facts rather than copying text, and credits the article on the History tab. |
+| **CC BY-SA 4.0** | Breed history and facts in the tooltips (section 6a, quoted text); Wikipedia "Domestication of the dog", "Last Glacial Period", "Last Glacial Maximum", "Bonn–Oberkassel dog", "Paleolithic dog", 12 breed articles, and "Beagle", "Poodle", "American Cocker Spaniel" (years at #1) | Credit, **and share-alike**: adaptations of the article's *text* must use the same license. This site paraphrases facts rather than copying text, and credits the article on the History tab. |
 | **CC0 / public domain** | Dryad dataset; Natural Earth; TidyTuesday AKC ranking compilation | No conditions. |
 | **Facts, cited (no license needed for the facts)** | AKC breed rankings 2021–2025; figures from Parker et al. 2004 and Rosenberg et al. 2002 | Only the numbers are used, with credit; no text or figures are copied from the AKC pages or *Science* articles. |
 | **PNAS open access license** | Brown et al. 2017 | Reuse with attribution under PNAS terms. |

@@ -6,6 +6,8 @@ import ExplorerMosaic, { type Arrange } from "./ExplorerMosaic";
 import { SiteNav } from "./shared";
 import { BREEDS, EX, JOB_GROUPS, photoUrl } from "@/lib/explorer";
 import { cladeColor } from "@/lib/palette";
+import { Lv } from "@/lib/readingLevel";
+import { B, Term } from "./Hints";
 
 const fmt = d3.format(",");
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
@@ -81,9 +83,16 @@ function Drawer({
         </dd>
       </dl>
       {!b.code && b.family !== "_wild" && (
-        <p className="ex-note">This breed wasn&rsquo;t sampled in the 2017 DNA study, so it isn&rsquo;t on the family tree.</p>
+        <p className="ex-note">
+          <Lv
+            puppy={<>Scientists didn&rsquo;t test this breed&rsquo;s <Term id="dna">DNA</Term> in the 2017 study, so it isn&rsquo;t on the family tree.</>}
+            pro={<>Not sampled in Parker et&nbsp;al. 2017, so it has no position in the <Term id="dna">genomic</Term> phylogeny.</>}
+          >
+            This breed wasn&rsquo;t sampled in the 2017 <Term id="dna">DNA</Term> study, so it isn&rsquo;t on the family tree.
+          </Lv>
+        </p>
       )}
-      {b.family === "_wild" && <p className="ex-note">A wild relative of dogs, not a dog breed. The Dog CEO collection includes it.</p>}
+      {b.family === "_wild" && <p className="ex-note"><Lv puppy="A wild cousin of dogs, not a dog breed. It’s in the photo collection anyway." pro="A wild canid, not a domestic breed; included in the Dog CEO collection.">A wild relative of dogs, not a dog breed. The Dog CEO collection includes it.</Lv></p>}
       <p className="ex-strip-h">All {b.files.length} photos</p>
       <ul className="ex-strip">
         {b.files.map((_, k) => (
@@ -104,12 +113,16 @@ function Drawer({
 
 export default function BreedExplorer() {
   const [arrange, setArrange] = useState<Arrange>("cluster");
-  // The clustered circle is too small to read on a phone; start phones on Family instead.
-  useEffect(() => {
-    if (window.innerWidth < 700) setArrange("family");
-  }, []);
   const [showTree, setShowTree] = useState(true);
   const [size, setSize] = useState(22);
+  // The clustered circle is too small to read on a phone; start phones on Family instead, with
+  // smaller photos so the wall is about a third as long to scroll (the Size slider still works).
+  useEffect(() => {
+    if (window.innerWidth < 700) {
+      setArrange("family");
+      setSize(14);
+    }
+  }, []);
   const [loaded, setLoaded] = useState(0);
   const [query, setQuery] = useState("");
   const [sel, setSel] = useState<{ breed: number; photo: number } | null>(null);
@@ -149,12 +162,17 @@ export default function BreedExplorer() {
             {fmt(EX.total)} dogs, <em>one wall</em>
           </h1>
           <p className="pairs-lede">
-            Every photo in the Dog CEO collection: {fmt(EX.total)} pictures of {dogBreeds} breeds,
-            plus mixed breeds and a few wild cousins, gathered into one family portrait. Breeds
-            that share a branch of the family tree cluster together, and the oldest lineages sit
-            closest to the grey wolf in the middle. Rearrange the wall by family group, original
-            job, region, or photo color, or send every dog home on the map. Hover over a photo to
-            see its breed and click to open it.
+            <Lv
+              puppy={<>Here are {fmt(EX.total)} dog photos of {dogBreeds} breeds, plus mixed breeds and a few wild cousins, all in one giant family picture! Breeds from the same part of the family tree sit together, and the oldest kinds of dogs sit closest to the <B c="WOLF">grey wolf</B> in the middle. Try sorting the wall by family, job, where they come from, or color, or put every dog on the map. Point at a photo to see the breed, and click to open it.</>}
+              pro={<>The full Dog CEO image collection ({fmt(EX.total)} images of {dogBreeds} breeds, plus mixed breeds and wild canids), arranged as a single mosaic. Clusters follow clade membership in the phylogeny, with basal lineages placed nearest the <B c="WOLF">grey wolf</B> at the center. Re-sort by clade, original function, region of origin or mean image color, or project every image to its breed&rsquo;s origin on the map.</>}
+            >
+              Every photo in the Dog CEO collection: {fmt(EX.total)} pictures of {dogBreeds} breeds,
+              plus mixed breeds and a few wild cousins, gathered into one family portrait. Breeds
+              that share a branch of the family tree cluster together, and the oldest lineages sit
+              closest to the <B c="WOLF">grey wolf</B> in the middle. Rearrange the wall by family group, original
+              job, region, or photo color, or send every dog home on the map. Hover over a photo to
+              see its breed and click to open it.
+            </Lv>
           </p>
         </header>
 
@@ -226,6 +244,7 @@ export default function BreedExplorer() {
         {sel && <Drawer sel={sel} onClose={() => setSel(null)} onPhoto={(p) => setSel({ ...sel, photo: p })} />}
 
         <footer className="pairs-foot ex-foot">
+          {/* Credits stay in full at every reading level. */}
           <p>
             Photos: the <a href="https://dog.ceo/dog-api/">Dog CEO API</a>, built on the
             Stanford Dogs dataset, shown as small thumbnails and loaded at full size when opened.

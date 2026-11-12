@@ -7,7 +7,10 @@ import raw from "@/data/akc.json";
 import { data } from "@/lib/tree";
 import { cladeColor } from "@/lib/palette";
 import { photoOf, photoOfAkc } from "@/lib/photos";
-import { SiteNav } from "./shared";
+import { factsText } from "@/lib/breedFacts";
+import { Lv } from "@/lib/readingLevel";
+import { SiteNav, useMedia } from "./shared";
+import { B } from "./Hints";
 
 type Breed = { slug: string; name: string; code: string | null; r: (number | null)[] };
 type Era = { breed: string; code: string; from: number; to: number };
@@ -41,7 +44,9 @@ function Photo({ b, size }: { b: Breed; size: number }) {
 }
 
 // React's SVG <image> types lack referrerPolicy, but the attribute works (Dog CEO images need it).
-const NO_REFERRER = { referrerPolicy: "no-referrer" } as object;
+// The server writes this attribute differently from the browser, so skip React's hydration
+// check for it (the attribute itself is identical either way).
+const NO_REFERRER = { referrerPolicy: "no-referrer", suppressHydrationWarning: true } as object;
 
 /** SVG photo disc (or initials) for chart marks. */
 function Disc({ b, x, y, r }: { b: Breed | Era; x: number; y: number; r: number }) {
@@ -102,6 +107,33 @@ function TopTiles() {
 // ---------------------------------------------------------------- #1 eras
 
 function Eras() {
+  // Narrow screens: ninety years don't fit across a phone, so list the reigns instead.
+  const narrow = useMedia("(max-width: 640px)");
+  if (narrow) {
+    const longest = d3.max(D.eras, (e) => e.to - e.from + 1)!;
+    return (
+      <ol className="pop-eralist">
+        {D.eras.map((e) => {
+          const years = e.to - e.from + 1;
+          const url = photoOf(e.code);
+          return (
+            <li key={e.from}>
+              {url ? <img className="pop-photo" src={url} alt="" loading="lazy" referrerPolicy="no-referrer" /> : <span className="pop-photo pop-nophoto" aria-hidden />}
+              <div>
+                <span className="pop-tname">{e.breed}</span>
+                <span className="pop-tmeta">
+                  {e.from}–{e.to} · {years} years at #1
+                </span>
+                <span className="pop-erabar" aria-hidden>
+                  <i style={{ width: `${(years / longest) * 100}%`, background: colorOf(e) }} />
+                </span>
+              </div>
+            </li>
+          );
+        })}
+      </ol>
+    );
+  }
   const W = 1000;
   const H = 214;
   const x = d3.scaleLinear().domain([1936, 2026]).range([12, W - 12]);
@@ -176,6 +208,7 @@ function Bump({ n }: { n: number }) {
           <>Hover or tap a breed to follow it. Breeds that drop out of the top {n} slide to the &ldquo;lower&rdquo; lane.</>
         )}
       </p>
+      <p className="swipe-note">Swipe the chart sideways to see every year.</p>
       <div className="pop-scroll">
         <svg viewBox={`0 0 ${W} ${H}`} className="pop-svg pop-bump" role="img" aria-label={`Top ${n} AKC breeds by year, ${FIRST_YEAR} to ${LAST_YEAR}.`} onPointerLeave={() => setHover(null)}>
           {YEARS.map((yy) => (
@@ -203,7 +236,7 @@ function Bump({ n }: { n: number }) {
             const ends = (b.r[0] ?? 999) <= n || (b.r[LAST] ?? 999) <= n;
             return (
               <g key={b.slug} className="pop-line" opacity={dim ? 0.12 : 1} onPointerEnter={() => setHover(b.slug)} onClick={() => setHover(b.slug)}>
-                <title>{b.name}</title>
+                <title>{[b.name, factsText(b.code, b.slug)].filter(Boolean).join("\n")}</title>
                 {segs.map((s) => (
                   <line key={s.i} x1={s.x1} y1={s.y1} x2={s.x2} y2={s.y2} stroke={c} strokeWidth={hover === b.slug ? 3.5 : 2.2} strokeDasharray={s.inside ? undefined : "3 3"} strokeLinecap="round" />
                 ))}
@@ -264,7 +297,7 @@ function Movers({ dir }: { dir: "up" | "down" }) {
         const c = colorOf(b);
         return (
           <g key={b.slug}>
-            <title>{`${b.name}: #${b.r[0]} in ${FIRST_YEAR}, #${b.r[LAST]} in ${LAST_YEAR}`}</title>
+            <title>{[`${b.name}: #${b.r[0]} in ${FIRST_YEAR}, #${b.r[LAST]} in ${LAST_YEAR}`, factsText(b.code, b.slug)].filter(Boolean).join("\n\n")}</title>
             <Disc b={b} x={14} y={yy} r={12} />
             <text className="pop-lab" x={34} y={yy} dy="0.35em">{b.name}</text>
             <line x1={a} x2={z} y1={yy} y2={yy} stroke={c} strokeWidth={2.2} />
@@ -372,10 +405,15 @@ export default function PopularityPage() {
           <p className="eyebrow">America&rsquo;s favorite dogs</p>
           <h1>The most popular breeds, year by year</h1>
           <p className="pairs-lede">
-            Every year the American Kennel Club ranks its breeds by how many puppies are
-            registered. The list moves slowly at the top and fast below it: one breed held{" "}
-            <strong>#1 for {lab.to - lab.from + 1} years in a row</strong>, while others have
-            climbed or fallen more than 30 places in a dozen years.
+            <Lv
+              puppy={<>Every year the American Kennel Club counts how many new puppies of each breed get signed up, and makes a list from most to least. The top of the list hardly changes: one breed was <strong>#1 for {lab.to - lab.from + 1} years in a row</strong>! Lower down, some breeds jumped up or dropped more than 30 spots in just 12 years.</>}
+              pro={<>The American Kennel Club ranks breeds annually by new registrations. Rank turnover is low at the top and high below it: one breed held <strong>#1 for {lab.to - lab.from + 1} consecutive years</strong>, while others moved more than 30 places in a dozen years.</>}
+            >
+              Every year the American Kennel Club ranks its breeds by how many puppies are
+              registered. The list moves slowly at the top and fast below it: one breed held{" "}
+              <strong>#1 for {lab.to - lab.from + 1} years in a row</strong>, while others have
+              climbed or fallen more than 30 places in a dozen years.
+            </Lv>
           </p>
           <p className="nm-top">
             Top 5 in {LAST_YEAR}:{" "}
@@ -391,8 +429,13 @@ export default function PopularityPage() {
         <section className="pairs-section" aria-labelledby="top-h">
           <h2 id="top-h">The top 20 of {LAST_YEAR}</h2>
           <p>
-            Change is compared with {LAST_YEAR - 1}. The colored dot is the breed&rsquo;s family
-            group on this site&rsquo;s family tree, when the breed was part of the 2017 study.
+            <Lv
+              puppy={<>The arrows compare with {LAST_YEAR - 1}. The colored dot shows the breed&rsquo;s family on this site&rsquo;s family tree (if the breed was in the 2017 study).</>}
+              pro={<>Rank change is relative to {LAST_YEAR - 1}. The colored marker gives the breed&rsquo;s clade in the Parker et&nbsp;al. phylogeny, where sampled.</>}
+            >
+              Change is compared with {LAST_YEAR - 1}. The colored dot is the breed&rsquo;s family
+              group on this site&rsquo;s family tree, when the breed was part of the 2017 study.
+            </Lv>
           </p>
           <TopTiles />
         </section>
@@ -400,9 +443,14 @@ export default function PopularityPage() {
         <section className="pairs-section" aria-labelledby="eras-h">
           <h2 id="eras-h">Who held #1, 1936–{LAST_YEAR}</h2>
           <p>
-            Only six reigns in ninety years. The Cocker Spaniel took the top spot twice; the
-            Labrador Retriever&rsquo;s run, from 1991 to 2021, is the longest on record. In 2022
-            the French Bulldog finally passed it, and it has stayed on top since.
+            <Lv
+              puppy={<>Only six breeds have been #1 in ninety years. The Cocker Spaniel got to the top twice. The <B c="LAB">Labrador Retriever</B> stayed #1 the longest ever, from 1991 to 2021. Then in 2022 the <B c="FBUL">French Bulldog</B> finally beat it, and it&rsquo;s been #1 ever since.</>}
+              pro={<>Six reigns in ninety years. The Cocker Spaniel held the top rank in two separate periods; the <B c="LAB">Labrador Retriever</B>&rsquo;s 1991–2021 run is the longest recorded. In 2022 the <B c="FBUL">French Bulldog</B> displaced it and has remained first since.</>}
+            >
+            Only six reigns in ninety years. The Cocker Spaniel took the top spot twice; the{" "}
+            <B c="LAB">Labrador Retriever</B>&rsquo;s run, from 1991 to 2021, is the longest on record. In 2022
+            the <B c="FBUL">French Bulldog</B> finally passed it, and it has stayed on top since.
+            </Lv>
           </p>
           <Eras />
         </section>
@@ -412,9 +460,14 @@ export default function PopularityPage() {
             Rank by rank, {FIRST_YEAR}–{LAST_YEAR}
           </h2>
           <p>
-            Each line is a breed. The French Bulldog climbed from #11 to #1; the Dachshund and
-            German Shorthaired Pointer moved up, the Bulldog slid from #5 to #10, and the Yorkshire
-            Terrier and Boxer dropped out of the top 10.
+            <Lv
+              puppy={<>Each line is a breed. The <B c="FBUL">French Bulldog</B> climbed all the way from #11 to #1! The <B c="DACH">Dachshund</B> and <B c="GSHP">German Shorthaired Pointer</B> went up too. The <B c="BULD">Bulldog</B> slid from #5 to #10, and the <B c="YORK">Yorkshire Terrier</B> and <B c="BOX">Boxer</B> fell out of the top 10.</>}
+              pro={<>Each line traces one breed&rsquo;s rank. The <B c="FBUL">French Bulldog</B> rose from #11 to #1; the <B c="DACH">Dachshund</B> and <B c="GSHP">German Shorthaired Pointer</B> gained; the <B c="BULD">Bulldog</B> declined from #5 to #10; the <B c="YORK">Yorkshire Terrier</B> and <B c="BOX">Boxer</B> left the top 10.</>}
+            >
+            Each line is a breed. The <B c="FBUL">French Bulldog</B> climbed from #11 to #1; the <B c="DACH">Dachshund</B> and{" "}
+            <B c="GSHP">German Shorthaired Pointer</B> moved up, the <B c="BULD">Bulldog</B> slid from #5 to #10, and the <B c="YORK">Yorkshire
+            Terrier</B> and <B c="BOX">Boxer</B> dropped out of the top 10.
+            </Lv>
           </p>
           <div className="job-chips" role="tablist" aria-label="How many ranks">
             {[10, 20].map((k) => (
@@ -431,9 +484,14 @@ export default function PopularityPage() {
             Biggest climbers and fallers since {FIRST_YEAR}
           </h2>
           <p>
-            Among breeds ranked in the top 60 in {FIRST_YEAR} or {LAST_YEAR}. The Cane Corso, an
+            <Lv
+              puppy={<>These breeds were in the top 60 in {FIRST_YEAR} or {LAST_YEAR}. The <B c="CANE">Cane Corso</B>, a big Italian guard dog, jumped from #50 to #11! Some big working dogs, like the <B c="BULM">Bullmastiff</B>, <B c="AKIT">Akita</B> and <B c="AMAL">Alaskan Malamute</B>, dropped.</>}
+              pro={<>Restricted to breeds in the top 60 in {FIRST_YEAR} or {LAST_YEAR}. The <B c="CANE">Cane Corso</B>, an Italian molosser recognized by the AKC only in 2010, rose from #50 to #11; large working and spitz breeds such as the <B c="BULM">Bullmastiff</B>, <B c="AKIT">Akita</B> and <B c="AMAL">Alaskan Malamute</B> declined.</>}
+            >
+            Among breeds ranked in the top 60 in {FIRST_YEAR} or {LAST_YEAR}. The <B c="CANE">Cane Corso</B>, an
             Italian guardian breed the AKC recognized only in 2010, rose from #50 to #11. Big
-            working and spitz breeds, like the Bullmastiff, Akita and Alaskan Malamute, fell.
+            working and spitz breeds, like the <B c="BULM">Bullmastiff</B>, <B c="AKIT">Akita</B> and <B c="AMAL">Alaskan Malamute</B>, fell.
+            </Lv>
           </p>
           <div className="pop-movers">
             <div>
@@ -449,7 +507,14 @@ export default function PopularityPage() {
 
         <section className="pairs-section" aria-labelledby="look-h">
           <h2 id="look-h">Look up any breed</h2>
-          <p>All {D.breeds.length} ranked breeds, {FIRST_YEAR} to {LAST_YEAR}. Higher on the chart is more popular.</p>
+          <p>
+            <Lv
+              puppy={<>Look up any of the {D.breeds.length} breeds, from {FIRST_YEAR} to {LAST_YEAR}. Higher on the chart means more popular.</>}
+              pro={<>All {D.breeds.length} ranked breeds, {FIRST_YEAR}–{LAST_YEAR}; rank 1 at the top.</>}
+            >
+              All {D.breeds.length} ranked breeds, {FIRST_YEAR} to {LAST_YEAR}. Higher on the chart is more popular.
+            </Lv>
+          </p>
           <Lookup />
         </section>
 
@@ -457,20 +522,35 @@ export default function PopularityPage() {
           <h2 id="dna-h">What popularity does to a breed&rsquo;s DNA</h2>
           <ul className="hl-reasons nm-takeaways">
             <li>
+              <Lv
+                puppy={<><strong>Too popular can be a problem.</strong> When lots of people want a breed, lots of puppies can come from just a few parent dogs. Then any hidden health problem those parents carry spreads to many more puppies (see <Link href="/#lineages">nature vs. breeding</Link>).</>}
+                pro={<><strong>Demand surges reduce effective population size.</strong> Popular-sire effects concentrate reproduction in few individuals, raising inbreeding and the frequency of whatever they carry, including recessive disease alleles (see <Link href="/#lineages">natural vs. artificial selection</Link>).</>}
+              >
               <strong>Booms can narrow the gene pool.</strong> When demand surges, many puppies
               can come from relatively few breeding dogs, especially sought-after sires. That
               concentrates whatever they carry, including hidden disease variants (see{" "}
               <Link href="/#lineages">natural selection vs. breeding</Link>).
+              </Lv>
             </li>
             <li>
-              <strong>Looks in fashion are often genetic extremes.</strong> The French Bulldog and
-              Bulldog are both in the top 10, and their flat faces are tied to breathing problems.
+              <Lv
+                puppy={<><strong>Trendy looks can be hard on dogs.</strong> The <B c="FBUL">French Bulldog</B> and <B c="BULD">Bulldog</B> are both in the top 10, and their flat faces can make it hard to breathe. Learn more on the <Link href="/health">Health &amp; heredity</Link> page.</>}
+                pro={<><strong>Fashionable morphologies are often genetic extremes.</strong> Two brachycephalic breeds, the <B c="FBUL">French Bulldog</B> and <B c="BULD">Bulldog</B>, rank in the top 10; brachycephaly is associated with obstructive airway syndrome (see <Link href="/health">Health &amp; heredity</Link>).</>}
+              >
+              <strong>Looks in fashion are often genetic extremes.</strong> The <B c="FBUL">French Bulldog</B> and{" "}
+              <B c="BULD">Bulldog</B> are both in the top 10, and their flat faces are tied to breathing problems.
               The genetics are on the <Link href="/health">Health &amp; heredity</Link> tab.
+              </Lv>
             </li>
             <li>
+              <Lv
+                puppy={<><strong>The list counts sign-ups, not all dogs.</strong> It only counts purebred puppies signed up with the AKC. Mixed-breed dogs and doodles, which are some of the most common dogs around, aren&rsquo;t on it at all.</>}
+                pro={<><strong>Rankings measure registrations, not prevalence.</strong> Only AKC-registered purebred litters are counted; mixed-breed dogs and designer crosses, common in many urban populations, are excluded.</>}
+              >
               <strong>Rankings count registrations, not dogs.</strong> They only include purebred
               puppies registered with the AKC, so mixed-breed dogs and doodles, among the most
               common dogs in many cities, never appear.
+              </Lv>
             </li>
           </ul>
         </section>

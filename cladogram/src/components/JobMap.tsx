@@ -9,6 +9,7 @@ import land110 from "world-atlas/land-110m.json";
 import { ORIGINS } from "@/lib/origins";
 import { data } from "@/lib/tree";
 import { photoOf } from "@/lib/photos";
+import { factsHtml } from "@/lib/breedFacts";
 
 const W = 480;
 const H = 270;
@@ -36,6 +37,7 @@ export default function JobMap({
   const host = useRef<HTMLDivElement>(null);
   const api = useRef<((c: string | null) => void) | null>(null);
   const onHoverRef = useRef(onHover);
+  const cleanup = useRef<(() => void) | null>(null);
   onHoverRef.current = onHover;
 
   // The land and frame never change; draw them once.
@@ -103,7 +105,8 @@ export default function JobMap({
       tip.html(
         `${photo ? `<img class="tip-photo" src="${photo}" alt="" referrerpolicy="no-referrer" />` : ""}
          <div class="tip-name">${data.breeds[n.code].name}</div>
-         <div class="tip-sub">${o.place}${o.place === o.country ? "" : ` · ${o.country}`}</div>`,
+         <div class="tip-sub">${o.place}${o.place === o.country ? "" : ` · ${o.country}`}</div>
+         ${factsHtml(n.code)}`,
       ).classed("on", true);
       // Centre it above the dot, kept within the map's width.
       const box = el.getBoundingClientRect();
@@ -118,7 +121,20 @@ export default function JobMap({
       .attr("class", "jm-dot")
       .attr("transform", (d) => `translate(${d.x},${d.y})`)
       .on("pointerenter", (_, d) => onHoverRef.current(d.code, true))
-      .on("pointerleave", (_, d) => onHoverRef.current(d.code, false));
+      .on("pointerleave", (ev: PointerEvent, d) => {
+        // A finger lifting off isn't "leaving": a tapped dot stays lit until a tap elsewhere.
+        if (ev.pointerType === "mouse") onHoverRef.current(d.code, false);
+        else tapped = d.code;
+      });
+    let tapped: string | null = null;
+    const clearTap = (ev: PointerEvent) => {
+      if (tapped && ev.pointerType !== "mouse" && !(ev.target as Element).closest?.(".jm-dot")) {
+        onHoverRef.current(tapped, false);
+        tapped = null;
+      }
+    };
+    document.addEventListener("pointerdown", clearTap);
+    cleanup.current = () => document.removeEventListener("pointerdown", clearTap);
     g.append("circle").attr("class", "jm-hit").attr("r", R + 4);
     g.append("circle").attr("class", "jm-pt").attr("r", R).attr("fill", (d) => colorOf(d.code));
 
@@ -130,6 +146,7 @@ export default function JobMap({
       else tip.classed("on", false);
     };
     api.current(null);
+    return () => cleanup.current?.();
   }, [codes, colorOf]);
 
   useEffect(() => {

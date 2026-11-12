@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import * as d3 from "d3";
 import { agoLabel, ANCIENT_BREEDS, EVENTS, MILESTONES, MODERN_BREEDS, NOW, TIME_MAX, type HistoryEvent } from "@/lib/history";
 import { photoOf } from "@/lib/photos";
+import { factsText } from "@/lib/breedFacts";
 import { data } from "@/lib/tree";
 import { cladeColor } from "@/lib/palette";
 
@@ -44,7 +45,8 @@ const LINE_H = 12;
 const STEM = 20; // gap between the axis and the nearest row of photos
 const ROW_GAP = 6;
 
-export default function Timeline({ view }: { view: TimelineView }) {
+/** `spot`: a breed (code) named in the text the reader is hovering; its photo stays lit, the rest dim. */
+export default function Timeline({ view, spot = null }: { view: TimelineView; spot?: string | null }) {
   const host = useRef<HTMLDivElement>(null);
   const api = useRef<((v: TimelineView) => void) | null>(null);
 
@@ -151,7 +153,7 @@ export default function Timeline({ view }: { view: TimelineView }) {
         // One word per line; the date lives on the axis and in the hover text.
         const label = g.append("text").attr("class", "tl-mb-name").attr("text-anchor", "middle");
         for (const w of d.name.split(/\s+/)) label.append("tspan").attr("x", 0).text(w);
-        g.append("title").text(d.title);
+        g.append("title").text([d.title, factsText(d.code)].filter(Boolean).join("\n\n"));
       });
 
       /** Greedy rows (nearest row above, then below, where the widest word fits), stacked outward. */
@@ -242,7 +244,7 @@ export default function Timeline({ view }: { view: TimelineView }) {
       }
       const t = g.append("text").attr("class", "tl-mb-name").attr("text-anchor", "middle");
       a.name.split(/\s+/).forEach((w, k) => t.append("tspan").attr("x", 0).attr("y", UR + 14 + k * LINE_H).text(w));
-      g.append("title").text(`${a.name}: origin unknown. ${a.note}`);
+      g.append("title").text([`${a.name}: origin unknown. ${a.note}`, factsText(a.code)].filter(Boolean).join("\n\n"));
     });
 
     // ---------- layout for the current span ----------
@@ -367,6 +369,16 @@ export default function Timeline({ view }: { view: TimelineView }) {
         });
       }
       zoomTo(target);
+      // Phones held upright show the timeline taller than it is wide, so it scrolls sideways:
+      // bring the events this step is about into view.
+      if (el.scrollWidth > el.clientWidth + 4) {
+        const tx = d3.scaleLinear().domain([target, 0]).range([X0, X1]);
+        const xs = EVENTS.filter((e) => focus.has(e.id)).map((e) => tx(Array.isArray(e.at) ? (e.at[0] + e.at[1]) / 2 : e.at));
+        // With nothing to focus on: the middle of the breed photos (modern view), else the middle.
+        const cx = xs.length ? d3.mean(xs)! : v.mode === "modern" ? d3.mean(MODERN_BREEDS, (b) => tx(NOW - b.year))! : W / 2;
+        const left = (cx / W) * el.scrollWidth - el.clientWidth / 2;
+        el.scrollTo({ left: Math.max(0, left), behavior: reduce ? "auto" : "smooth" });
+      }
     };
     return () => {
       d3.select(el).selectAll("*").remove();
@@ -377,6 +389,13 @@ export default function Timeline({ view }: { view: TimelineView }) {
   useEffect(() => {
     api.current?.(view);
   }, [view]);
+
+  useEffect(() => {
+    const svg = d3.select(host.current).select("svg");
+    svg.selectAll<SVGGElement, { code: string }>("g.mb, .tl-unknown > g")
+      .classed("is-spot", (d) => d.code === spot)
+      .classed("is-dim", (d) => spot !== null && d.code !== spot);
+  }, [spot]);
 
   return <div ref={host} className="timeline" />;
 }

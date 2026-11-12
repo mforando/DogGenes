@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, type CSSProperties, type ReactNode } from "react";
 import * as d3 from "d3";
+import { useReadingLevel } from "@/lib/readingLevel";
 
 export type TermId = "dna" | "cladogram" | "clade" | "bootstrap" | "haplotype";
 
@@ -192,22 +193,107 @@ export const TERMS: Record<TermId, { word: string; say?: string; body: ReactNode
   },
 };
 
-export function TermCard({ id }: { id: TermId }) {
+/** Each glossary definition at the Puppy (5th-grade) and Albert Pawstein (scientist) levels. */
+const TERM_LEVELS: Record<TermId, { puppy: ReactNode; pro: ReactNode }> = {
+  dna: {
+    puppy: (
+      <>
+        <p>The instruction book inside every part of your body, written with just four letters: A, C, G and T. A dog&rsquo;s book is about 2.4 billion letters long!</p>
+        <p>Any two dogs have almost the same book. The scientists checked about 150,000 spots where dogs are often different.</p>
+      </>
+    ),
+    pro: (
+      <>
+        <p>The nuclear genome: ~2.4 Gb of sequence over 38 autosomes plus the X and Y chromosomes.</p>
+        <p>Dogs were genotyped on SNP arrays at ~150,000 single-nucleotide polymorphisms, the variable sites used to estimate genetic distance and haplotype sharing.</p>
+      </>
+    ),
+  },
+  cladogram: {
+    puppy: (
+      <>
+        <p>A family-tree picture. It shows which dogs split off from which, and in what order, like a sports bracket played backwards.</p>
+        <p>It doesn&rsquo;t show dates, and how long a line is doesn&rsquo;t matter.</p>
+      </>
+    ),
+    pro: (
+      <>
+        <p>A branching diagram of inferred relationships. Here a neighbor-joining tree from pairwise genetic distances, drawn as a cladogram.</p>
+        <p>Only topology is meaningful: branch lengths are not scaled to time or substitutions.</p>
+      </>
+    ),
+  },
+  clade: {
+    puppy: (
+      <>
+        <p>One branch of the tree plus all the smaller branches growing out of it: a great-great-grandparent and all their family.</p>
+        <p>Like one side of your family: you, your brothers and sisters, your cousins, and the grandparents you share.</p>
+      </>
+    ),
+    pro: (
+      <>
+        <p>A monophyletic group: a common ancestor and all of its descendants.</p>
+        <p>The study defines 23 clades of breeds with strong bootstrap support; a few breeds fall outside any clade.</p>
+      </>
+    ),
+  },
+  bootstrap: {
+    puppy: (
+      <>
+        <p>A way to check whether you&rsquo;d get the same answer again. The scientists mixed up their data and drew the tree 100 times.</p>
+        <p>If two breeds end up next to each other in 95 of the 100 trees, that pair gets a score of 95%. Higher scores mean we can trust it more.</p>
+      </>
+    ),
+    pro: (
+      <>
+        <p>Nonparametric bootstrap: loci are resampled with replacement and the tree re-inferred 100 times.</p>
+        <p>Node support is the percentage of replicates recovering that bipartition; values ≥95% (gold markers) are well supported.</p>
+      </>
+    ),
+  },
+  haplotype: {
+    puppy: (
+      <>
+        <p>A piece of DNA that gets passed down in one chunk, like a page copied word-for-word from a parent. Every generation, the pieces get chopped smaller.</p>
+        <p>So if two dogs share a <em>long</em> piece, they had a shared relative not long ago. The length is measured in <strong>Mb</strong>, millions of DNA letters.</p>
+      </>
+    ),
+    pro: (
+      <>
+        <p>A set of alleles inherited together on one chromosome. Recombination shortens shared segments each generation.</p>
+        <p>Long segments identical by descent (IBD) therefore indicate recent common ancestry; the study summarizes pairwise sharing as total IBD length in <strong>Mb</strong>.</p>
+      </>
+    ),
+  },
+};
+
+/** A glossary definition at the reader's level. */
+export function TermBody({ id }: { id: TermId }) {
+  const { level } = useReadingLevel();
+  return <>{level === "adult" ? TERMS[id].body : TERM_LEVELS[id][level]}</>;
+}
+
+/** The small explainer diagram for one glossary word (also used by the hover hints in the text). */
+export function TermFigure({ id }: { id: TermId }) {
   const svgRef = useRef<SVGSVGElement>(null);
   useEffect(() => {
     const svg = d3.select(svgRef.current!);
     svg.selectAll("*").remove();
     DRAW[id](svg.append("g") as unknown as G);
   }, [id]);
+  return <svg ref={svgRef} viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`Diagram illustrating ${TERMS[id].word}`} />;
+}
+
+export function TermCard({ id }: { id: TermId }) {
   const t = TERMS[id];
   return (
     <li className="term">
-      <svg ref={svgRef} viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`Diagram illustrating ${t.word}`} />
+      <TermFigure id={id} />
       <h3>
         {t.word}
         {t.say && <span className="say">{t.say}</span>}
       </h3>
-      {t.body}
+      <TermBody id={id} />
     </li>
   );
 }

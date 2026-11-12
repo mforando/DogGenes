@@ -1,15 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import FaceMorph from "./FaceMorph";
+import { HintProvider } from "./Hints";
 import Timeline from "./Timeline";
-import { CITATION, SiteNav, useActiveStep } from "./shared";
+import { CITATION, RotateHint, SiteNav, useActiveStep } from "./shared";
 import { HISTORY_STEPS } from "@/lib/steps";
+import { HISTORY_LEVEL_BODIES } from "@/lib/historyLevels";
+import { Lv, useReadingLevel } from "@/lib/readingLevel";
 
 /** The history of dogs: 40,000 years of domestication on a scroll-driven timeline. */
 export default function HistoryStory() {
   const { active, stepRef } = useActiveStep();
+  const { level } = useReadingLevel();
   // The family tree used to be the home page: send old links to its sections
   // (/#full-chart, /#breed-pairs, /#c-blocks, ...) on to /tree.
   useEffect(() => {
@@ -19,9 +23,12 @@ export default function HistoryStory() {
     }
   }, []);
   const step = HISTORY_STEPS[active];
+  // Hovering a breed's name in the text lights up its photo on the timeline.
+  const [textBreed, setTextBreed] = useState<string | null>(null);
+  useEffect(() => setTextBreed(null), [active]);
 
   return (
-    <>
+    <HintProvider onBreed={setTextBreed}>
       <SiteNav />
       <header className="hero hero-history">
         <FaceMorph />
@@ -31,10 +38,28 @@ export default function HistoryStory() {
             From Ice Age wolves to <em>best friends</em>
           </h1>
           <p className="dek">
-            Dogs were the first animal people ever tamed, long before farming, cities or
-            writing. Scroll through 40,000 years of history: where dogs came from, how a wolf
-            becomes a dog, and the oldest dogs ever found.
+            <Lv
+              puppy={
+                <>
+                  Dogs were the very first animals people ever tamed, way before farms, towns or
+                  writing. Scroll down to travel back 40,000 years: where dogs came from, how a wolf
+                  turned into a dog, and the oldest dog bones ever found.
+                </>
+              }
+              pro={
+                <>
+                  The dog was the first domesticated species, predating agriculture, sedentism and
+                  writing. Scroll through 40,000 years: the contested origin of domestic dogs, the
+                  genomic signatures of domestication, and the earliest archaeological evidence.
+                </>
+              }
+            >
+              Dogs were the first animal people ever tamed, long before farming, cities or
+              writing. Scroll through 40,000 years of history: where dogs came from, how a wolf
+              becomes a dog, and the oldest dogs ever found.
+            </Lv>
           </p>
+          <RotateHint />
           <div className="scroll-cue" aria-hidden>
             <span>scroll</span>
           </div>
@@ -52,7 +77,7 @@ export default function HistoryStory() {
           </div>
           <div className="figure-stage timeline-on">
             <div className="stage-timeline">
-              <Timeline view={step.timeline!} />
+              <Timeline view={step.timeline!} spot={textBreed} />
             </div>
           </div>
         </div>
@@ -70,7 +95,7 @@ export default function HistoryStory() {
               <div className="card">
                 <p className="kicker">{s.kicker}</p>
                 <h2 id={`h-${s.id}`}>{s.title}</h2>
-                {s.body}
+                {level === "adult" ? s.body : HISTORY_LEVEL_BODIES[s.id]?.[level] ?? s.body}
               </div>
             </section>
           ))}
@@ -90,6 +115,6 @@ export default function HistoryStory() {
           </p>
         </footer>
       </section>
-    </>
+    </HintProvider>
   );
 }

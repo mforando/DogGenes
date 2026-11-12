@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type RefObject } from "react";
 import * as d3 from "d3";
 import { ANCESTOR, ANCESTOR_BREED, data, GEOM, isLeaf, layout, nodeIdOf, type TNode } from "@/lib/tree";
 import { cladeColor, OUTGROUP } from "@/lib/palette";
 import type { View } from "@/lib/steps";
 import { photoOf } from "@/lib/photos";
+import { factsHtml } from "@/lib/breedFacts";
 
 type Props = {
   view: View;
@@ -13,6 +14,10 @@ type Props = {
   onSelect: (code: string | null) => void;
   /** Hovering (or focusing) a breed's wedge reports it; leaving reports null. */
   onHover?: (code: string | null) => void;
+  /** Show the tooltip in this element (a fixed panel beside the chart) instead of at the pointer. */
+  tipDock?: RefObject<HTMLElement | null>;
+  /** Phone-size screens: crop to the ring (no name labels) so the circle fills the space. */
+  compact?: boolean;
 };
 
 type Pt = { a: number; r: number };
@@ -128,7 +133,7 @@ function cladeSpans(leaves: TNode[]) {
 const partnersOf = (code: string) =>
   data.links.filter(([a, b]) => a === code || b === code).map(([a, b, v]) => [a === code ? b : a, v] as const);
 
-export default function Cladogram({ view, selected, onSelect, onHover }: Props) {
+export default function Cladogram({ view, selected, onSelect, onHover, tipDock, compact = false }: Props) {
   const onHoverRef = useRef(onHover);
   onHoverRef.current = onHover;
   const host = useRef<HTMLDivElement>(null);
@@ -175,7 +180,7 @@ export default function Cladogram({ view, selected, onSelect, onHover }: Props) 
     const gMarks = zoomG.append("g").attr("class", "marks");
     const gHit = zoomG.append("g").attr("class", "hits");
 
-    const tip = d3.select(el).append("div").attr("class", "tip").attr("role", "status");
+    const tip = d3.select(tipDock?.current ?? el).append("div").attr("class", "tip").attr("role", "status");
 
     let L = layout(new Set(), { withAncestor: true });
     let flipKey = "|";
@@ -266,7 +271,8 @@ export default function Cladogram({ view, selected, onSelect, onHover }: Props) 
            <dt>Dogs tested</dt><dd>${d.data.n}</dd>
            <dt>Mixed with other families</dt><dd>${cross} breed${cross === 1 ? "" : "s"}</dd>
          </dl>
-         ${d.data.frags > 1 ? `<div class="tip-note">This breed is split into ${d.data.frags} wedges${d.data.main ? ". This is the biggest one." : "."}</div>` : ""}`,
+         ${d.data.frags > 1 ? `<div class="tip-note">This breed is split into ${d.data.frags} wedges${d.data.main ? ". This is the biggest one." : "."}</div>` : ""}
+         ${factsHtml(d.data.code)}`,
       ).classed("on", true);
       const box = el.getBoundingClientRect();
       let x: number, y: number;
@@ -653,6 +659,7 @@ export default function Cladogram({ view, selected, onSelect, onHover }: Props) 
 
     return () => {
       d3.select(el).selectAll("*").remove();
+      tip.remove();
       api.current = null;
     };
   }, []);
@@ -661,5 +668,12 @@ export default function Cladogram({ view, selected, onSelect, onHover }: Props) 
     api.current?.update(view, selected);
   }, [view, selected]);
 
-  return <div ref={host} className="cladogram" />;
+  // Compact: a viewBox just outside the clade ring. Names are hidden (CSS) because they'd be a
+  // few pixels tall; the page lists what's highlighted and a tap shows a breed's details.
+  useEffect(() => {
+    const half = compact ? GEOM.rClade1 + 3 : W / 2;
+    d3.select(host.current).select("svg").attr("viewBox", `${-half} ${-half} ${half * 2} ${half * 2}`);
+  }, [compact]);
+
+  return <div ref={host} className={`cladogram${compact ? " compact" : ""}`} />;
 }

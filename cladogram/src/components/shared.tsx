@@ -6,6 +6,22 @@ import { useEffect, useRef, useState } from "react";
 import { data } from "@/lib/tree";
 import { cladeColor } from "@/lib/palette";
 import { PHOTOS } from "@/lib/photos";
+import LevelToggle from "./LevelToggle";
+
+/** True while a CSS media query matches (false on the server and on first paint). */
+export function useMedia(query: string) {
+  const [on, setOn] = useState(false);
+  useEffect(() => {
+    const m = window.matchMedia(query);
+    const sync = () => setOn(m.matches);
+    sync();
+    m.addEventListener("change", sync);
+    return () => m.removeEventListener("change", sync);
+  }, [query]);
+  return on;
+}
+/** Phone-size screens in either orientation (a rotated phone is wide but short). */
+export const PHONE = "(max-width: 900px), (max-height: 520px) and (orientation: landscape)";
 
 /** Tracks which scroll step is crossing the reading line. */
 export function useActiveStep() {
@@ -86,8 +102,18 @@ const PAGES = [
 export function SiteNav() {
   // With trailingSlash the pathname may end in "/"; compare without it.
   const path = usePathname().replace(/(.)\/$/, "$1");
+  // The reading level sits at the end of the nav; once the nav scrolls away a copy stays
+  // pinned to the top-right corner (the family tree page pins its own, beside the "?").
+  const nav = useRef<HTMLElement>(null);
+  const [pinned, setPinned] = useState(false);
+  useEffect(() => {
+    const io = new IntersectionObserver(([e]) => setPinned(!e.isIntersecting));
+    if (nav.current) io.observe(nav.current);
+    return () => io.disconnect();
+  }, []);
   return (
-    <nav className="site-nav" aria-label="Pages">
+    <>
+    <nav ref={nav} className="site-nav" aria-label="Pages">
       <span className="site-mark" aria-hidden>
         Canis · 2017
       </span>
@@ -100,7 +126,36 @@ export function SiteNav() {
           </li>
         ))}
       </ul>
+      <LevelToggle className="level-nav" />
     </nav>
+    {path !== "/tree" && (
+      <div className={`level-pin${pinned ? " on" : ""}`} aria-hidden={!pinned}>
+        <LevelToggle />
+      </div>
+    )}
+    </>
+  );
+}
+
+/**
+ * A small animated prompt in a page's intro, shown only on phones held upright (CSS): the
+ * dense charts are bigger and easier to read with the phone turned sideways.
+ */
+export function RotateHint() {
+  return (
+    <p className="rotate-hint" role="note">
+      <svg viewBox="0 0 64 64" aria-hidden>
+        <path className="rh-arc" d="M50 20a22 22 0 0 0-30-8" />
+        <path className="rh-arrow" d="M17 5l2 9 9-3" />
+        <g className="rh-phone">
+          <rect x="22" y="12" width="20" height="40" rx="4" />
+          <line x1="29" y1="47" x2="35" y2="47" />
+        </g>
+      </svg>
+      <span>
+        <strong>Turn your phone sideways</strong> for bigger charts. It works upright too.
+      </span>
+    </p>
   );
 }
 

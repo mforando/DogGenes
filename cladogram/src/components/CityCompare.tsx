@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import * as d3 from "d3";
 import raw from "@/data/torontonames.json";
 import { LiftBars } from "./NameCharts";
+import { Lv } from "@/lib/readingLevel";
 
 type Item = { name: string; n: number; lift: number };
 type Top = { name: string; n: number; share: number };
@@ -113,10 +114,15 @@ function NameTrend() {
             })}
           </svg>
           <p className="hl-small">
-            After {LAST_FULL} Toronto publishes only its top 200 names each year, so its line shows
-            those years only when the name made the top 200 (a gap means it didn&rsquo;t), divided by
-            the city&rsquo;s official count of licensed dogs. New York counts dogs by the year their
-            license was issued.
+            <Lv
+              puppy={<>After {LAST_FULL}, Toronto only shares its top 200 names each year, so a gap in its line means the name wasn&rsquo;t in the top 200 that year.</>}
+              pro={<>After {LAST_FULL} Toronto releases only its top 200 names annually; those years are plotted only when the name is in the top 200 (gaps otherwise), normalized by the official licensed-dog count. New York is binned by license issue year.</>}
+            >
+              After {LAST_FULL} Toronto publishes only its top 200 names each year, so its line shows
+              those years only when the name made the top 200 (a gap means it didn&rsquo;t), divided by
+              the city&rsquo;s official count of licensed dogs. New York counts dogs by the year their
+              license was issued.
+            </Lv>
           </p>
         </div>
       ) : (
@@ -202,20 +208,30 @@ export default function CityCompare() {
     <section className="pairs-section" aria-labelledby="city-h">
       <h2 id="city-h">New York vs. Toronto</h2>
       <p>
+        <Lv
+          puppy={<>Toronto shares its dog names too (just names, no breeds), so we can compare the two cities: {fmt(T.source.toronto_dogs)} dogs in Toronto and {fmt(T.source.nyc_dogs)} in New York in {y}. Their favorite names are almost the same! Seven of the top 10 match, led by Charlie, Bella, Max and Luna. Highlighted names are only in one city&rsquo;s top 10.</>}
+          pro={<>Toronto also publishes licensed-dog names (without breed), allowing a cross-city comparison: {fmt(T.source.toronto_dogs)} Toronto and {fmt(T.source.nyc_dogs)} New York dogs licensed in {y}. The head of the distribution is nearly identical, with 7 of each top 10 shared (Charlie, Bella, Max, Luna lead); highlighted names are unique to one city&rsquo;s top 10.</>}
+        >
         Toronto publishes the names of its licensed dogs too (names only, no breeds), so we
         can compare the two cities: {fmt(T.source.toronto_dogs)} dogs licensed in Toronto in {y}{" "}
         and {fmt(T.source.nyc_dogs)} in New York the same year. The favorites are almost the
         same. Seven of each city&rsquo;s top 10 names are shared, led by Charlie, Bella, Max
         and Luna. Highlighted names are in only one city&rsquo;s top 10.
+        </Lv>
       </p>
       <div className="nm-cards cc-tops">
         <TopList city="Toronto" rows={T.top.toronto} other={T.top.nyc} />
         <TopList city="New York City" rows={T.top.nyc} other={T.top.toronto} />
       </div>
       <p>
+        <Lv
+          puppy={<>The differences show up further down the list. These are the names each city uses a lot more than the other (the bars show how many times more common; the second number is how many dogs had it):</>}
+          pro={<>Differences emerge in the tail. Using the same weighted log-odds method, the names most over-represented in each city relative to the other (bars show lift; the second number is the count):</>}
+        >
         The differences show up a little further down the list. Using the same
         distinctive-name method as above, these are the names each city uses far more than the
         other (bars show how many times more common; the second number is how many dogs had it):
+        </Lv>
       </p>
       <div className="nm-cards">
         <article className="nm-card">
@@ -231,10 +247,15 @@ export default function CityCompare() {
       </div>
       <ul className="hl-reasons nm-takeaways cc-notes">
         <li>
+          <Lv
+            puppy={<><strong>Toronto&rsquo;s dog names sound Scottish and Irish.</strong> Angus, Finnegan, Murphy, Maggie and Molly are way more popular there, and so is a Canadian favorite: Maple! Lots of people in Toronto have Irish or Scottish families.</>}
+            pro={<><strong>Toronto names skew Scottish and Irish.</strong> Angus, Finnegan, Murphy, Maggie and Molly are strongly over-represented, as is the Canadian Maple, consistent with ancestry: ~1 in 12 Torontonians report Irish and ~1 in 13 Scottish origin, versus ~1 in 23 and ~1 in 200 New Yorkers.</>}
+          >
           <strong>Toronto&rsquo;s names sound Scottish and Irish.</strong> Angus, Finnegan,
           Murphy, Maggie and Molly all come out well ahead, and so does a Canadian original:
           Maple. It fits the city: about 1 in 12 Torontonians report Irish origin and 1 in 13
           Scottish, against 1 in 23 and 1 in 200 New Yorkers.
+          </Lv>
           <OriginSplit />
           <span className="cc-src">
             Toronto: 2021 Census. New York: American Community Survey 2020–2024. People can report
@@ -242,22 +263,37 @@ export default function CityCompare() {
           </span>
         </li>
         <li>
-          <strong>New York&rsquo;s dogs are royalty.</strong> Princess, Prince, King and Lady are
-          all about twice as common as in Toronto.
+          <Lv
+            puppy={<><strong>New York&rsquo;s dogs are royalty.</strong> Princess, Prince, King and Lady are about twice as common as in Toronto!</>}
+            pro={<><strong>Regal names are over-represented in New York.</strong> Princess, Prince, King and Lady each occur at roughly twice Toronto&rsquo;s rate.</>}
+          >
+            <strong>New York&rsquo;s dogs are royalty.</strong> Princess, Prince, King and Lady are
+            all about twice as common as in Toronto.
+          </Lv>
         </li>
         <li>
+          <Lv
+            puppy={<><strong>New York names show off the city&rsquo;s neighborhoods and languages.</strong> Dogs are named Brooklyn, Spanish speakers use Nena (&ldquo;girl&rdquo;), and treat names like Brownie, Oreo and Cookie are popular. New Yorkers also just call little dogs Little or Baby.</>}
+            pro={<><strong>New York names reflect local geography and language.</strong> Brooklyn; the Spanish Nena (&ldquo;girl&rdquo;); food names such as Brownie, Oreo and Cookie; and bare diminutives (Little, Baby) where Toronto owners prefer compounds (&ldquo;Little Bear&rdquo;, &ldquo;Little One&rdquo;).</>}
+          >
           <strong>New York names reflect its neighborhoods and languages.</strong> Dogs are named
           Brooklyn, Spanish-speaking owners use Nena (&ldquo;girl&rdquo;),
           and treat names like Brownie, Oreo and Cookie are more common. New Yorkers also call
           lapdogs plain Little and Baby, where Toronto owners write &ldquo;Little Bear&rdquo; or
           &ldquo;Little One&rdquo;.
+          </Lv>
         </li>
       </ul>
       <h3 className="cc-h">Look up a name in both cities</h3>
       <p className="cc-p">
-        How common a name is in each city, year by year, as a share of licensed dogs, so the two
-        cities can be compared despite their different sizes. Any of the {d3.format(",")(NAMES.length)}{" "}
-        names given to at least {T.source.trend_min} dogs in one year in either city.
+        <Lv
+          puppy={<>See how popular a name is in each city, year by year. It&rsquo;s shown out of every 10,000 dogs, so a big city and a smaller one can be compared fairly. Try any of {d3.format(",")(NAMES.length)} names.</>}
+          pro={<>Annual frequency per 10,000 licensed dogs in each city, normalizing for population size. Any of the {d3.format(",")(NAMES.length)} names with ≥{T.source.trend_min} dogs in at least one city-year.</>}
+        >
+          How common a name is in each city, year by year, as a share of licensed dogs, so the two
+          cities can be compared despite their different sizes. Any of the {d3.format(",")(NAMES.length)}{" "}
+          names given to at least {T.source.trend_min} dogs in one year in either city.
+        </Lv>
       </p>
       <NameTrend />
     </section>

@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as d3 from "d3";
 import { GENERATIONS, N_LINES, simulate, summary, type Dog, type Mode } from "@/lib/selection";
+import { Term } from "./Hints";
+import { Lv } from "@/lib/readingLevel";
 
 /**
  * Natural selection vs. breeding, and why breeds are analysed differently from species:
@@ -187,11 +189,16 @@ function AnimatedVersion() {
         <SimPanel mode="artificial" gens={runs.artificial} gen={gen} y={PH + 14} />
       </svg>
       <p className="sel-note">
-        Same 90 starting dogs, same 20 generations. In the wild the pressure is gentle and
-        spread over many traits, so change is slow and the old variety survives. A breeder
-        pushes hard on one trait with a few chosen sires: the look changes fast, most founder
-        lines vanish, and a hidden disease variant can ride along with a popular sire because
-        nobody can see it to select against it.
+        <Lv
+          puppy={<>Same 90 dogs to start, same 20 generations. In nature, lots of little things matter, so dogs change slowly and stay different from each other. A breeder picks just a few dogs to be parents, chosen for one look. The look changes fast, most of the family lines disappear, and a hidden disease can spread from a popular dad because nobody can see it.</>}
+          pro={<>Same 90 founders, 20 generations. Under natural selection, weak selection is distributed across many traits, so phenotypic change is gradual and standing variation persists. Under artificial selection, strong truncation selection on one trait with few sires drives rapid phenotypic change, loss of founder lineages (reduced effective population size), and hitchhiking of an invisible recessive variant linked to a popular sire.</>}
+        >
+          Same 90 starting dogs, same 20 generations. In the wild the pressure is gentle and
+          spread over many traits, so change is slow and the old variety survives. A breeder
+          pushes hard on one trait with a few chosen sires: the look changes fast, most founder
+          lines vanish, and a hidden disease variant can ride along with a popular sire because
+          nobody can see it to select against it.
+        </Lv>
       </p>
       <TreeVsWeb animate />
       <ul className="sel-points">
@@ -202,7 +209,7 @@ function AnimatedVersion() {
         </li>
         <li>
           <strong>Genetic islands.</strong> About 30% of dog genetic variation lies between
-          breeds, versus about 5% between human populations, so DNA can tell almost any breed
+          breeds, versus about 5% between human populations, so <Term id="dna">DNA</Term> can tell almost any breed
           apart.
         </li>
         <li>

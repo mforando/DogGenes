@@ -26,7 +26,7 @@ export type TNode = HierarchyNode<RawNode> & {
 };
 
 export const GEOM = {
-  size: 1240,
+  size: 1120, // viewBox: just room for the outermost labels (clade names at rCladeName)
   rTree: 330, // radius at the deepest internal node
   rWedge: 372, // outer edge of breed wedges
   rClade0: 377,

@@ -8,6 +8,7 @@ import SelectionExplainer from "@/components/SelectionExplainer";
 import MissingLinkFigure from "@/components/MissingLinkFigure";
 import AncientBreeds from "@/components/AncientBreeds";
 import DigSites from "@/components/DigSites";
+import { B, Clade, Term } from "@/components/Hints";
 
 /** Declarative description of what the cladogram should show for a scroll step. */
 export type View = {
@@ -78,8 +79,8 @@ export const HISTORY_STEPS: Step[] = [
           it the Victorian-era breed explosion.
         </p>
         <p>
-          The timeline shows breeds from the study with a known founding date, from the Jack
-          Russell terrier (1819) to the American hairless terrier (1972). Hover over a photo to
+          The timeline shows breeds from the study with a known founding date, from the <B c="JACK">Jack
+          Russell terrier</B> (1819) to the <B c="AHRT">American hairless terrier</B> (1972). Hover over a photo to
           read its story.
         </p>
         <div className="hx-stats">
@@ -131,14 +132,14 @@ export const HISTORY_STEPS: Step[] = [
       <>
         <p>
           Zoom out again, past the farming era and into the last Ice Age. Here&rsquo;s the
-          twist: dogs don&rsquo;t come from the grey wolves alive today.
+          twist: dogs don&rsquo;t come from the <B c="WOLF">grey wolves</B> alive today.
           They come from an <strong>Ice Age wolf population that has since died out</strong>.
           The dog and wolf families split somewhere between 40,000 and 27,000 years ago.
         </p>
         <p>
           About 25,000 years ago, at the coldest point of the Ice Age, wolves crashed to a
           few survivors. They later spread back out from Beringia, the old land bridge
-          between Siberia and Alaska, replacing the other wolves. So the grey wolf in our
+          between Siberia and Alaska, replacing the other wolves. So the <B c="WOLF">grey wolf</B> in our
           family tree is a cousin, not a grandparent.
         </p>
         <blockquote>
@@ -157,7 +158,7 @@ export const HISTORY_STEPS: Step[] = [
     body: (
       <>
         <p>
-          Scientists still argue about where it happened. Different DNA studies point to{" "}
+          Scientists still argue about where it happened. Different <Term id="dna">DNA</Term> studies point to{" "}
           <strong>East Asia</strong>, <strong>Siberia</strong>, or <strong>Europe</strong>.
         </p>
         <p>
@@ -190,7 +191,7 @@ export const HISTORY_STEPS: Step[] = [
         <DigSites />
         <p>
           Older finds from Goyet in Belgium (36,000 years) and Siberia&rsquo;s Altai
-          Mountains (33,300 years) have dog-like skulls, but they&rsquo;re hotly debated. DNA
+          Mountains (33,300 years) have dog-like skulls, but they&rsquo;re hotly debated. <Term id="dna">DNA</Term>{" "}
           puts the Goyet animal on a side branch, most likely an extinct population of wolves
           rather than an ancestor of today&rsquo;s dogs. Skulls with a clearly dog-shaped
           profile turn up around 11,000 years ago.
@@ -216,7 +217,7 @@ export const HISTORY_STEPS: Step[] = [
           people had more lean meat than they could eat, and shared it.
         </p>
         <p>
-          Either way, the DNA shows what changed most: <strong>behavior</strong>. Genes for
+          Either way, the <Term id="dna">DNA</Term> shows what changed most: <strong>behavior</strong>. Genes for
           brain function, stress hormones like adrenaline, and digesting fat and starch were
           all reshaped. Changes near the genes linked to Williams-Beuren syndrome, which
           makes people unusually friendly, are tied to dogs&rsquo; sociability. Even today,
@@ -237,7 +238,7 @@ export const HISTORY_STEPS: Step[] = [
         <p>
           By the time the Ice Age ended, 11,700 years ago, dogs had already split into at
           least <strong>five lineages</strong>. We know them from ancient dogs found in the
-          Levant (the eastern Mediterranean), Karelia (northwest Russia), Lake Baikal
+          Levant (the eastern <Clade id="Mediterranean">Mediterranean</Clade>), Karelia (northwest Russia), Lake Baikal
           (Siberia), and the ancient Americas, plus the New Guinea singing dog, which is
           still alive today. Dogs likely reached the Americas with the very first people.
         </p>
@@ -249,8 +250,8 @@ export const HISTORY_STEPS: Step[] = [
           And they were shaped differently. For tens of thousands of years, dogs changed the
           way wild animals do: the world around them decided which pups survived. Breeds were
           made by <strong>people choosing which dogs had puppies</strong>, aiming at a few
-          traits and then closing the studbooks. That leaves a very different mark on their
-          DNA, and it means geneticists can&rsquo;t read breeds the way they read the
+          traits and then closing the studbooks. That leaves a very different mark on their{" "}
+          <Term id="dna">DNA</Term>, and it means geneticists can&rsquo;t read breeds the way they read the
           evolution of species. Watch the difference play out:
         </p>
         <SelectionExplainer />
@@ -269,12 +270,12 @@ const BREED_STEPS: Step[] = [
     body: (
       <>
         <p>
-          Every sliver around the edge is a group of real dogs whose DNA was tested. The
+          Every sliver around the edge is a group of real dogs whose <Term id="dna">DNA</Term> was tested. The
           lines inside connect dogs by how similar their DNA is. The more two dogs have in
           common, the closer together they sit.
         </p>
         <p>
-          It&rsquo;s a <strong>cladogram</strong>: a family tree that shows who split off
+          It&rsquo;s a <strong><Term id="cladogram">cladogram</Term></strong>: a family tree that shows who split off
           from whom. It doesn&rsquo;t show dates, so don&rsquo;t read anything into how long
           the lines are.
         </p>
@@ -291,13 +292,13 @@ const BREED_STEPS: Step[] = [
       <>
         <p>
           The very center is the <strong>root</strong>, the oldest split in the whole tree.
-          To anchor it, the researchers included the <strong>golden jackal</strong>, a wild
+          To anchor it, the researchers included the <strong><B c="GDJK">golden jackal</B></strong>, a wild
           cousin of dogs. Because we know it branched off long ago, it tells us which end of
           the tree is the old end.
         </p>
         <p>
-          Next come <strong>grey wolves</strong>, dogs&rsquo; closest living relatives
-          (cousins, not ancestors: dogs come from an Ice Age wolf population that has since died out), then the <strong>basenji</strong>, an ancient
+          Next come <strong><B c="WOLF">grey wolves</B></strong>, dogs&rsquo; closest living relatives
+          (cousins, not ancestors: dogs come from an Ice Age wolf population that has since died out), then the <strong><B c="BSJI">basenji</B></strong>, an ancient
           African breed. Every other breed is further out. The rule of thumb: the
           closer to the edge, the more recent the split.
         </p>
@@ -313,7 +314,7 @@ const BREED_STEPS: Step[] = [
     body: (
       <>
         <p>
-          Meet the <strong>boxers</strong>. All ten boxers in the study have such similar DNA
+          Meet the <strong><B c="BOX">boxers</B></strong>. All ten boxers in the study have such similar <Term id="dna">DNA</Term>{" "}
           that they always clump together, so they&rsquo;re drawn as one wedge. Each little
           dot is one dog. Wider wedges mean more dogs were tested.
         </p>
@@ -338,9 +339,9 @@ const BREED_STEPS: Step[] = [
           closer the relatives.
         </p>
         <p>
-          The <strong>golden retriever</strong>&rsquo;s closest relative here is the{" "}
-          <strong>flat-coated retriever</strong>. Next comes the <strong>Labrador</strong>,
-          and a bit further back the <strong>Newfoundland</strong>.
+          The <strong><B c="GOLD">golden retriever</B></strong>&rsquo;s closest relative here is the{" "}
+          <strong><B c="FCR">flat-coated retriever</B></strong>. Next comes the <strong><B c="LAB">Labrador</B></strong>,
+          and a bit further back the <strong><B c="NEWF">Newfoundland</B></strong>.
         </p>
       </>
     ),
@@ -359,7 +360,7 @@ const BREED_STEPS: Step[] = [
     body: (
       <>
         <p>
-          The <strong>dachshund</strong> and the <strong>Afghan hound</strong> sit side by
+          The <strong><B c="DACH">dachshund</B></strong> and the <strong><B c="AFGH">Afghan hound</B></strong> sit side by
           side on the edge, and both are called &ldquo;hounds.&rdquo; Easy to assume
           they&rsquo;re close family, right?
         </p>
@@ -381,7 +382,7 @@ const BREED_STEPS: Step[] = [
         <p>
           Think of the tree as a hanging mobile. You can spin any branch around its hook and
           nothing about who&rsquo;s related to whom changes. Watch: we just spun the fork
-          joining the dachshund and Afghan hound.
+          joining the <B c="DACH">dachshund</B> and <B c="AFGH">Afghan hound</B>.
         </p>
         <p>
           Now they&rsquo;re on opposite sides of the circle, but their path to the shared
@@ -404,7 +405,7 @@ const BREED_STEPS: Step[] = [
     body: (
       <>
         <p>
-          The researchers double-checked their tree by <strong>bootstrapping</strong>: they
+          The researchers double-checked their tree by <strong><Term id="bootstrap">bootstrapping</Term></strong>: they
           reshuffled the data and rebuilt the tree 100 times. Each marker shows how often a
           fork came out the same way:
         </p>
@@ -428,7 +429,7 @@ const BREED_STEPS: Step[] = [
     body: (
       <>
         <p>
-          Zoom out and the breeds clump into bigger branches called <strong>clades</strong>:
+          Zoom out and the breeds clump into bigger branches called <strong><Term id="clade">clades</Term></strong>:
           a shared ancestor plus all its descendants. Almost every breed (150 of them) falls
           into one of 23 clades, each holding 2 to 18 breeds.
         </p>
@@ -448,9 +449,9 @@ const BREED_STEPS: Step[] = [
     body: (
       <>
         <p>
-          Some families look like odd couples. The <strong>Mediterranean</strong> group puts
-          speedy, skinny sighthounds like the saluki next to giant sheep guards like the
-          Great Pyrenees. The <strong>UK Rural</strong> group pairs greyhounds with collies.
+          Some families look like odd couples. The <strong><Clade id="Mediterranean">Mediterranean</Clade></strong> group puts
+          speedy, skinny sighthounds like the <B c="SALU">saluki</B> next to giant sheep guards like the{" "}
+          <B c="GPYR">Great Pyrenees</B>. The <strong><Clade id="UKRural">UK Rural</Clade></strong> group pairs <B c="GREY">greyhounds</B> with <B c="COLL">collies</B>.
         </p>
         <p>
           The likely story: each region bred its own hunting dogs and its own farm dogs from
@@ -469,15 +470,15 @@ const BREED_STEPS: Step[] = [
           not where dogs live.
         </p>
         <p>
-          Shared DNA follows the map too. About <strong>three-quarters</strong> of all the DNA
+          Shared <Term id="dna">DNA</Term> follows the map too. About <strong>three-quarters</strong> of all the DNA
           that breeds share in the study links breeds from the same continent. Partly
           that&rsquo;s because most breeds are European, but Asia&rsquo;s keep to themselves as
-          well: more than half of their sharing is with other Asian breeds, like the Shih Tzu,
-          Lhasa Apso and Pekingese. Breeds from the rest of the world mostly point back to
+          well: more than half of their sharing is with other Asian breeds, like the <B c="SHIH">Shih Tzu</B>,{" "}
+          <B c="LHSA">Lhasa Apso</B> and <B c="PEKE">Pekingese</B>. Breeds from the rest of the world mostly point back to
           Europe, because many were built from dogs that settlers brought with them. Only about
           a fifth of North America&rsquo;s sharing stays on the continent, and less for
-          Australia and Africa: the Australian kelpie&rsquo;s closest relative is the border
-          collie, and South Africa&rsquo;s boerboel&rsquo;s is the bullmastiff. Pick a continent
+          Australia and Africa: the Australian <B c="KELP">kelpie</B>&rsquo;s closest relative is the <B c="BORD">border
+          collie</B>, and South Africa&rsquo;s <B c="BOER">boerboel</B>&rsquo;s is the <B c="BULM">bullmastiff</B>. Pick a continent
           to light up its breeds.
         </p>
       </>
@@ -494,13 +495,13 @@ const BREED_STEPS: Step[] = [
       <>
         <p>
           A few breeds are scattered across more than one wedge. Some are newer breeds still
-          settling down. Others depend on where the dogs came from: cane corsos from Italy
-          stick together, while American ones sit beside Neapolitan mastiffs.
+          settling down. Others depend on where the dogs came from: <B c="CANE">cane corsos</B> from Italy
+          stick together, while American ones sit beside <B c="NEAP">Neapolitan mastiffs</B>.
         </p>
         <p>
-          The <strong>Xoloitzcuintli</strong> (Mexican hairless dog) and the{" "}
-          <strong>Peruvian hairless dog</strong> are split across distant branches. Some of
-          them sit right next to the German shepherd, a hint of old mixing with European
+          The <strong><B c="XOLO">Xoloitzcuintli</B></strong> (Mexican hairless dog) and the{" "}
+          <strong><B c="INCA">Peruvian hairless dog</B></strong> are split across distant branches. Some of
+          them sit right next to the <B c="GSD">German shepherd</B>, a hint of old mixing with European
           herding dogs.
         </p>
       </>
@@ -525,9 +526,9 @@ const BUNDLE_STEPS: Step[] = [
           breeds&rsquo; shared ancestor, then travels back out to the other breed.
         </p>
         <p>
-          Take the <strong>Eurasier</strong> again. A tree can only split, but this breed was
-          made by joining three: in the 1970s breeders crossed the chow chow, keeshond and
-          samoyed. Its three curves follow the tree to each parent, which is why it ends up
+          Take the <strong><B c="EURA">Eurasier</B></strong> again. A tree can only split, but this breed was
+          made by joining three: in the 1970s breeders crossed the <B c="CHOW">chow chow</B>, <B c="KEES">keeshond</B> and{" "}
+          <B c="SAMO">samoyed</B>. Its three curves follow the tree to each parent, which is why it ends up
           in a wedge of its own somewhere between them.
         </p>
       </>
@@ -566,8 +567,8 @@ const BUNDLE_STEPS: Step[] = [
     body: (
       <>
         <p>
-          Every fork in this tree is an ancestor nobody has ever seen. The researchers only had
-          DNA from dogs alive today, so the forks are worked out backwards from their
+          Every fork in this tree is an ancestor nobody has ever seen. The researchers only had{" "}
+          <Term id="dna">DNA</Term> from dogs alive today, so the forks are worked out backwards from their
           descendants. In human evolution these unseen ancestors are called{" "}
           <strong>missing links</strong>: the ape that humans and gorillas both descend from,
           for example, has never been found.
@@ -586,8 +587,8 @@ const BUNDLE_STEPS: Step[] = [
           </figcaption>
         </figure>
         <p>
-          Dogs have a missing link too. The <strong>grey wolf</strong> and the{" "}
-          <strong>basenji</strong> share an ancestor: the Ice Age wolf population dogs came from,
+          Dogs have a missing link too. The <strong><B c="WOLF">grey wolf</B></strong> and the{" "}
+          <strong><B c="BSJI">basenji</B></strong> share an ancestor: the Ice Age wolf population dogs came from,
           which has since died out. Watch the chart: if DNA from that population were found, it
           would join the tree right at the fork where dogs part from wolves, between the wolf
           and the basenji. Every breed shifts over to make room, but in this simple picture
@@ -614,7 +615,7 @@ const CHORD_STEPS: Step[] = CIRCOS_STEPS.filter((c) => c.id !== "explore").map((
       <>
         <p>
           <strong>Part two.</strong> The family tree shows how breeds branched apart. But
-          breeders also mix breeds back together, and that leaves long shared stretches of DNA
+          breeders also mix breeds back together, and that leaves long shared stretches of <Term id="dna">DNA</Term>{" "}
           behind. The paper drew those as a <em>chord diagram</em>: a ring of breeds tied
           together by ribbons. Here&rsquo;s how to read it.
         </p>

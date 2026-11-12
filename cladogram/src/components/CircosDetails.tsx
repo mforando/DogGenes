@@ -8,6 +8,7 @@ import BreedGallery from "./BreedGallery";
 import RelatedBreeds from "./RelatedBreeds";
 import CladeTree from "./CladeTree";
 import { data } from "@/lib/tree";
+import { Term } from "./Hints";
 
 const mb = (v: number) => `${(v / 1e6).toFixed(1)} Mb`;
 // Country-of-origin populations use the main breed's photos and family-tree entry.
@@ -66,7 +67,7 @@ export default function CircosDetails({
       <div className="cd-empty">
         <p className="cd-kicker">Details</p>
         <p className="cd-hint">
-          Hover over a breed&rsquo;s block to see who it shares DNA with, or over a ribbon to
+          Hover over a breed&rsquo;s block to see who it shares <Term id="dna">DNA</Term> with, or over a ribbon to
           see how much two breeds share. <strong>Click</strong> a breed to lock it in place so
           you can scroll through its details; click again to come back here.
         </p>
@@ -103,7 +104,7 @@ export default function CircosDetails({
           <p className="cd-note cd-meet">
             On the family tree they sit <strong>{stepsApart(treeCode(l.a), treeCode(l.b))} branches apart</strong>
             {a.clade && a.clade === b.clade ? "" : ", in different families"}. The gold lines on the
-            chart show where their family lines meet. A big DNA overlap despite that distance
+            chart show where their family lines meet. A big <Term id="dna">DNA</Term> overlap despite that distance
             points to a fairly recent cross.
           </p>
         )}
@@ -140,7 +141,7 @@ export default function CircosDetails({
       {ps.length ? (
         <>
           <p className="cd-sub">
-            Shares big chunks of DNA with <strong>{ps.length}</strong> breed{ps.length === 1 ? "" : "s"} from
+            Shares big chunks of <Term id="dna">DNA</Term> with <strong>{ps.length}</strong> breed{ps.length === 1 ? "" : "s"} from
             other families:
           </p>
           <ol className="cd-list">
@@ -222,7 +223,7 @@ function CladePanel({ clade }: { clade: string }) {
       </p>
       <p className="cd-tree-h">Its family tree</p>
       <CladeTree clade={clade} />
-      <p className="cd-tree-h">Shares DNA with these families</p>
+      <p className="cd-tree-h">Shares <Term id="dna">DNA</Term> with these families</p>
       {rows.length ? (
         <ol className="cd-list cd-clade-list">
           {rows.map((r) => (
