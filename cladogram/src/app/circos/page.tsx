@@ -1,19 +1,9 @@
-"use client";
+import Moved from "@/components/Moved";
+import { movedMeta } from "@/lib/seo";
 
-import { useEffect } from "react";
+/** Retired URL: its content now lives at /tree/#full-chart. */
+export const metadata = movedMeta("/tree/");
 
-const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
-
-/** This page moved into the home page; send visitors (and old links) to the right spot. */
 export default function Page() {
-  useEffect(() => {
-    window.location.replace(`${BASE}/tree/#full-chart`);
-  }, []);
-  return (
-    <main className="moved">
-      <p>
-        This page has moved. <a href={`${BASE}/tree/#full-chart`}>Continue to the family tree &amp; DNA web →</a>
-      </p>
-    </main>
-  );
+  return <Moved to="/tree/#full-chart" label="Continue to the family tree & DNA web" />;
 }

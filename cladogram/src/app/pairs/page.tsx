@@ -1,19 +1,9 @@
-"use client";
+import Moved from "@/components/Moved";
+import { movedMeta } from "@/lib/seo";
 
-import { useEffect } from "react";
+/** Retired URL: its content now lives at /tree/#breed-pairs. */
+export const metadata = movedMeta("/tree/");
 
-const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
-
-/** The breed pairs moved into the home page; send visitors (and old links) to the right spot. */
 export default function Page() {
-  useEffect(() => {
-    window.location.replace(`${BASE}/tree/#breed-pairs`);
-  }, []);
-  return (
-    <main className="moved">
-      <p>
-        This page has moved. <a href={`${BASE}/tree/#breed-pairs`}>Continue to the breed pairs on the family tree &amp; DNA web →</a>
-      </p>
-    </main>
-  );
+  return <Moved to="/tree/#breed-pairs" label="Continue to the breed pairs on the family tree & DNA web" />;
 }

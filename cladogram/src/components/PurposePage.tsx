@@ -201,7 +201,7 @@ export default function PurposePage() {
                         onPointerLeave={() => hover(c, false)}
                       >
                         {photoOf(c) ? (
-                          <img src={photoOf(c)} alt="" loading="lazy" referrerPolicy="no-referrer" />
+                          <img src={photoOf(c)} alt={data.breeds[c]?.name ?? ""} loading="lazy" referrerPolicy="no-referrer" />
                         ) : (
                           <span className="job-nophoto" />
                         )}

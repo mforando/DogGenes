@@ -1,17 +1,24 @@
-// Copies the static export (cladogram/out) into the repository root so GitHub Pages can
-// serve it, giving the repo an index.html entry point. Runs automatically after
-// `npm run build` (the "postbuild" script).
+// Copies the static export (cladogram/out) into the repository's docs/ folder, which
+// GitHub Pages serves (Settings → Pages → Deploy from a branch → main, /docs). Runs
+// automatically after `npm run build` (the "postbuild" script).
 //
-// Safety: the root also holds source material (PDFs, spreadsheet, this app's folder).
-// A manifest records exactly what this script placed there, so a rebuild removes only
-// its own previous output, and it refuses to overwrite anything it didn't create.
-import { copyFileSync, cpSync, existsSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+// Why docs/ and not the repo root: Pages serves everything in the folder it publishes,
+// so publishing the root also put the source PDFs, spreadsheet and notes online. docs/
+// holds only the built site and is replaced wholesale on every build.
+//
+//   node scripts/publish.mjs              build output → docs/
+//   node scripts/publish.mjs --clean-root also remove the site copy that older versions of
+//                                         this script placed in the repo root (listed in
+//                                         .pages-manifest.json). Run it once, after Pages
+//                                         has been switched to /docs.
+import { copyFileSync, cpSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const app = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const out = join(app, "out");
 const root = resolve(app, "..");
+const docs = join(root, "docs");
 const MANIFEST = join(root, ".pages-manifest.json");
 
 if (!existsSync(join(out, "index.html"))) {
@@ -35,27 +42,19 @@ function flattenPayloads(dir) {
 }
 flattenPayloads(out);
 
-const previous = existsSync(MANIFEST) ? JSON.parse(readFileSync(MANIFEST, "utf8")).entries : [];
-const entries = readdirSync(out);
-const protectedNames = new Set([".git", ".github", "cladogram", ".gitignore", "README.md", ".pages-manifest.json"]);
-
-// Refuse to clobber files we didn't put there.
-const clashes = entries.filter((e) => protectedNames.has(e) || (existsSync(join(root, e)) && !previous.includes(e)));
-if (clashes.length) {
-  console.error(`publish: refusing to overwrite existing file(s) in the site root: ${clashes.join(", ")}`);
-  console.error("Move or rename them, then run the build again.");
-  process.exit(1);
-}
-
-// Remove the last published copy, then copy the fresh build.
-for (const e of previous) rmSync(join(root, e), { recursive: true, force: true });
-for (const e of entries) cpSync(join(out, e), join(root, e), { recursive: true });
-
+// docs/ is ours alone: replace its contents with the fresh build. (Empty it rather than
+// delete it, so a terminal or editor with docs/ open on Windows doesn't block the build.)
+mkdirSync(docs, { recursive: true });
+for (const e of readdirSync(docs)) rmSync(join(docs, e), { recursive: true, force: true });
+cpSync(out, docs, { recursive: true });
 // Without this, GitHub Pages' Jekyll step hides the "_next" folder (leading underscore).
-writeFileSync(join(root, ".nojekyll"), "");
+writeFileSync(join(docs, ".nojekyll"), "");
+console.log(`publish: copied the site to ${docs} (entry point: docs/index.html)`);
 
-writeFileSync(
-  MANIFEST,
-  JSON.stringify({ note: "Files copied here by cladogram/scripts/publish.mjs. Safe to delete with them.", entries: [...entries, ".nojekyll"] }, null, 2) + "\n",
-);
-console.log(`publish: copied ${entries.length} item(s) to ${root} (entry point: index.html)`);
+// One-off clean-up of the old root copy, listed in the manifest the previous version wrote.
+if (process.argv.includes("--clean-root") && existsSync(MANIFEST)) {
+  const previous = JSON.parse(readFileSync(MANIFEST, "utf8")).entries ?? [];
+  for (const e of previous) rmSync(join(root, e), { recursive: true, force: true });
+  rmSync(MANIFEST);
+  console.log(`publish: removed ${previous.length} old site item(s) from the repo root`);
+}

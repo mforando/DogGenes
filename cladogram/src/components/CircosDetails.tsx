@@ -150,7 +150,7 @@ export default function CircosDetails({
               return (
                 <li key={p.code}>
                   {photoOf(photoCode(p.code)) ? (
-                    <img className="cd-thumb" src={photoOf(photoCode(p.code))} alt="" loading="lazy" referrerPolicy="no-referrer" />
+                    <img className="cd-thumb" src={photoOf(photoCode(p.code))} alt={o.name} loading="lazy" referrerPolicy="no-referrer" />
                   ) : (
                     <span className="cd-thumb cd-thumb-none" style={{ borderColor: o.color }} aria-hidden />
                   )}

@@ -20,7 +20,7 @@ function Chip({ code }: { code: string }) {
   return (
     <li className="hl-chip">
       {url ? (
-        <img src={url} alt="" loading="lazy" referrerPolicy="no-referrer" />
+        <img src={url} alt={nameOf(code)} loading="lazy" referrerPolicy="no-referrer" />
       ) : (
         <span className="hl-noimg" style={{ borderColor: cladeColor(data.breeds[code]?.clade ?? null, code) }} aria-hidden />
       )}

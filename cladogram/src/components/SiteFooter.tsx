@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 /** One citation line: what it is, where to find it, and its license. */
@@ -128,13 +129,16 @@ const BY_PAGE: Record<string, Cite[]> = {
   "/popularity": [C.akc, C.tidytuesday, C.wikiFacts, C.wikiTopBreeds, C.parker, C.dogceo, C.commons],
 };
 
+/** Breed pages (/breeds/…) draw on the study, Wikipedia, the AKC and NYC licensing data. */
+const BREED_CITES: Cite[] = [C.parker, C.wikiFacts, C.akc, C.nyc, C.dogceo, C.commons];
+
 const SOURCES_URL = "https://github.com/mforando/DogGenes/blob/main/SOURCES.md";
 const LINKEDIN = "https://www.linkedin.com/in/mforando/";
 
 export default function SiteFooter() {
   const raw = usePathname() ?? "/";
   const path = raw.replace(/\/+$/, "") || "/";
-  const cites = BY_PAGE[path] ?? BY_PAGE["/"];
+  const cites = BY_PAGE[path] ?? (path.startsWith("/breeds") ? BREED_CITES : BY_PAGE["/"]);
 
   return (
     <footer className="site-footer" aria-label="Sources and credits">
@@ -153,6 +157,9 @@ export default function SiteFooter() {
         <p className="sf-all">
           All sources and licenses: <a href={SOURCES_URL} target="_blank" rel="noopener noreferrer">SOURCES.md</a>. For
           learning, not veterinary advice.
+        </p>
+        <p className="sf-all">
+          <Link href="/breeds/">Every breed on the family tree, A to Z →</Link>
         </p>
       </div>
       <div className="sf-me">

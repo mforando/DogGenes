@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
+import { track } from "@/lib/track";
 import { createPortal } from "react-dom";
 import { TERMS, TermBody, TermFigure, type TermId } from "./Primer";
 import { data } from "@/lib/tree";
@@ -36,7 +37,13 @@ export function HintProvider({
   onClade?: (id: string | null) => void;
 }) {
   const [pop, setPop] = useState<Pop | null>(null);
-  const open = useCallback((p: Pop) => setPop(p), []);
+  // The last word opened, so re-hovering the same word isn't counted twice.
+  const lastHint = useRef<string | null>(null);
+  const open = useCallback((p: Pop) => {
+    if (lastHint.current !== p.id) track("text_hint", { kind: p.kind, id: p.id });
+    lastHint.current = p.id;
+    setPop(p);
+  }, []);
   // Only close if the pop-up still belongs to this word (enter/leave can arrive out of order).
   const close = useCallback((id: string) => setPop((p) => (p && p.id === id ? null : p)), []);
   // The pop-up is pinned to where the word was; scrolling moves the word, so let it go.

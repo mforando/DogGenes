@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { track } from "@/lib/track";
 import raw from "@/data/game.json";
 import { SiteNav } from "./shared";
 import { Lv } from "@/lib/readingLevel";
@@ -142,6 +143,38 @@ function AiPanel({ q }: { q: Question }) {
   );
 }
 
+/**
+ * Share a finished round: the phone's share sheet where there is one, otherwise copy the
+ * message and link to the clipboard.
+ */
+function ShareScore({ you, ai, total, level }: { you: number; ai: number; total: number; level: string }) {
+  const [copied, setCopied] = useState(false);
+  const verdict = you > ai ? "I beat the AI" : you === ai ? "I tied the AI" : "The AI beat me";
+  const text = `${verdict} at naming dog breeds: ${you} of ${total} vs. ${ai} on ${level}. Can you beat it?`;
+  const share = async () => {
+    const url = `${window.location.origin}${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/game/`;
+    let method = "clipboard";
+    try {
+      if (navigator.share) {
+        method = "share_sheet";
+        await navigator.share({ title: "Dog Breed Quiz: Can You Beat the AI?", text, url });
+      } else {
+        await navigator.clipboard.writeText(`${text} ${url}`);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2500);
+      }
+      track("share", { content_type: "game_score", method });
+    } catch {
+      // The reader closed the share sheet, or the clipboard is blocked: nothing to do.
+    }
+  };
+  return (
+    <button type="button" className="dg-secondary" onClick={share}>
+      {copied ? "Copied!" : "Share your score"}
+    </button>
+  );
+}
+
 export default function GamePage() {
   const [level, setLevel] = useState<Level>("easy");
   const [mode, setMode] = useState<Mode>("choice");
@@ -188,6 +221,7 @@ export default function GamePage() {
       } catch {}
       setHistory(h);
       setFinished(r);
+      track("game_complete", { level, mode, score: Math.round(you * 100), ai: Math.round(ai * 100), beat_ai: you > ai });
     }
   };
   const [finished, setFinished] = useState<Result | null>(null);
@@ -252,9 +286,12 @@ export default function GamePage() {
               The AI got {pct(finished.ai)} ({ai} of {LENGTH}) on the same photos.{" "}
               <strong>{finished.pct > finished.ai ? "You beat the AI!" : finished.pct === finished.ai ? "It’s a tie." : "The AI wins this round."}</strong>
             </p>
-            <button type="button" className="dg-primary" onClick={() => restart(level)}>
-              Play another round
-            </button>
+            <div className="dg-end-actions">
+              <button type="button" className="dg-primary" onClick={() => restart(level)}>
+                Play another round
+              </button>
+              <ShareScore you={you} ai={ai} total={LENGTH} level={level} />
+            </div>
             {history.length > 0 && (
               <div className="dg-history">
                 <p className="dg-kicker">Your scores on this device</p>

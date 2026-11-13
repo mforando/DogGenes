@@ -1,11 +1,22 @@
 import type { Metadata } from "next";
 import HistoryStory from "@/components/HistoryStory";
+import JsonLd, { article } from "@/components/JsonLd";
+import { pageMeta } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "The History of Dogs",
-  description: "40,000 years of dog history, from Ice Age wolves to modern breeds, on a scroll-driven timeline.",
-};
+const TITLE = "Where Dogs Came From: 40,000 Years From Wolf to Breed";
+const DESCRIPTION = "Dogs descend from an extinct Ice Age wolf, not today’s gray wolf. Explore 40,000 years of dog history, the oldest dog fossils and how breeds began.";
+
+export const metadata: Metadata = pageMeta({ title: TITLE, description: DESCRIPTION, path: "/", image: "og/home.png" });
 
 export default function Page() {
-  return <HistoryStory />;
+  return (
+    <>
+      <JsonLd
+        data={[
+          article({ headline: TITLE, description: DESCRIPTION, path: "/", image: "og/home.png" }),
+        ]}
+      />
+      <HistoryStory />
+    </>
+  );
 }

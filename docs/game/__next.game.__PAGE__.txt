@@ -1,0 +1,52 @@
+1:"$Sreact.fragment"
+2:"/DogGenes/_next/static/chunks/2vuk01mm2-bk8.js"
+3:"ReadingLevelProvider"
+4:I[83039,["$2"],"$3"]
+5:I[39756,["$2"],"default"]
+6:I[37457,["$2"],"default"]
+7:I[8745,["$2"],"default"]
+8:I[79520,["$2"],""]
+16:"ViewportBoundary"
+17:I[97367,["$2"],"$16"]
+18:"MetadataBoundary"
+19:I[97367,["$2"],"$18"]
+1a:"$Sreact.suspense"
+:HL["/DogGenes/_next/static/chunks/25b04_0byg49r.css","style"]
+:HL["/DogGenes/_next/static/chunks/3e4y_vh45v8rq.css","style"]
+a:X
+d:X
+d:C
+f:T475,[{"@context":"https://schema.org","@type":"Article","headline":"Dog Breed Quiz: Can You Beat the AI?","description":"Name the breed from a photo in 20 rounds, then see whether you beat an image-recognition AI. Easy, medium and hard levels.","url":"https://mforando.github.io/DogGenes/game/","mainEntityOfPage":"https://mforando.github.io/DogGenes/game/","image":"https://mforando.github.io/DogGenes/og/game.png","author":{"@type":"Person","name":"Mason Forando","url":"https://www.linkedin.com/in/mforando/"},"publisher":{"@type":"Organization","name":"DogGenes","url":"https://mforando.github.io/DogGenes/"},"datePublished":"2026-10-08","dateModified":"2026-11-13","inLanguage":"en","about":[{"@type":"Thing","name":"Dog","sameAs":"https://en.wikipedia.org/wiki/Dog"},{"@type":"Thing","name":"Dog breed","sameAs":"https://en.wikipedia.org/wiki/Dog_breed"}]},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mforando.github.io/DogGenes/"},{"@type":"ListItem","position":2,"name":"Dog Breed Game","item":"https://mforando.github.io/DogGenes/game/"}]}]e:[["children",{"s":"__PAGE__","h":160,"d":{"r":["$","$1","c",{"children":[[["$","script",null,{"type":"application/ld+json","dangerouslySetInnerHTML":{"__html":"$f"}}],"$L10"],["$L11","$L12","$L13"],"$L14"]}],"p":"$@15","v":null,"s":"$a"}}]]
+b:[["children",{"s":"game","h":96,"d":{"r":["$","$1","c",{"children":[null,["$","$L5",null,{"parallelRouterKey":"children","template":["$","$L6",null,{}]}]]}],"p":"$@c","v":"$d","s":"$a"},"c":"$Qe"}]]
+0:{"t":{"t":{"s":"","h":80,"d":{"r":["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/DogGenes/_next/static/chunks/25b04_0byg49r.css","precedence":"next"}],["$","link","1",{"rel":"stylesheet","href":"/DogGenes/_next/static/chunks/3e4y_vh45v8rq.css","precedence":"next"}],["$","script","script-0",{"src":"/DogGenes/_next/static/chunks/2vuk01mm2-bk8.js","async":true}]],["$","html",null,{"lang":"en","className":"iJ-pAG_variable PbtS4q_variable _24soKW_variable","children":["$","body",null,{"children":[["$","script",null,{"type":"application/ld+json","dangerouslySetInnerHTML":{"__html":"{\"@context\":\"https://schema.org\",\"@type\":\"WebSite\",\"name\":\"DogGenes\",\"url\":\"https://mforando.github.io/DogGenes/\",\"description\":\"Interactive stories about where dogs came from and how 161 breeds are related, built from the DNA of 1,355 dogs.\",\"inLanguage\":\"en\",\"author\":{\"@type\":\"Person\",\"name\":\"Mason Forando\",\"url\":\"https://www.linkedin.com/in/mforando/\"},\"publisher\":{\"@type\":\"Person\",\"name\":\"Mason Forando\",\"sameAs\":[\"https://www.linkedin.com/in/mforando/\"]}}"}}],["$","$L4",null,{"children":[["$","$L5",null,{"parallelRouterKey":"children","template":["$","$L6",null,{}],"notFound":[[["$","title",null,{"children":"404: This page could not be found."}],["$","div",null,{"style":{"fontFamily":"system-ui,\"Segoe UI\",Roboto,Helvetica,Arial,sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\"","height":"100vh","textAlign":"center","display":"flex","flexDirection":"column","alignItems":"center","justifyContent":"center"},"children":["$","div",null,{"children":[["$","style",null,{"dangerouslySetInnerHTML":{"__html":"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}"}}],["$","h1",null,{"className":"next-error-h1","style":{"display":"inline-block","margin":"0 20px 0 0","padding":"0 23px 0 0","fontSize":24,"fontWeight":500,"verticalAlign":"top","lineHeight":"49px"},"children":404}],["$","div",null,{"style":{"display":"inline-block"},"children":["$","h2",null,{"style":{"fontSize":14,"fontWeight":400,"lineHeight":"49px","margin":0},"children":"This page could not be found."}]}]]}]}]],[]]}],["$","$L7",null,{}]]}],["$","$L8",null,{"src":"https://www.googletagmanager.com/gtag/js?id=G-C0J6DE3KL8","strategy":"afterInteractive"}],["$","$L8",null,{"id":"google-analytics","strategy":"afterInteractive","children":"\n            window.dataLayer = window.dataLayer || [];\n            function gtag(){dataLayer.push(arguments);}\n            gtag('js', new Date());\n\n            gtag('config', 'G-C0J6DE3KL8');\n          "}]]}]}]]}],"p":"$@9","v":null,"s":"$a"},"c":"$Qb"},"h":{"r":["$","$1","h",{"children":[null,["$","$L17",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}],["$","meta","2",{"name":"theme-color","content":"#0d1110"}]]}],["$","$L19",null,{"children":[["$","div",null,{"hidden":true,"children":["$","$1a",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"Dog Breed Quiz: Can You Beat the AI? | DogGenes"}],["$","meta","1",{"name":"description","content":"Name the breed from a photo in 20 rounds, then see whether you beat an image-recognition AI. Easy, medium and hard levels."}],["$","meta","2",{"name":"application-name","content":"DogGenes"}],["$","link","3",{"rel":"author","href":"https://www.linkedin.com/in/mforando/"}],["$","meta","4",{"name":"author","content":"Mason Forando"}],["$","link","5",{"rel":"canonical","href":"https://mforando.github.io/DogGenes/game/"}],["$","meta","6",{"property":"og:title","content":"Dog Breed Quiz: Can You Beat the AI?"}],["$","meta","7",{"property":"og:description","content":"Name the breed from a photo in 20 rounds, then see whether you beat an image-recognition AI. Easy, medium and hard levels."}],["$","meta","8",{"property":"og:url","content":"https://mforando.github.io/DogGenes/game/"}],["$","meta","9",{"property":"og:site_name","content":"DogGenes"}],["$","meta","10",{"property":"og:locale","content":"en_US"}],["$","meta","11",{"property":"og:image","content":"https://mforando.github.io/DogGenes/og/game.png"}],"$L1b","$L1c","$L1d","$L1e","$L1f","$L20","$L21","$L22","$L23","$L24"]}]}],null]}],"$L25"]}],"p":"$@26","v":null,"s":"$a"}},"a":"$@27","u":"$@28","b":"0zffONW0O1x_AFf-35vBi"}
+29:"/DogGenes/_next/static/chunks/3tszbt9fq5gsn.js"
+2a:"/DogGenes/_next/static/chunks/302q6vwsbil5i.js"
+2b:"/DogGenes/_next/static/chunks/2uytlcds60e87.js"
+2c:I[2419,["$2","$29","$2a","$2b"],"default"]
+2d:I[97367,["$2"],"OutletBoundary"]
+2f:I[27201,["$2"],"IconMark"]
+10:["$","$L2c",null,{}]
+11:["$","script","script-0",{"src":"/DogGenes/_next/static/chunks/3tszbt9fq5gsn.js","async":true}]
+12:["$","script","script-1",{"src":"/DogGenes/_next/static/chunks/302q6vwsbil5i.js","async":true}]
+13:["$","script","script-2",{"src":"/DogGenes/_next/static/chunks/2uytlcds60e87.js","async":true}]
+14:["$","$L2d",null,{"children":["$","$1a",null,{"name":"Next.MetadataOutlet","children":"$@2e"}]}]
+1b:["$","meta","12",{"property":"og:image:width","content":"1200"}]
+1c:["$","meta","13",{"property":"og:image:height","content":"630"}]
+1d:["$","meta","14",{"property":"og:image:alt","content":"Dog Breed Quiz: Can You Beat the AI?"}]
+1e:["$","meta","15",{"property":"og:type","content":"article"}]
+1f:["$","meta","16",{"name":"twitter:card","content":"summary_large_image"}]
+20:["$","meta","17",{"name":"twitter:title","content":"Dog Breed Quiz: Can You Beat the AI?"}]
+21:["$","meta","18",{"name":"twitter:description","content":"Name the breed from a photo in 20 rounds, then see whether you beat an image-recognition AI. Easy, medium and hard levels."}]
+22:["$","meta","19",{"name":"twitter:image","content":"https://mforando.github.io/DogGenes/og/game.png"}]
+23:["$","link","20",{"rel":"icon","href":"/DogGenes/icon.svg?icon.0u8y5wcsqj8af.svg","sizes":"any","type":"image/svg+xml"}]
+24:["$","$L2f","21",{}]
+25:["$","meta",null,{"name":"next-size-adjust","content":""}]
+a:300
+2e:null
+28:true
+a:C
+27:0
+c:"$undefined"
+9:"$undefined"
+26:"$undefined"
+15:"$undefined"

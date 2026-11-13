@@ -40,7 +40,7 @@ export default function HistoryStory() {
       <header className="hero hero-history">
         <FaceMorph />
         <div className="hero-inner">
-          <p className="eyebrow">The history of dogs</p>
+          <p className="eyebrow">The history of dogs: where dogs came from</p>
           <h1>
             From Ice Age wolves to <em>best friends</em>
           </h1>

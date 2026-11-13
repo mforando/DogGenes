@@ -118,7 +118,7 @@ function Eras() {
           const url = photoOf(e.code);
           return (
             <li key={e.from}>
-              {url ? <img className="pop-photo" src={url} alt="" loading="lazy" referrerPolicy="no-referrer" /> : <span className="pop-photo pop-nophoto" aria-hidden />}
+              {url ? <img className="pop-photo" src={url} alt={e.breed} loading="lazy" referrerPolicy="no-referrer" /> : <span className="pop-photo pop-nophoto" aria-hidden />}
               <div>
                 <span className="pop-tname">{e.breed}</span>
                 <span className="pop-tmeta">

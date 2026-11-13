@@ -1,19 +1,9 @@
-"use client";
+import Moved from "@/components/Moved";
+import { movedMeta } from "@/lib/seo";
 
-import { useEffect } from "react";
+/** Retired URL: its content now lives at /. */
+export const metadata = movedMeta("/");
 
-const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
-
-/** The history of dogs is now the home page; send old links (and their #section) there. */
 export default function Page() {
-  useEffect(() => {
-    window.location.replace(`${BASE}/${window.location.hash}`);
-  }, []);
-  return (
-    <main className="moved">
-      <p>
-        This page has moved. <a href={`${BASE}/`}>Continue to the history of dogs →</a>
-      </p>
-    </main>
-  );
+  return <Moved to="/" label="Continue to the history of dogs" keepHash />;
 }

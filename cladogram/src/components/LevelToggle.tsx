@@ -1,6 +1,7 @@
 "use client";
 
 import { LEVELS, useReadingLevel } from "@/lib/readingLevel";
+import { track } from "@/lib/track";
 
 /** Puppy / Adult / Albert Pawstein: switches the story's wording. */
 export default function LevelToggle({ className = "" }: { className?: string }) {
@@ -15,7 +16,10 @@ export default function LevelToggle({ className = "" }: { className?: string }) 
           aria-checked={level === l.id}
           title={l.hint}
           className={level === l.id ? "on" : ""}
-          onClick={() => setLevel(l.id)}
+          onClick={() => {
+            setLevel(l.id);
+            track("reading_level", { level: l.id });
+          }}
         >
           {l.label}
         </button>

@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState, useRef } from "react";
+import { Fragment, useEffect, useMemo, useState, useRef } from "react";
+import { breedPath, hasBreedPage } from "@/lib/breedLinks";
 import Cladogram from "./Cladogram";
 import { STEPS, STEP_ALIASES } from "@/lib/steps";
 import { data, ringOrder } from "@/lib/tree";
@@ -121,7 +122,7 @@ function StoryBody() {
       const b = data.breeds[code];
       const key = b.clade ?? (code === "WOLF" || code === "GDJK" ? "_wild" : "_none");
       const list = groups.get(key) ?? groups.set(key, []).get(key)!;
-      if (!list.includes(b.name)) list.push(b.name);
+      if (!list.includes(code)) list.push(code);
     }
     return [...groups];
   }, []);
@@ -132,7 +133,7 @@ function StoryBody() {
       <header className="hero">
         <DnaHelix />
         <div className="hero-inner">
-          <p className="eyebrow">A beginner’s guide to dog DNA</p>
+          <p className="eyebrow">The dog breed family tree · a beginner’s guide to dog DNA</p>
           <h1>
             How to read <em>the dog&rsquo;s</em> family tree
           </h1>
@@ -252,7 +253,14 @@ function StoryBody() {
                   />
                   {key === "_wild" ? "Wild relatives" : key === "_none" ? "Loners (no clear family)" : data.clades[key]}
                 </h3>
-                <p>{names.join(", ")}</p>
+                <p>
+                  {names.map((c, j) => (
+                    <Fragment key={c}>
+                      {j > 0 && ", "}
+                      {hasBreedPage(c) ? <Link href={breedPath(c)}>{data.breeds[c].name}</Link> : data.breeds[c].name}
+                    </Fragment>
+                  ))}
+                </p>
               </div>
             ))}
           </div>

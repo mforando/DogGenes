@@ -1,0 +1,65 @@
+1:"$Sreact.fragment"
+2:"/DogGenes/_next/static/chunks/2vuk01mm2-bk8.js"
+3:"ReadingLevelProvider"
+4:I[83039,["$2"],"$3"]
+5:I[39756,["$2"],"default"]
+6:I[37457,["$2"],"default"]
+7:I[8745,["$2"],"default"]
+8:I[79520,["$2"],""]
+1c:"ViewportBoundary"
+1d:I[97367,["$2"],"$1c"]
+1e:"MetadataBoundary"
+1f:I[97367,["$2"],"$1e"]
+20:"$Sreact.suspense"
+:HL["/DogGenes/_next/static/chunks/25b04_0byg49r.css","style"]
+:HL["/DogGenes/_next/static/chunks/3e4y_vh45v8rq.css","style"]
+a:X
+d:X
+d:C
+f:T5e1,[{"@context":"https://schema.org","@type":"Article","headline":"Dog Breed Family Tree: How 161 Breeds Are Related","description":"An interactive DNA family tree of 161 dog breeds from a landmark 2017 study, plus a map of which breeds were crossed to make others.","url":"https://mforando.github.io/DogGenes/tree/","mainEntityOfPage":"https://mforando.github.io/DogGenes/tree/","image":"https://mforando.github.io/DogGenes/og/tree.png","author":{"@type":"Person","name":"Mason Forando","url":"https://www.linkedin.com/in/mforando/"},"publisher":{"@type":"Organization","name":"DogGenes","url":"https://mforando.github.io/DogGenes/"},"datePublished":"2026-10-08","dateModified":"2026-11-13","inLanguage":"en","about":[{"@type":"Thing","name":"Dog","sameAs":"https://en.wikipedia.org/wiki/Dog"},{"@type":"Thing","name":"Dog breed","sameAs":"https://en.wikipedia.org/wiki/Dog_breed"}],"citation":{"@type":"ScholarlyArticle","name":"Genomic analyses reveal the influence of geographic origin, migration, and hybridization on modern dog breed development","author":"Parker, H. G. et al.","datePublished":"2017","isPartOf":{"@type":"Periodical","name":"Cell Reports"},"url":"https://doi.org/10.1016/j.celrep.2017.03.079"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mforando.github.io/DogGenes/"},{"@type":"ListItem","position":2,"name":"Family tree & DNA web","item":"https://mforando.github.io/DogGenes/tree/"}]}]e:[["children",{"s":"__PAGE__","h":160,"d":{"r":["$","$1","c",{"children":[[["$","script",null,{"type":"application/ld+json","dangerouslySetInnerHTML":{"__html":"$f"}}],"$L10"],["$L11","$L12","$L13","$L14","$L15","$L16","$L17","$L18","$L19"],"$L1a"]}],"p":"$@1b","v":null,"s":"$a"}}]]
+b:[["children",{"s":"tree","h":96,"d":{"r":["$","$1","c",{"children":[null,["$","$L5",null,{"parallelRouterKey":"children","template":["$","$L6",null,{}]}]]}],"p":"$@c","v":"$d","s":"$a"},"c":"$Qe"}]]
+0:{"t":{"t":{"s":"","h":80,"d":{"r":["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/DogGenes/_next/static/chunks/25b04_0byg49r.css","precedence":"next"}],["$","link","1",{"rel":"stylesheet","href":"/DogGenes/_next/static/chunks/3e4y_vh45v8rq.css","precedence":"next"}],["$","script","script-0",{"src":"/DogGenes/_next/static/chunks/2vuk01mm2-bk8.js","async":true}]],["$","html",null,{"lang":"en","className":"iJ-pAG_variable PbtS4q_variable _24soKW_variable","children":["$","body",null,{"children":[["$","script",null,{"type":"application/ld+json","dangerouslySetInnerHTML":{"__html":"{\"@context\":\"https://schema.org\",\"@type\":\"WebSite\",\"name\":\"DogGenes\",\"url\":\"https://mforando.github.io/DogGenes/\",\"description\":\"Interactive stories about where dogs came from and how 161 breeds are related, built from the DNA of 1,355 dogs.\",\"inLanguage\":\"en\",\"author\":{\"@type\":\"Person\",\"name\":\"Mason Forando\",\"url\":\"https://www.linkedin.com/in/mforando/\"},\"publisher\":{\"@type\":\"Person\",\"name\":\"Mason Forando\",\"sameAs\":[\"https://www.linkedin.com/in/mforando/\"]}}"}}],["$","$L4",null,{"children":[["$","$L5",null,{"parallelRouterKey":"children","template":["$","$L6",null,{}],"notFound":[[["$","title",null,{"children":"404: This page could not be found."}],["$","div",null,{"style":{"fontFamily":"system-ui,\"Segoe UI\",Roboto,Helvetica,Arial,sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\"","height":"100vh","textAlign":"center","display":"flex","flexDirection":"column","alignItems":"center","justifyContent":"center"},"children":["$","div",null,{"children":[["$","style",null,{"dangerouslySetInnerHTML":{"__html":"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}"}}],["$","h1",null,{"className":"next-error-h1","style":{"display":"inline-block","margin":"0 20px 0 0","padding":"0 23px 0 0","fontSize":24,"fontWeight":500,"verticalAlign":"top","lineHeight":"49px"},"children":404}],["$","div",null,{"style":{"display":"inline-block"},"children":["$","h2",null,{"style":{"fontSize":14,"fontWeight":400,"lineHeight":"49px","margin":0},"children":"This page could not be found."}]}]]}]}]],[]]}],["$","$L7",null,{}]]}],["$","$L8",null,{"src":"https://www.googletagmanager.com/gtag/js?id=G-C0J6DE3KL8","strategy":"afterInteractive"}],["$","$L8",null,{"id":"google-analytics","strategy":"afterInteractive","children":"\n            window.dataLayer = window.dataLayer || [];\n            function gtag(){dataLayer.push(arguments);}\n            gtag('js', new Date());\n\n            gtag('config', 'G-C0J6DE3KL8');\n          "}]]}]}]]}],"p":"$@9","v":null,"s":"$a"},"c":"$Qb"},"h":{"r":["$","$1","h",{"children":[null,["$","$L1d",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}],["$","meta","2",{"name":"theme-color","content":"#0d1110"}]]}],["$","$L1f",null,{"children":[["$","div",null,{"hidden":true,"children":["$","$20",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"Dog Breed Family Tree: How 161 Breeds Are Related | DogGenes"}],["$","meta","1",{"name":"description","content":"An interactive DNA family tree of 161 dog breeds from a landmark 2017 study, plus a map of which breeds were crossed to make others."}],["$","meta","2",{"name":"application-name","content":"DogGenes"}],["$","link","3",{"rel":"author","href":"https://www.linkedin.com/in/mforando/"}],["$","meta","4",{"name":"author","content":"Mason Forando"}],["$","link","5",{"rel":"canonical","href":"https://mforando.github.io/DogGenes/tree/"}],["$","meta","6",{"property":"og:title","content":"Dog Breed Family Tree: How 161 Breeds Are Related"}],["$","meta","7",{"property":"og:description","content":"An interactive DNA family tree of 161 dog breeds from a landmark 2017 study, plus a map of which breeds were crossed to make others."}],["$","meta","8",{"property":"og:url","content":"https://mforando.github.io/DogGenes/tree/"}],["$","meta","9",{"property":"og:site_name","content":"DogGenes"}],["$","meta","10",{"property":"og:locale","content":"en_US"}],"$L21","$L22","$L23","$L24","$L25","$L26","$L27","$L28","$L29","$L2a","$L2b"]}]}],null]}],"$L2c"]}],"p":"$@2d","v":null,"s":"$a"}},"a":"$@2e","u":"$@2f","b":"0zffONW0O1x_AFf-35vBi"}
+30:"/DogGenes/_next/static/chunks/1-a3cbdy3pjqe.js"
+31:"/DogGenes/_next/static/chunks/10-d_jwt41hbk.js"
+32:"/DogGenes/_next/static/chunks/3tszbt9fq5gsn.js"
+33:"/DogGenes/_next/static/chunks/21cnqu7yfo3nh.js"
+34:"/DogGenes/_next/static/chunks/2njhvnt00s_s-.js"
+35:"/DogGenes/_next/static/chunks/0for2nkzfb4rj.js"
+36:"/DogGenes/_next/static/chunks/1fcaywwxlm3kl.js"
+37:"/DogGenes/_next/static/chunks/2uytlcds60e87.js"
+38:"/DogGenes/_next/static/chunks/214-n7nk5fldg.js"
+39:I[32456,["$2","$30","$31","$32","$33","$34","$35","$36","$37","$38"],"default"]
+3a:I[97367,["$2"],"OutletBoundary"]
+3c:I[27201,["$2"],"IconMark"]
+10:["$","$L39",null,{}]
+11:["$","script","script-0",{"src":"/DogGenes/_next/static/chunks/1-a3cbdy3pjqe.js","async":true}]
+12:["$","script","script-1",{"src":"/DogGenes/_next/static/chunks/10-d_jwt41hbk.js","async":true}]
+13:["$","script","script-2",{"src":"/DogGenes/_next/static/chunks/3tszbt9fq5gsn.js","async":true}]
+14:["$","script","script-3",{"src":"/DogGenes/_next/static/chunks/21cnqu7yfo3nh.js","async":true}]
+15:["$","script","script-4",{"src":"/DogGenes/_next/static/chunks/2njhvnt00s_s-.js","async":true}]
+16:["$","script","script-5",{"src":"/DogGenes/_next/static/chunks/0for2nkzfb4rj.js","async":true}]
+17:["$","script","script-6",{"src":"/DogGenes/_next/static/chunks/1fcaywwxlm3kl.js","async":true}]
+18:["$","script","script-7",{"src":"/DogGenes/_next/static/chunks/2uytlcds60e87.js","async":true}]
+19:["$","script","script-8",{"src":"/DogGenes/_next/static/chunks/214-n7nk5fldg.js","async":true}]
+1a:["$","$L3a",null,{"children":["$","$20",null,{"name":"Next.MetadataOutlet","children":"$@3b"}]}]
+21:["$","meta","11",{"property":"og:image","content":"https://mforando.github.io/DogGenes/og/tree.png"}]
+22:["$","meta","12",{"property":"og:image:width","content":"1200"}]
+23:["$","meta","13",{"property":"og:image:height","content":"630"}]
+24:["$","meta","14",{"property":"og:image:alt","content":"Dog Breed Family Tree: How 161 Breeds Are Related"}]
+25:["$","meta","15",{"property":"og:type","content":"article"}]
+26:["$","meta","16",{"name":"twitter:card","content":"summary_large_image"}]
+27:["$","meta","17",{"name":"twitter:title","content":"Dog Breed Family Tree: How 161 Breeds Are Related"}]
+28:["$","meta","18",{"name":"twitter:description","content":"An interactive DNA family tree of 161 dog breeds from a landmark 2017 study, plus a map of which breeds were crossed to make others."}]
+29:["$","meta","19",{"name":"twitter:image","content":"https://mforando.github.io/DogGenes/og/tree.png"}]
+2a:["$","link","20",{"rel":"icon","href":"/DogGenes/icon.svg?icon.0u8y5wcsqj8af.svg","sizes":"any","type":"image/svg+xml"}]
+2b:["$","$L3c","21",{}]
+2c:["$","meta",null,{"name":"next-size-adjust","content":""}]
+a:300
+3b:null
+2f:true
+a:C
+2e:0
+c:"$undefined"
+9:"$undefined"
+2d:"$undefined"
+1b:"$undefined"

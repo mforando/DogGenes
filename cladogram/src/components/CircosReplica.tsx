@@ -76,7 +76,8 @@ export default function CircosReplica({ embedded = false }: { embedded?: boolean
           <aside className="replica-side" aria-label="Figure key and controls">
             <header className="replica-head">
               <p className="eyebrow">Recreated from Parker et al. 2017, Figure 4</p>
-              <h1>Which dog breeds have been mixed together?</h1>
+              {/* Embedded under the story, the page already has its own <h1>. */}
+              {embedded ? <h2 className="replica-title">Which dog breeds have been mixed together?</h2> : <h1 className="replica-title">Which dog breeds have been mixed together?</h1>}
               <p className="replica-caption">
                 <Lv
                   puppy={<><strong>What it shows:</strong> each colored block is a breed, in the same order as the family tree. A ribbon joins two breeds from different families that share a lot of <Term id="dna">DNA</Term>. That means people mixed them together in the last 200 years or so. Wider ribbons mean more shared DNA.</>}
