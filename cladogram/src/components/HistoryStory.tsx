@@ -9,6 +9,7 @@ import { CITATION, RotateHint, SiteNav, useActiveStep } from "./shared";
 import { HISTORY_STEPS, STEP_ALIASES } from "@/lib/steps";
 import { HISTORY_LEVEL_BODIES } from "@/lib/historyLevels";
 import { Lv, useReadingLevel } from "@/lib/readingLevel";
+import MotionToggle from "./MotionToggle";
 
 /** The history of dogs: 40,000 years of domestication on a scroll-driven timeline. */
 export default function HistoryStory() {
@@ -70,10 +71,15 @@ export default function HistoryStory() {
             <span>scroll</span>
           </div>
         </div>
+        <MotionToggle />
       </header>
 
       <main className="scrolly">
-        <div className="figure" aria-live="polite">
+        <div className="figure">
+          {/* Screen readers hear one short line per step; the chart itself isn't a live region. */}
+          <p className="sr-only" aria-live="polite" aria-atomic="true">
+            {`Step ${active + 1} of ${HISTORY_STEPS.length}: ${step.title}. The timeline now shows this period.`}
+          </p>
           <div className="figure-meta">
             <span className="counter">
               {String(active + 1).padStart(2, "0")}
@@ -108,7 +114,7 @@ export default function HistoryStory() {
         </div>
       </main>
 
-      <section className="appendix history-next">
+      <section className="appendix history-next" aria-label="Next page and sources">
         <Link href="/tree" className="history-cta">
           <span className="history-cta-kicker">Next</span>
           <span className="history-cta-label">Next: how 161 breeds are related →</span>

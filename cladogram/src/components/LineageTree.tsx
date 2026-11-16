@@ -7,11 +7,13 @@ import { cladeColor } from "@/lib/palette";
 import { familyTree, lineage, type FamilyNode } from "@/lib/relatives";
 import { photoOf } from "@/lib/photos";
 import { factsText } from "@/lib/breedFacts";
+import { LIGHT, tone } from "@/lib/theme";
+import { useTheme } from "@/lib/useTheme";
 
-const INK = "#e9e2d0";
-const MUTED = "#8a8a7f";
-const GOLD = "#e8b74a";
-const BG = "#0d1110";
+let INK = "#e9e2d0";
+let MUTED = "#8a8a7f";
+let GOLD = "#e8b74a";
+let BG = "#0d1110";
 const DX = 30; // spacing between neighbouring tips
 const DY = 34; // spacing between ancestor levels
 const PHOTO = 26; // breed photo between the tip dot and its name
@@ -34,7 +36,12 @@ export default function LineageTree({ code, onSelect }: { code: string; onSelect
   onSelectRef.current = onSelect;
   const zoomApi = useRef<{ by: (k: number) => void; reset: () => void } | null>(null);
 
+  const theme = useTheme(); // rebuild when the light/dark switch changes
   useEffect(() => {
+    INK = tone("#e9e2d0", LIGHT.ink);
+    MUTED = tone("#8a8a7f", LIGHT.muted);
+    GOLD = tone("#e8b74a", LIGHT.gold);
+    BG = tone("#0d1110", LIGHT.bg);
     const el = host.current!;
     const tree = familyTree(code);
     if (!tree) return;
@@ -71,7 +78,7 @@ export default function LineageTree({ code, onSelect }: { code: string; onSelect
     content.append("g").selectAll("line").data(levels).join("line")
       .attr("x1", x0 - 20).attr("x2", x1 + 20)
       .attr("y1", (l) => yMax - l * DY).attr("y2", (l) => yMax - l * DY)
-      .attr("stroke", "#18201c");
+      .attr("stroke", tone("#18201c", LIGHT.grid));
 
     // ---------- elbow links, as in the circular cladogram ----------
     const spineNodes = new Set<P>();
@@ -162,7 +169,7 @@ export default function LineageTree({ code, onSelect }: { code: string; onSelect
       }
       ph.append("rect").attr("x", -PHOTO / 2).attr("y", py).attr("width", PHOTO).attr("height", PHOTO).attr("rx", 3)
         .attr("fill", "none")
-        .attr("stroke", self ? GOLD : url ? "rgba(233,226,208,0.35)" : cladeColor(data.breeds[c]?.clade ?? null, c))
+        .attr("stroke", self ? GOLD : url ? tone("rgba(233,226,208,0.35)", "rgba(32,37,31,0.35)") : cladeColor(data.breeds[c]?.clade ?? null, c))
         .attr("stroke-width", self ? 2 : 1)
         .attr("stroke-dasharray", url ? null : "3 2");
       const tipText = [nameOf(c), factsText(c)].filter(Boolean).join("\n");
@@ -222,7 +229,7 @@ export default function LineageTree({ code, onSelect }: { code: string; onSelect
       d3.select(el).selectAll("svg").remove();
       zoomApi.current = null;
     };
-  }, [code]);
+  }, [code, theme]);
 
   const forks = lineage(code).length;
   return (

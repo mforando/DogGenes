@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 import * as d3 from "d3";
 import { data, type RawNode } from "@/lib/tree";
-import { cladeColor } from "@/lib/palette";
+import { cladeVar } from "@/lib/palette";
 
 type T = { name: string; code?: string; children?: T[] };
 
@@ -32,7 +32,7 @@ export default function CladeTree({ clade }: { clade: string }) {
     return { root: root as d3.HierarchyPointNode<T>, H, W };
   }, [clade]);
   if (!tree) return null;
-  const color = cladeColor(clade);
+  const color = cladeVar(clade);
   const { root, H, W } = tree;
   return (
     <svg className="clade-tree" viewBox={`-4 -10 ${W} ${H + 4}`} role="img" aria-label={`Family tree of the ${data.clades[clade]} breeds: ${root.leaves().map((l) => l.data.name).join(", ")}`}>

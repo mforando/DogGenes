@@ -5,7 +5,7 @@ import { SiteNav } from "@/components/shared";
 import JsonLd, { breadcrumbs } from "@/components/JsonLd";
 import { BREED_CODES, breedPage, breedPath, breedSummary, codeOfSlug, slugOf, type BreedPage } from "@/lib/breeds";
 import { data } from "@/lib/tree";
-import { cladeColor } from "@/lib/palette";
+import { cladeVar } from "@/lib/palette";
 import { pageMeta } from "@/lib/seo";
 import { abs, AUTHOR, SITE_NAME } from "@/lib/site";
 
@@ -34,7 +34,7 @@ const fmtYears = (n: number) => n.toLocaleString("en-US");
 function BreedLink({ code }: { code: string }) {
   return (
     <Link href={breedPath(code)} className="bp-link">
-      <i style={{ background: cladeColor(data.breeds[code].clade, code) }} aria-hidden />
+      <i style={{ background: cladeVar(data.breeds[code].clade, code) }} aria-hidden />
       {data.breeds[code].name}
     </Link>
   );

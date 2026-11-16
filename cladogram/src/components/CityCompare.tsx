@@ -23,7 +23,7 @@ const fmt = d3.format(",");
 const pct = d3.format(".1%");
 const one = d3.format(",.1f");
 // Validated as a pair on the dark surface (lightness, chroma, CVD and normal-vision checks).
-const CITY = { toronto: { label: "Toronto", color: "#d35e2c" }, nyc: { label: "New York", color: "#2d88e2" } };
+const CITY = { toronto: { label: "Toronto", color: "var(--clade-Alpine, #d35e2c)" }, nyc: { label: "New York", color: "var(--clade-NewWorld, #2d88e2)" } };
 const NAMES = Object.keys(T.trend).sort();
 const TY = T.source.toronto_years;
 const LAST_FULL = T.source.toronto_full_years[T.source.toronto_full_years.length - 1];
@@ -100,7 +100,7 @@ function NameTrend() {
                 <g key={s.id}>
                   <path d={line(s.pts)!} fill="none" stroke={c} strokeWidth={2.4} />
                   {shown.map((p) => (
-                    <circle key={p.y} cx={x(p.y)} cy={y(p.v)} r={3.6} fill={c} stroke="#141a18" strokeWidth={1.5}>
+                    <circle key={p.y} cx={x(p.y)} cy={y(p.v)} r={3.6} fill={c} stroke="var(--bg-raise, #141a18)" strokeWidth={1.5}>
                       <title>{`${CITY[s.id].label}, ${p.y}: ${one(p.v)} per 10,000 dogs`}</title>
                     </circle>
                   ))}

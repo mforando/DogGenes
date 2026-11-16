@@ -2,6 +2,7 @@
 
 import { circosData, links, nodeByCode, nodes, partnersOf, type CNode } from "@/lib/circos";
 import { photoOf } from "@/lib/photos";
+import { cladeVar } from "@/lib/palette";
 import type { CircosHover } from "./Circos";
 import { stepsApart } from "@/lib/pairs";
 import BreedGallery from "./BreedGallery";
@@ -27,7 +28,7 @@ function BreedHeader({ n, small = false, gallery = false }: { n: CNode; small?: 
       ) : photo ? (
         <img src={photo} alt={n.name} referrerPolicy="no-referrer" />
       ) : (
-        <span className="cd-noimg" style={{ borderColor: n.color }} aria-hidden>
+        <span className="cd-noimg" style={{ borderColor: n.cssColor }} aria-hidden>
           {n.name.split(/\s+/).slice(0, 2).map((w) => w[0]).join("")}
         </span>
       )}
@@ -36,7 +37,7 @@ function BreedHeader({ n, small = false, gallery = false }: { n: CNode; small?: 
           {n.name}
         </p>
         <p className="cd-family">
-          <i style={{ background: n.color }} aria-hidden />
+          <i style={{ background: n.cssColor }} aria-hidden />
           {familyLabel(n)}
         </p>
       </div>
@@ -152,12 +153,12 @@ export default function CircosDetails({
                   {photoOf(photoCode(p.code)) ? (
                     <img className="cd-thumb" src={photoOf(photoCode(p.code))} alt={o.name} loading="lazy" referrerPolicy="no-referrer" />
                   ) : (
-                    <span className="cd-thumb cd-thumb-none" style={{ borderColor: o.color }} aria-hidden />
+                    <span className="cd-thumb cd-thumb-none" style={{ borderColor: o.cssColor }} aria-hidden />
                   )}
                   <span className="cd-pname">
                     <span>{o.name}</span>
                     <span className="cd-pfam">
-                      <i style={{ background: o.color }} aria-hidden />
+                      <i style={{ background: o.cssColor }} aria-hidden />
                       {familyLabel(o)}
                     </span>
                   </span>
@@ -197,7 +198,7 @@ const otherLabel = (code: string) => {
 /** Hovering a family's band: its tree, and how much DNA it shares with each other family. */
 function CladePanel({ clade }: { clade: string }) {
   const members = nodes.filter((n) => n.clade === clade);
-  const color = members[0]?.color ?? "#888";
+  const color = members[0]?.cssColor ?? "#888";
   const codes = new Set(members.map((n) => n.code));
   const out = links.filter((l) => codes.has(l.a) !== codes.has(l.b));
   const byOther = new Map<string, { label: string; color: string; value: number; ribbons: number }>();
@@ -205,7 +206,7 @@ function CladePanel({ clade }: { clade: string }) {
     const other = codes.has(l.a) ? l.b : l.a;
     const key = otherLabel(other);
     const o = nodeByCode.get(other)!;
-    const e = byOther.get(key) ?? { label: key, color: o.clade || o.code === "WOLF" ? o.color : "#7d847e", value: 0, ribbons: 0 };
+    const e = byOther.get(key) ?? { label: key, color: o.clade || o.code === "WOLF" ? o.cssColor : cladeVar(null), value: 0, ribbons: 0 };
     e.value += l.value;
     e.ribbons += 1;
     byOther.set(key, e);

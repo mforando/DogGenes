@@ -3,12 +3,14 @@
 import { useEffect, useRef, type CSSProperties, type ReactNode } from "react";
 import * as d3 from "d3";
 import { useReadingLevel } from "@/lib/readingLevel";
+import { LIGHT, tone } from "@/lib/theme";
+import { useTheme } from "@/lib/useTheme";
 
 export type TermId = "dna" | "cladogram" | "clade" | "bootstrap" | "haplotype";
 
-const INK = "#e9e2d0";
-const MUTED = "#5b635d";
-const GOLD = "#e8b74a";
+let INK = "#e9e2d0";
+let MUTED = "#5b635d";
+let GOLD = "#e8b74a";
 const W = 240;
 const H = 120;
 
@@ -59,9 +61,9 @@ const DRAW: Record<TermId, (g: G) => void> = {
       row.forEach((ch, i) => {
         const diff = ch !== seq[i] || alt[i] !== seq[i];
         g.append("rect").attr("x", x0 + i * cell).attr("y", y - 2).attr("width", cell - 1.5).attr("height", 14)
-          .attr("rx", 2).attr("fill", diff ? GOLD : "#232b27");
+          .attr("rx", 2).attr("fill", diff ? GOLD : tone("#232b27", LIGHT.grid));
         g.append("text").attr("x", x0 + i * cell + (cell - 1.5) / 2).attr("y", y + 8.5).attr("text-anchor", "middle")
-          .attr("class", "pr-mono").attr("fill", diff ? "#0d1110" : INK).text(ch);
+          .attr("class", "pr-mono").attr("fill", diff ? tone("#0d1110", LIGHT.bg) : INK).text(ch);
       });
     });
     g.append("text").attr("x", x0).attr("y", 108).attr("class", "pr-label").attr("fill", GOLD)
@@ -102,7 +104,7 @@ const DRAW: Record<TermId, (g: G) => void> = {
     gens.forEach((gen, r) => {
       const y = 18 + r * 32;
       g.append("text").attr("x", 20).attr("y", y).attr("class", "pr-label").attr("fill", MUTED).text(gen.label);
-      g.append("rect").attr("x", 20).attr("y", y + 5).attr("width", 200).attr("height", 10).attr("rx", 5).attr("fill", "#232b27");
+      g.append("rect").attr("x", 20).attr("y", y + 5).attr("width", 200).attr("height", 10).attr("rx", 5).attr("fill", tone("#232b27", LIGHT.grid));
       for (const [a, b] of gen.pieces) {
         g.append("rect").attr("x", a).attr("y", y + 5).attr("width", b - a).attr("height", 10).attr("rx", 5).attr("fill", GOLD);
       }
@@ -276,11 +278,15 @@ export function TermBody({ id }: { id: TermId }) {
 /** The small explainer diagram for one glossary word (also used by the hover hints in the text). */
 export function TermFigure({ id }: { id: TermId }) {
   const svgRef = useRef<SVGSVGElement>(null);
+  const theme = useTheme(); // rebuild when the light/dark switch changes
   useEffect(() => {
+    INK = tone("#e9e2d0", LIGHT.ink);
+    MUTED = tone("#5b635d", LIGHT.muted);
+    GOLD = tone("#e8b74a", LIGHT.gold);
     const svg = d3.select(svgRef.current!);
     svg.selectAll("*").remove();
     DRAW[id](svg.append("g") as unknown as G);
-  }, [id]);
+  }, [id, theme]);
   return <svg ref={svgRef} viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`Diagram illustrating ${TERMS[id].word}`} />;
 }
 

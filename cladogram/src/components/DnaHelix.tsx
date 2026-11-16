@@ -1,6 +1,9 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { motionPaused, useMotionPaused } from "@/lib/motion";
+import { isLight } from "@/lib/theme";
+import { useTheme } from "@/lib/useTheme";
 
 /**
  * A slowly spinning 3D DNA double helix, drawn on a canvas and centered on the header's
@@ -10,8 +13,12 @@ import { useEffect, useRef } from "react";
  * the far side recedes. It holds still for reduced motion and only animates while the
  * opening section is on screen.
  */
-const BACKBONE = [240, 200, 118];
-const BASE = { A: [110, 231, 160], T: [205, 125, 240], C: [240, 118, 150], G: [120, 132, 245] };
+const BACKBONE_DARK = [240, 200, 118];
+const BASE_DARK = { A: [110, 231, 160], T: [205, 125, 240], C: [240, 118, 150], G: [120, 132, 245] };
+// Light mode: the same strands in deeper inks, fading toward the paper instead of black.
+const BACKBONE_LIGHT = [214, 150, 20];
+const BASE_LIGHT = { A: [22, 168, 96], T: [160, 70, 210], C: [222, 64, 120], G: [60, 96, 232] };
+const PAPER = [243, 248, 245];
 // A fixed, repeatable sequence so the pattern doesn't flicker between frames.
 const SEQ = "ATGCGTACCTAGGCTAATCGGATCCATG";
 const PARTNER: Record<string, "A" | "T" | "C" | "G"> = { A: "T", T: "A", C: "G", G: "C" };
@@ -20,11 +27,14 @@ const TURNS = 2.2;
 
 export default function DnaHelix() {
   const ref = useRef<HTMLCanvasElement>(null);
+  const paused = useMotionPaused();
+  const theme = useTheme(); // redraw when the light/dark switch changes
 
   useEffect(() => {
     const canvas = ref.current!;
     const ctx = canvas.getContext("2d")!;
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    // Still for reduced motion, or while the reader has paused animation.
+    const reduce = paused || motionPaused();
     let raf = 0;
     let W = 0;
     let H = 0;
@@ -39,6 +49,9 @@ export default function DnaHelix() {
     };
 
     const tilt = 0.32; // lean the axis toward the viewer a little, for depth
+    const light = isLight();
+    const BACKBONE = light ? BACKBONE_LIGHT : BACKBONE_DARK;
+    const BASE = light ? BASE_LIGHT : BASE_DARK;
     const draw = (t: number) => {
       ctx.clearRect(0, 0, W, H);
       const R = W * 0.3; // helix radius
@@ -57,7 +70,8 @@ export default function DnaHelix() {
       const items: Item[] = [];
       const shade = (c: number[], z: number, a = 1) => {
         const k = 0.45 + 0.55 * (1 - (z + R) / (2 * R)); // nearer = brighter
-        return `rgba(${c.map((v) => Math.round(v * k)).join(",")},${a * (0.35 + 0.65 * k)})`;
+        const col = light ? c.map((v, i) => Math.round(v * k + PAPER[i] * (1 - k))) : c.map((v) => Math.round(v * k));
+        return `rgba(${col.join(",")},${a * (0.35 + 0.65 * k)})`;
       };
       const STEPS = PAIRS * 4;
       const strand = (offset: number) => {
@@ -155,7 +169,7 @@ export default function DnaHelix() {
       ro.disconnect();
       io.disconnect();
     };
-  }, []);
+  }, [paused, theme]);
 
   return <canvas ref={ref} className="dna-helix" aria-hidden />;
 }

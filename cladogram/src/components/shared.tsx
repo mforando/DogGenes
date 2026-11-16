@@ -4,9 +4,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { data } from "@/lib/tree";
-import { cladeColor } from "@/lib/palette";
+import { cladeVar } from "@/lib/palette";
 import { PHOTOS } from "@/lib/photos";
 import LevelToggle from "./LevelToggle";
+import ThemeToggle from "./ThemeToggle";
 
 /** True while a CSS media query matches (false on the server and on first paint). */
 export function useMedia(query: string) {
@@ -74,10 +75,10 @@ export function Specimens({
           onBlur={onHover ? () => onHover(null) : undefined}
         >
           <figure>
-            <img src={url} alt={data.breeds[code].name} loading="lazy" referrerPolicy="no-referrer" />
+            <img src={url} alt="" loading="lazy" referrerPolicy="no-referrer" />
             {!all && (
               <figcaption>
-                <i style={{ background: cladeColor(data.breeds[code].clade, code) }} />
+                <i style={{ background: cladeVar(data.breeds[code].clade, code) }} />
                 {data.breeds[code].name}
               </figcaption>
             )}
@@ -89,8 +90,8 @@ export function Specimens({
 }
 
 const PAGES = [
-  { href: "/", label: "The history of dogs" },
-  { href: "/tree", label: "Family tree & DNA web" },
+  { href: "/", label: "The Evolution of Dogs" },
+  { href: "/tree", label: "Family Tree" },
   { href: "/purpose", label: "Bred for purpose" },
   { href: "/explorer", label: "Breed Explorer" },
   { href: "/health", label: "Health & heredity" },
@@ -126,11 +127,17 @@ export function SiteNav() {
           </li>
         ))}
       </ul>
-      <LevelToggle className="level-nav" />
+      {/* The wrapper takes over the pill's flex placement (it renders in the same spot); the
+          light-mode switch hangs off it, out of the flow, so nothing else moves. */}
+      <div className="nav-tools">
+        <LevelToggle className="level-nav" />
+        <ThemeToggle />
+      </div>
     </nav>
     {path !== "/tree" && (
-      <div className={`level-pin${pinned ? " on" : ""}`} aria-hidden={!pinned}>
+      <div className={`level-pin${pinned ? " on" : ""}`} aria-hidden={!pinned} inert={!pinned}>
         <LevelToggle />
+        <ThemeToggle />
       </div>
     )}
     </>

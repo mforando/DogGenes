@@ -9,6 +9,9 @@ import { PINS, type Pin } from "@/lib/origins";
 import { data } from "@/lib/tree";
 import { photoOf } from "@/lib/photos";
 import { factsHtml } from "@/lib/breedFacts";
+import { motionPaused, onMotionChange } from "@/lib/motion";
+import { LIGHT, tone } from "@/lib/theme";
+import { useTheme } from "@/lib/useTheme";
 
 export type FlyTarget = { lat: number; lon: number; k: number; id: number };
 
@@ -21,6 +24,8 @@ type Props = {
   fly: FlyTarget | null;
   /** Hovering (or focusing) a dot reports its breed; leaving reports null. */
   onHover?: (code: string | null) => void;
+  /** Skip the mouse tooltip (the page shows the hovered breed elsewhere); taps keep it. */
+  quietTip?: boolean;
 };
 
 const topo = world as unknown as Topology<{ countries: GeometryCollection }>;
@@ -29,7 +34,9 @@ const borders = mesh(topo, topo.objects.countries, (a, b) => a !== b);
 const graticule = d3.geoGraticule10();
 
 /** A draggable, zoomable 3D globe (orthographic projection) with one dot per breed. */
-export default function Globe({ colorOf, highlight, selected, onSelect, fly, onHover }: Props) {
+export default function Globe({ colorOf, highlight, selected, onSelect, fly, onHover, quietTip = false }: Props) {
+  const quietRef = useRef(quietTip);
+  quietRef.current = quietTip;
   const onHoverRef = useRef(onHover);
   onHoverRef.current = onHover;
   const host = useRef<HTMLDivElement>(null);
@@ -41,6 +48,7 @@ export default function Globe({ colorOf, highlight, selected, onSelect, fly, onH
   const onSelectRef = useRef(onSelect);
   onSelectRef.current = onSelect;
 
+  const theme = useTheme(); // rebuild when the light/dark switch changes
   useEffect(() => {
     const el = host.current!;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -53,24 +61,24 @@ export default function Globe({ colorOf, highlight, selected, onSelect, fly, onH
     const base = () => S / 2 - 14;
     const apply = () => proj.translate([S / 2, S / 2]).scale(base() * k).rotate([rot[0], rot[1], 0]);
 
-    const svg = d3.select(el).append("svg").attr("role", "img")
+    const svg = d3.select(el).append("svg").attr("role", "group")
       .attr("aria-label", "Interactive globe showing where each dog breed originated. Drag to rotate.");
     const defs = svg.append("defs");
     const ocean = defs.append("radialGradient").attr("id", "ocean").attr("cx", "40%").attr("cy", "35%");
-    ocean.append("stop").attr("offset", "0%").attr("stop-color", "#1c2a2a");
-    ocean.append("stop").attr("offset", "100%").attr("stop-color", "#0b1312");
+    ocean.append("stop").attr("offset", "0%").attr("stop-color", tone("#1c2a2a", LIGHT.ocean0));
+    ocean.append("stop").attr("offset", "100%").attr("stop-color", tone("#0b1312", LIGHT.ocean1));
     const glow = defs.append("radialGradient").attr("id", "atmo");
-    glow.append("stop").attr("offset", "86%").attr("stop-color", "#8fb3c9").attr("stop-opacity", 0.0);
-    glow.append("stop").attr("offset", "93%").attr("stop-color", "#8fb3c9").attr("stop-opacity", 0.16);
-    glow.append("stop").attr("offset", "100%").attr("stop-color", "#8fb3c9").attr("stop-opacity", 0);
+    glow.append("stop").attr("offset", "86%").attr("stop-color", tone("#8fb3c9", LIGHT.ice)).attr("stop-opacity", 0.0);
+    glow.append("stop").attr("offset", "93%").attr("stop-color", tone("#8fb3c9", LIGHT.ice)).attr("stop-opacity", 0.16);
+    glow.append("stop").attr("offset", "100%").attr("stop-color", tone("#8fb3c9", LIGHT.ice)).attr("stop-opacity", 0);
 
     const gAtmo = svg.append("circle").attr("fill", "url(#atmo)");
     const sphere = svg.append("path").datum({ type: "Sphere" } as d3.GeoPermissibleObjects)
-      .attr("fill", "url(#ocean)").attr("stroke", "#2c3a36");
-    const grat = svg.append("path").datum(graticule).attr("fill", "none").attr("stroke", "#1d2a27").attr("stroke-width", 0.6);
-    const landPath = svg.append("path").datum(land).attr("fill", "#26302b").attr("stroke", "none");
-    const borderPath = svg.append("path").datum(borders).attr("fill", "none").attr("stroke", "#3a4741").attr("stroke-width", 0.5);
-    const gLeaders = svg.append("g").attr("stroke", "#e9e2d0").attr("stroke-opacity", 0.35).attr("stroke-width", 0.6);
+      .attr("fill", "url(#ocean)").attr("stroke", tone("#2c3a36", LIGHT.border));
+    const grat = svg.append("path").datum(graticule).attr("fill", "none").attr("stroke", tone("#1d2a27", LIGHT.grat)).attr("stroke-width", 0.6);
+    const landPath = svg.append("path").datum(land).attr("fill", tone("#26302b", LIGHT.land)).attr("stroke", "none");
+    const borderPath = svg.append("path").datum(borders).attr("fill", "none").attr("stroke", tone("#3a4741", LIGHT.border)).attr("stroke-width", 0.5);
+    const gLeaders = svg.append("g").attr("stroke", tone("#e9e2d0", LIGHT.ink)).attr("stroke-opacity", 0.35).attr("stroke-width", 0.6);
     const gPins = svg.append("g");
     const label = svg.append("g").attr("class", "globe-label").attr("pointer-events", "none");
     const tip = d3.select(el).append("div").attr("class", "tip").attr("role", "status");
@@ -80,13 +88,15 @@ export default function Globe({ colorOf, highlight, selected, onSelect, fly, onH
       .data(PINS, (d) => d.code)
       .join("circle")
       .attr("class", "pin")
-      .attr("stroke", "#0d1110")
+      .attr("stroke", tone("#0d1110", LIGHT.bg))
       .attr("stroke-width", 1)
       .attr("tabindex", 0)
       .attr("role", "button")
       .attr("aria-label", (d) => `${data.breeds[d.code].name}, from ${d.place}, ${d.country}`)
       .on("pointerenter.report focus.report", (_, d) => onHoverRef.current?.(d.code))
       .on("pointerenter pointermove", (ev: PointerEvent, d) => {
+        // The page shows this breed in a panel of its own: no floating tooltip here.
+        if (quietRef.current && ev.pointerType === "mouse") return;
         const photo = photoOf(d.code);
         tip.html(
           `${photo ? `<img class="tip-photo" src="${photo}" alt="" referrerpolicy="no-referrer" />` : ""}
@@ -117,7 +127,7 @@ export default function Globe({ colorOf, highlight, selected, onSelect, fly, onH
         }
       });
 
-    let current: Pick<Props, "colorOf" | "highlight" | "selected"> = { colorOf: () => "#e9e2d0", highlight: [], selected: null };
+    let current: Pick<Props, "colorOf" | "highlight" | "selected"> = { colorOf: () => tone("#e9e2d0", LIGHT.ink), highlight: [], selected: null };
 
     function render() {
       apply();
@@ -141,7 +151,7 @@ export default function Globe({ colorOf, highlight, selected, onSelect, fly, onH
           .attr("r", sel ? r + 3 : r)
           .attr("fill", current.colorOf(d.code))
           .attr("fill-opacity", on ? 1 : 0.18)
-          .attr("stroke", sel ? "#e8b74a" : "#0d1110")
+          .attr("stroke", sel ? tone("#e8b74a", LIGHT.gold) : tone("#0d1110", LIGHT.bg))
           .attr("stroke-width", sel ? 2.5 : 1);
       });
       leaders.each(function (d) {
@@ -161,12 +171,12 @@ export default function Globe({ colorOf, highlight, selected, onSelect, fly, onH
           .attr("class", "globe-tag").text(data.breeds[s.code].name);
         const bb = (t.node() as SVGTextElement).getBBox();
         label.insert("rect", "text").attr("x", bb.x - 6).attr("y", bb.y - 3).attr("width", bb.width + 12)
-          .attr("height", bb.height + 6).attr("rx", 3).attr("fill", "rgba(10,13,12,0.88)").attr("stroke", "#a8842f");
+          .attr("height", bb.height + 6).attr("rx", 3).attr("fill", tone("rgba(10,13,12,0.88)", "rgba(246,242,232,0.9)")).attr("stroke", tone("#a8842f", LIGHT.goldDim));
       }
     }
 
     // ---------- interaction: drag to rotate ----------
-    let spinning = !reduce;
+    let spinning = !reduce && !motionPaused();
     let onScreen = false;
     // The idle spin's timer runs only while the globe is spinning and on screen; once a reader
     // grabs it (or it scrolls away) the timer stops, so it never ticks in the background.
@@ -183,6 +193,11 @@ export default function Globe({ colorOf, highlight, selected, onSelect, fly, onH
         timer = null;
       }
     };
+    // The site-wide pause switch stops (or restarts) the idle spin.
+    const offMotion = onMotionChange((p) => {
+      spinning = !p;
+      syncTimer();
+    });
     const stopSpin = () => {
       spinning = false;
       syncTimer();
@@ -256,17 +271,18 @@ export default function Globe({ colorOf, highlight, selected, onSelect, fly, onH
     };
     render();
     return () => {
+      offMotion();
       timer?.stop();
       io.disconnect();
       ro.disconnect();
       d3.select(el).selectAll("*").remove();
       api.current = null;
     };
-  }, []);
+  }, [theme]);
 
   useEffect(() => {
     api.current?.style({ colorOf, highlight, selected });
-  }, [colorOf, highlight, selected]);
+  }, [colorOf, highlight, selected, theme]);
 
   useEffect(() => {
     if (fly) api.current?.fly(fly);

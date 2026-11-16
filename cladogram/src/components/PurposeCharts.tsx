@@ -8,14 +8,16 @@ import { photoOf } from "@/lib/photos";
 import { factsHtml } from "@/lib/breedFacts";
 import { FAMILIES, PURPOSES, SUMMARIES, type PurposeId } from "@/lib/purpose";
 import { useMedia } from "./shared";
+import { LIGHT, tone } from "@/lib/theme";
+import { useTheme } from "@/lib/useTheme";
 
 /** Most breed photos a matrix tooltip shows; any more are listed by name. */
 const PHOTO_MAX = 9;
 
-const INK = "#e9e2d0";
-const MUTED = "#8a8a7f";
-const GOLD = "#e8b74a";
-const famColor = (f: string) => (f === "_none" ? "#7d847e" : cladeColor(f));
+let INK = "#e9e2d0";
+let MUTED = "#8a8a7f";
+let GOLD = "#e8b74a";
+const famColor = (f: string) => (f === "_none" ? cladeColor(null) : cladeColor(f));
 const famName = (f: string) => FAMILIES.find((x) => x.id === f)!.name;
 
 /**
@@ -33,13 +35,17 @@ export function PurposeMatrix({ selected, onSelect }: { selected: PurposeId; onS
   selectedRef.current = selected;
   const tall = useMedia("(max-width: 640px)");
 
+  const theme = useTheme(); // rebuild when the light/dark switch changes
   useEffect(() => {
+    INK = tone("#e9e2d0", LIGHT.ink);
+    MUTED = tone("#8a8a7f", LIGHT.muted);
+    GOLD = tone("#e8b74a", LIGHT.gold);
     const el = host.current!;
     const left = tall ? 152 : 190, top = tall ? 206 : 150, right = tall ? 58 : 96, cell = tall ? 32 : 30, rowH = tall ? 30 : 40;
     const W = left + (tall ? PURPOSES.length : FAMILIES.length) * cell + right;
     const H = top + (tall ? FAMILIES.length : PURPOSES.length) * rowH + 10;
     const svg = d3.select(el).append("svg").attr("viewBox", `0 0 ${W} ${H}`)
-      .attr("role", "img")
+      .attr("role", "group")
       .attr("aria-label", "Matrix of dog jobs by family group; dot size shows how many breeds of each job are in each family.");
     const tip = d3.select(el).append("div").attr("class", "tip").attr("role", "status");
     const jobName = (id: PurposeId) => PURPOSES.find((p) => p.id === id)!.name;
@@ -112,7 +118,7 @@ export function PurposeMatrix({ selected, onSelect }: { selected: PurposeId; onS
         });
       colG.append("rect").attr("class", "pm-band").attr("x", (_, i) => cx(i) - cell / 2 + 2).attr("y", top - 8)
         .attr("width", cell - 4).attr("height", H - top + 2).attr("rx", 4);
-      colG.append("line").attr("x1", (_, i) => cx(i)).attr("x2", (_, i) => cx(i)).attr("y1", top - 6).attr("y2", H - 6).attr("stroke", "#1b2320");
+      colG.append("line").attr("x1", (_, i) => cx(i)).attr("x2", (_, i) => cx(i)).attr("y1", top - 6).attr("y2", H - 6).attr("stroke", tone("#1b2320", LIGHT.grid));
       colG.append("text").attr("transform", (_, i) => `translate(${cx(i) + 4},${top - 14}) rotate(-72)`)
         .attr("class", "pm-name").text((s) => jobName(s.id));
       colG.each(function (s, i) {
@@ -128,7 +134,7 @@ export function PurposeMatrix({ selected, onSelect }: { selected: PurposeId; onS
       // Family rows: color tick, name, and a tap target for the family's breeds by job.
       FAMILIES.forEach((f, j) => {
         const row = svg.append("g").attr("class", "pm-col-hit pm-tap");
-        row.append("line").attr("x1", left - 4).attr("x2", W - right).attr("y1", cy(j)).attr("y2", cy(j)).attr("stroke", "#171e1b").attr("pointer-events", "none");
+        row.append("line").attr("x1", left - 4).attr("x2", W - right).attr("y1", cy(j)).attr("y2", cy(j)).attr("stroke", tone("#171e1b", LIGHT.grid)).attr("pointer-events", "none");
         row.append("rect").attr("x", left - 10).attr("y", cy(j) - 5).attr("width", 4).attr("height", 10).attr("rx", 1).attr("fill", famColor(f.id));
         row.append("text").attr("x", left - 16).attr("y", cy(j)).attr("dy", "0.35em").attr("text-anchor", "end").attr("class", "pm-fam").text(f.name);
         const hit = row.append("rect").attr("x", 0).attr("y", cy(j) - rowH / 2).attr("width", left - 2).attr("height", rowH).attr("fill", "transparent");
@@ -144,7 +150,7 @@ export function PurposeMatrix({ selected, onSelect }: { selected: PurposeId; onS
           const list = s.byFamily[f.id];
           if (!list) return;
           const dot = g.append("g").attr("transform", `translate(${cx(i)},${cy(j)})`);
-          dot.append("circle").attr("r", r(list.length)).attr("fill", famColor(f.id)).attr("stroke", "#0d1110").attr("stroke-width", 1.5);
+          dot.append("circle").attr("r", r(list.length)).attr("fill", famColor(f.id)).attr("stroke", tone("#0d1110", LIGHT.bg)).attr("stroke-width", 1.5);
           if (list.length > 1) dot.append("text").attr("dy", "0.35em").attr("text-anchor", "middle").attr("class", "pm-n").text(list.length);
           hoverTip(dot.append("circle").attr("r", 15).attr("fill", "transparent"), () => {
             const shown = list.slice(0, PHOTO_MAX), rest = list.slice(PHOTO_MAX);
@@ -176,7 +182,7 @@ export function PurposeMatrix({ selected, onSelect }: { selected: PurposeId; onS
     FAMILIES.forEach((f, j) => {
       const x = left + j * cell + cell / 2;
       cols.append("line").attr("x1", x).attr("x2", x).attr("y1", top - 6).attr("y2", H - 6)
-        .attr("stroke", "#1b2320");
+        .attr("stroke", tone("#1b2320", LIGHT.grid));
       cols.append("rect").attr("x", x - 5).attr("y", top - 14).attr("width", 10).attr("height", 4).attr("rx", 1)
         .attr("fill", famColor(f.id));
       cols.append("text").attr("transform", `translate(${x + 3},${top - 20}) rotate(-55)`)
@@ -231,7 +237,7 @@ export function PurposeMatrix({ selected, onSelect }: { selected: PurposeId; onS
         if (!list) return;
         const x = left + j * cell + cell / 2;
         const dot = g.append("g").attr("transform", `translate(${x},0)`);
-        dot.append("circle").attr("r", r(list.length)).attr("fill", famColor(f.id)).attr("stroke", "#0d1110").attr("stroke-width", 1.5);
+        dot.append("circle").attr("r", r(list.length)).attr("fill", famColor(f.id)).attr("stroke", tone("#0d1110", LIGHT.bg)).attr("stroke-width", 1.5);
         if (list.length > 1) dot.append("text").attr("dy", "0.35em").attr("text-anchor", "middle").attr("class", "pm-n").text(list.length);
         // Generous hit area for the tooltip.
         hoverTip(dot.append("circle").attr("r", 14).attr("fill", "transparent"), () => {
@@ -260,7 +266,7 @@ export function PurposeMatrix({ selected, onSelect }: { selected: PurposeId; onS
       d3.select(el).selectAll("*").remove();
       api.current = null;
     };
-  }, [tall]);
+  }, [tall, theme]);
 
   useEffect(() => api.current?.(selected), [selected]);
   return <div ref={host} className={`purpose-matrix${tall ? " tall" : ""}`} />;
@@ -278,7 +284,11 @@ export function MixingBars({ selected, onSelect }: { selected: PurposeId; onSele
   const selectedRef = useRef(selected);
   selectedRef.current = selected;
 
+  const theme = useTheme(); // rebuild when the light/dark switch changes
   useEffect(() => {
+    INK = tone("#e9e2d0", LIGHT.ink);
+    MUTED = tone("#8a8a7f", LIGHT.muted);
+    GOLD = tone("#e8b74a", LIGHT.gold);
     const el = host.current!;
     const sorted = [...SUMMARIES].sort((a, b) => b.crossPerBreed - a.crossPerBreed);
     const left = narrow ? 2 : 220, right = narrow ? 44 : 60, rowH = narrow ? 44 : 34, top = narrow ? 8 : 30;
@@ -290,7 +300,7 @@ export function MixingBars({ selected, onSelect }: { selected: PurposeId; onSele
 
     // Recessive grid.
     for (const t of x.ticks(4)) {
-      svg.append("line").attr("x1", x(t)).attr("x2", x(t)).attr("y1", top - 8).attr("y2", H - 22).attr("stroke", "#1c2420");
+      svg.append("line").attr("x1", x(t)).attr("x2", x(t)).attr("y1", top - 8).attr("y2", H - 22).attr("stroke", tone("#1c2420", LIGHT.grid));
       svg.append("text").attr("x", x(t)).attr("y", H - 6).attr("text-anchor", "middle").attr("class", "mb-tick").text(t);
     }
     if (!narrow) svg.append("text").attr("x", left).attr("y", 14).attr("class", "mb-axis")
@@ -312,7 +322,7 @@ export function MixingBars({ selected, onSelect }: { selected: PurposeId; onSele
       .attr("x", (s) => x(s.crossPerBreed) + 8).text((s) => s.crossPerBreed.toFixed(1));
 
     api.current = (p) => {
-      row.select("rect.mb-bar").attr("fill", (s) => (s.id === p ? GOLD : "#4b5651"));
+      row.select("rect.mb-bar").attr("fill", (s) => (s.id === p ? GOLD : tone("#4b5651", LIGHT.dim)));
       row.select("text.mb-name").attr("fill", (s) => (s.id === p ? GOLD : INK));
       row.select("text.mb-val").attr("fill", (s) => (s.id === p ? INK : MUTED));
     };
@@ -321,7 +331,7 @@ export function MixingBars({ selected, onSelect }: { selected: PurposeId; onSele
       d3.select(el).selectAll("*").remove();
       api.current = null;
     };
-  }, [narrow]);
+  }, [narrow, theme]);
 
   useEffect(() => api.current?.(selected), [selected]);
   return <div ref={host} className="mixing-bars" />;

@@ -2,14 +2,19 @@
 
 import { useEffect, useRef } from "react";
 import * as d3 from "d3";
+import { LIGHT, tone } from "@/lib/theme";
+import { useTheme } from "@/lib/useTheme";
 
-const INK = "#e9e2d0";
-const GOLD = "#e8b74a";
+let INK = "#e9e2d0";
+let GOLD = "#e8b74a";
 
 /** Horizontal bars for "N× more likely" lifts within one group. */
 export function LiftBars({ items: raw, max }: { items: { name: string; n: number; lift: number }[]; max: number }) {
   const host = useRef<HTMLDivElement>(null);
+  const theme = useTheme(); // rebuild when the light/dark switch changes
   useEffect(() => {
+    INK = tone("#e9e2d0", LIGHT.ink);
+    GOLD = tone("#e8b74a", LIGHT.gold);
     const el = host.current!;
     // Largest lift at the top; ties go to the more common name.
     const items = [...raw].sort((a, b) => b.lift - a.lift || b.n - a.n);
@@ -27,14 +32,17 @@ export function LiftBars({ items: raw, max }: { items: { name: string; n: number
     return () => {
       d3.select(el).selectAll("*").remove();
     };
-  }, [raw, max]);
+  }, [raw, max, theme]);
   return <div ref={host} className="nm-lifts" />;
 }
 
 /** Size mix for one name compared with all NYC dogs. */
 export function SizeCompare({ sizes, counts, base }: { sizes: string[]; counts: number[]; base: number[] }) {
   const host = useRef<HTMLDivElement>(null);
+  const theme = useTheme(); // rebuild when the light/dark switch changes
   useEffect(() => {
+    INK = tone("#e9e2d0", LIGHT.ink);
+    GOLD = tone("#e8b74a", LIGHT.gold);
     const el = host.current!;
     const total = d3.sum(counts) || 1;
     const share = counts.map((c) => c / total);
@@ -57,6 +65,6 @@ export function SizeCompare({ sizes, counts, base }: { sizes: string[]; counts: 
     return () => {
       d3.select(el).selectAll("*").remove();
     };
-  }, [sizes, counts, base]);
+  }, [sizes, counts, base, theme]);
   return <div ref={host} className="nm-size" />;
 }

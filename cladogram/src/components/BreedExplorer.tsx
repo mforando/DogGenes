@@ -5,19 +5,19 @@ import * as d3 from "d3";
 import ExplorerMosaic, { type Arrange } from "./ExplorerMosaic";
 import { SiteNav } from "./shared";
 import { BREEDS, EX, JOB_GROUPS, photoUrl } from "@/lib/explorer";
-import { cladeColor } from "@/lib/palette";
+import { cladeVar } from "@/lib/palette";
 import { Lv } from "@/lib/readingLevel";
 import { B, Term } from "./Hints";
 
 const fmt = d3.format(",");
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 const ARRANGE: { id: Arrange; label: string }[] = [
+  { id: "mosaic", label: "Mosaic" },
   { id: "cluster", label: "Clustered" },
   { id: "family", label: "Family" },
   { id: "job", label: "Job" },
   { id: "region", label: "Region" },
   { id: "color", label: "Photo color" },
-  { id: "map", label: "Map" },
 ];
 const dogBreeds = BREEDS.filter((b) => b.family !== "_wild" && b.path !== "mix").length;
 const byName = [...BREEDS].sort((a, b) => a.name.localeCompare(b.name));
@@ -50,7 +50,7 @@ function Drawer({
   const url = photoUrl(b, sel.photo);
   useEffect(() => setLoaded(false), [url]);
   const job = JOB_GROUPS.find((j) => j.id === b.job)!.name;
-  const color = b.family.startsWith("_") ? "#7d847e" : cladeColor(b.family);
+  const color = b.family.startsWith("_") ? cladeVar(null) : cladeVar(b.family);
 
   return (
     <aside className="ex-drawer" aria-label={`${b.name} photos`}>
@@ -112,16 +112,14 @@ function Drawer({
 }
 
 export default function BreedExplorer() {
-  const [arrange, setArrange] = useState<Arrange>("cluster");
+  // The photo mosaic is the opening view on every screen.
+  const [arrange, setArrange] = useState<Arrange>("mosaic");
   const [showTree, setShowTree] = useState(true);
   const [size, setSize] = useState(22);
-  // The clustered circle is too small to read on a phone; start phones on Family instead, with
-  // smaller photos so the wall is about a third as long to scroll (the Size slider still works).
+  // Phones: smaller photos in the grid views, so the wall is about a third as long to scroll
+  // (the mosaic fits the screen at this size; the Size slider still works).
   useEffect(() => {
-    if (window.innerWidth < 700) {
-      setArrange("family");
-      setSize(14);
-    }
+    if (window.innerWidth < 700) setSize(14);
   }, []);
   const [loaded, setLoaded] = useState(0);
   const [query, setQuery] = useState("");
@@ -163,15 +161,15 @@ export default function BreedExplorer() {
           </h1>
           <p className="pairs-lede">
             <Lv
-              puppy={<>Here are {fmt(EX.total)} dog photos of {dogBreeds} breeds, plus mixed breeds and a few wild cousins, all in one giant family picture! Breeds from the same part of the family tree sit together, and the oldest kinds of dogs sit closest to the <B c="WOLF">grey wolf</B> in the middle. Try sorting the wall by family, job, where they come from, or color, or put every dog on the map. Point at a photo to see the breed, and click to open it.</>}
-              pro={<>The full Dog CEO image collection ({fmt(EX.total)} images of {dogBreeds} breeds, plus mixed breeds and wild canids), arranged as a single mosaic. Clusters follow clade membership in the phylogeny, with basal lineages placed nearest the <B c="WOLF">grey wolf</B> at the center. Re-sort by clade, original function, region of origin or mean image color, or project every image to its breed&rsquo;s origin on the map.</>}
+              puppy={<>Here are {fmt(EX.total)} dog photos of {dogBreeds} breeds, plus mixed breeds and a few wild cousins, all in one giant family picture! Breeds from the same part of the family tree sit together, and the oldest kinds of dogs sit closest to the <B c="WOLF">grey wolf</B> in the middle. First they make a giant rainbow that spells DOGS, using every single photo! Then try sorting the wall by family, job, where they come from, or color. Point at a photo to see the breed, and click to open it.</>}
+              pro={<>The full Dog CEO image collection ({fmt(EX.total)} images of {dogBreeds} breeds, plus mixed breeds and wild canids), arranged as a single mosaic. Clusters follow clade membership in the phylogeny, with basal lineages placed nearest the <B c="WOLF">grey wolf</B> at the center. The opening view uses every image once in a photo mosaic: a hue-ordered rainbow of equal tiles, each band as tall as the collection has images of that hue, under the word DOGS built from the darkest images. Re-sort by clade, original function, region of origin or mean image color.</>}
             >
               Every photo in the Dog CEO collection: {fmt(EX.total)} pictures of {dogBreeds} breeds,
               plus mixed breeds and a few wild cousins, gathered into one family portrait. Breeds
               that share a branch of the family tree cluster together, and the oldest lineages sit
               closest to the <B c="WOLF">grey wolf</B> in the middle. Rearrange the wall by family group, original
-              job, region, or photo color, or send every dog home on the map. Hover over a photo to
-              see its breed and click to open it.
+              job, region, or photo color; it opens as a rainbow spelling DOGS, built from every one
+              of the photos. Hover over a photo to see its breed and click to open it.
             </Lv>
           </p>
         </header>
@@ -193,7 +191,7 @@ export default function BreedExplorer() {
               max={48}
               step={2}
               value={size}
-              disabled={arrange === "map" || arrange === "cluster"}
+              disabled={arrange === "cluster" || arrange === "mosaic"}
               onChange={(e) => setSize(+e.target.value)}
               aria-label="Photo size"
             />

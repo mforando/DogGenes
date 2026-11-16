@@ -98,8 +98,8 @@ function OtherBreed({ maxLift }: { maxLift: number }) {
   );
 }
 // The four listed breeds, in list order (validated as a set on the dark surface), then the rest.
-const GUESS_COLORS = ["#2d88e2", "#d35e2c", "#199e6e", "#b75fb8"];
-const OTHER_COLOR = "#4a5450";
+const GUESS_COLORS = ["var(--clade-NewWorld, #2d88e2)", "var(--clade-Alpine, #d35e2c)", "var(--clade-Hungarian, #199e6e)", "var(--clade-SmallSpitz, #b75fb8)"];
+const OTHER_COLOR = "var(--dim-fill, #4a5450)";
 
 /** Pie: what share of dogs with this name are each listed breed, and everything else. */
 function BreedPie({ name, total, rows }: { name: string; total: number; rows: [number, number, number][] }) {
@@ -114,7 +114,7 @@ function BreedPie({ name, total, rows }: { name: string; total: number; rows: [n
     <figure className="nm-pie">
       <svg viewBox={`${-R - 2} ${-R - 2} ${2 * R + 4} ${2 * R + 4}`} role="img" aria-label={`Dogs named ${name}: ${slices.map((s) => `${s.label} ${Math.round((s.n / total) * 100)}%`).join(", ")}`}>
         {arcs.map((a) => (
-          <path key={a.data.label} d={arc(a)!} fill={a.data.color} stroke="#141a18" strokeWidth={2}>
+          <path key={a.data.label} d={arc(a)!} fill={a.data.color} stroke="var(--bg-raise, #141a18)" strokeWidth={2}>
             <title>
               {[`${a.data.label}: ${fmt(a.data.n)} of ${fmt(total)} (${Math.round((a.data.n / total) * 100)}%)`, factsText(null, null, a.data.label)]
                 .filter(Boolean)

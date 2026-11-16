@@ -5,5 +5,5 @@ import { movedMeta } from "@/lib/seo";
 export const metadata = movedMeta("/");
 
 export default function Page() {
-  return <Moved to="/" label="Continue to the history of dogs" keepHash />;
+  return <Moved to="/" label="Continue to The Evolution of Dogs" keepHash />;
 }

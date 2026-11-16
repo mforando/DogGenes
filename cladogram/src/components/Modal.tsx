@@ -1,16 +1,19 @@
 "use client";
 
 import { useEffect, useRef, type ReactNode } from "react";
+import { trapTab } from "@/lib/focusTrap";
 
 /** A centered dialog over a dimmed page; Escape, the × or a backdrop click closes it. */
 export default function Modal({ label, onClose, children }: { label: string; onClose: () => void; children: ReactNode }) {
   const closeBtn = useRef<HTMLButtonElement>(null);
+  const dialog = useRef<HTMLDivElement>(null);
   const onCloseRef = useRef(onClose);
   onCloseRef.current = onClose;
   useEffect(() => {
     const opener = document.activeElement as HTMLElement | null;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onCloseRef.current();
+      trapTab(e, dialog.current);
     };
     window.addEventListener("keydown", onKey);
     const overflow = document.body.style.overflow;
@@ -24,7 +27,7 @@ export default function Modal({ label, onClose, children }: { label: string; onC
   }, []);
   return (
     <div className="gloss-backdrop" onClick={(e) => e.target === e.currentTarget && onClose()}>
-      <div className="gloss-dialog modal-dialog" role="dialog" aria-modal="true" aria-label={label}>
+      <div ref={dialog} className="gloss-dialog modal-dialog" role="dialog" aria-modal="true" aria-label={label}>
         <button ref={closeBtn} type="button" className="gloss-close modal-close" aria-label="Close" onClick={onClose}>
           ×
         </button>

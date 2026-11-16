@@ -5,6 +5,8 @@ import * as d3 from "d3";
 import { feature, mesh } from "topojson-client";
 import type { GeometryCollection, Topology } from "topojson-specification";
 import world from "world-atlas/countries-110m.json";
+import { LIGHT, tone } from "@/lib/theme";
+import { useTheme } from "@/lib/useTheme";
 
 /**
  * Two of the oldest accepted dog finds, on a small draggable globe, with what was found.
@@ -60,6 +62,7 @@ export default function DigSites() {
   const [active, setActive] = useState<string>("bonn");
   const api = useRef<((id: string) => void) | null>(null);
 
+  const theme = useTheme(); // rebuild when the light/dark switch changes
   useEffect(() => {
     const el = host.current!;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -74,16 +77,16 @@ export default function DigSites() {
       .attr("aria-label", "Globe showing the Erralla cave in Spain and Bonn-Oberkassel in Germany. Drag to rotate.");
     const defs = svg.append("defs");
     const ocean = defs.append("radialGradient").attr("id", "dig-ocean").attr("cx", "40%").attr("cy", "35%");
-    ocean.append("stop").attr("offset", "0%").attr("stop-color", "#1d2b2b");
-    ocean.append("stop").attr("offset", "100%").attr("stop-color", "#0b1312");
+    ocean.append("stop").attr("offset", "0%").attr("stop-color", tone("#1d2b2b", LIGHT.ocean0));
+    ocean.append("stop").attr("offset", "100%").attr("stop-color", tone("#0b1312", LIGHT.ocean1));
     defs.append("clipPath").attr("id", "dig-clip").append("circle").attr("cx", S / 2).attr("cy", S / 2).attr("r", R);
     const globe = svg.append("g").attr("clip-path", "url(#dig-clip)");
-    const sphere = globe.append("path").datum({ type: "Sphere" } as d3.GeoPermissibleObjects).attr("fill", "url(#dig-ocean)").attr("stroke", "#2c3a36");
-    const grat = globe.append("path").datum(graticule).attr("fill", "none").attr("stroke", "#1d2a27").attr("stroke-width", 0.5);
-    const landP = globe.append("path").datum(land).attr("fill", "#28322d");
-    const bordP = globe.append("path").datum(borders).attr("fill", "none").attr("stroke", "#3d4a44").attr("stroke-width", 0.4);
+    const sphere = globe.append("path").datum({ type: "Sphere" } as d3.GeoPermissibleObjects).attr("fill", "url(#dig-ocean)").attr("stroke", tone("#2c3a36", LIGHT.border));
+    const grat = globe.append("path").datum(graticule).attr("fill", "none").attr("stroke", tone("#1d2a27", LIGHT.grat)).attr("stroke-width", 0.5);
+    const landP = globe.append("path").datum(land).attr("fill", tone("#28322d", LIGHT.land));
+    const bordP = globe.append("path").datum(borders).attr("fill", "none").attr("stroke", tone("#3d4a44", LIGHT.border)).attr("stroke-width", 0.4);
     const pins = globe.append("g");
-    svg.append("circle").attr("cx", S / 2).attr("cy", S / 2).attr("r", R).attr("fill", "none").attr("stroke", "#3a4a44");
+    svg.append("circle").attr("cx", S / 2).attr("cy", S / 2).attr("r", R).attr("fill", "none").attr("stroke", tone("#3a4a44", LIGHT.border));
     let current = "bonn";
 
     function render() {
@@ -97,7 +100,7 @@ export default function DigSites() {
         const p = enter.append("g").attr("class", "pin").style("cursor", "pointer")
           .on("click", (_, d) => setActive(d.id));
         p.append("circle").attr("class", "dig-pulse").attr("r", 9);
-        p.append("circle").attr("class", "dot").attr("r", 4.5).attr("stroke", "#0d1110").attr("stroke-width", 1.5);
+        p.append("circle").attr("class", "dot").attr("r", 4.5).attr("stroke", tone("#0d1110", LIGHT.bg)).attr("stroke-width", 1.5);
         p.append("text").attr("class", "dig-label").attr("dy", "0.35em");
         return p;
       });
@@ -107,11 +110,11 @@ export default function DigSites() {
         const [x, y] = proj([d.lon, d.lat]) ?? [0, 0];
         const on = d.id === current;
         const sel = d3.select(this).attr("display", visible ? null : "none").attr("transform", `translate(${x},${y})`);
-        sel.select("circle.dot").attr("fill", on ? "#e8b74a" : "#e9e2d0");
+        sel.select("circle.dot").attr("fill", on ? tone("#e8b74a", LIGHT.gold) : tone("#e9e2d0", LIGHT.ink));
         sel.select("circle.dig-pulse").attr("display", on ? null : "none");
         // Spain's label to the left, Germany's to the right, so they never collide.
         sel.select("text").attr("x", d.id === "erralla" ? -9 : 9).attr("text-anchor", d.id === "erralla" ? "end" : "start")
-          .attr("fill", on ? "#e8b74a" : "#e9e2d0").text(d.id === "erralla" ? "Erralla" : "Bonn");
+          .attr("fill", on ? tone("#e8b74a", LIGHT.gold) : tone("#e9e2d0", LIGHT.ink)).text(d.id === "erralla" ? "Erralla" : "Bonn");
       });
     }
 
@@ -140,7 +143,7 @@ export default function DigSites() {
       d3.select(el).selectAll("*").remove();
       api.current = null;
     };
-  }, []);
+  }, [theme]);
 
   useEffect(() => api.current?.(active), [active]);
   const site = SITES.find((s) => s.id === active)!;

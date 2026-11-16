@@ -2,14 +2,13 @@
 
 import { useEffect, useRef } from "react";
 import * as d3 from "d3";
-import { feature } from "topojson-client";
-import type { GeometryCollection, Topology } from "topojson-specification";
-import world from "world-atlas/countries-110m.json";
+import mosaicData from "@/data/mosaic.json";
 import { factsHtml } from "@/lib/breedFacts";
-import { BREEDS, EX, FAMILY_ORDER, JOB_GROUPS, REGIONS, type ExBreed } from "@/lib/explorer";
+import { BREEDS, EX, FAMILY_ORDER, JOB_GROUPS, REGIONS, photoUrl, type ExBreed } from "@/lib/explorer";
 import { clusterCells, HUB } from "@/lib/explorerCluster";
+import { LIGHT, onThemeChange, tone } from "@/lib/theme";
 
-export type Arrange = "cluster" | "family" | "job" | "region" | "color" | "map";
+export type Arrange = "mosaic" | "cluster" | "family" | "job" | "region" | "color";
 
 type Props = {
   arrange: Arrange;
@@ -30,7 +29,7 @@ const GAP = 1;
 const MARGIN = 16;
 const LABEL_H = 54;
 const GROUP_GAP = 26;
-const GOLD = "#e8b74a";
+let GOLD = "#e8b74a";
 
 // ---------- static per-tile data ----------
 const tileBreed = new Uint16Array(N);
@@ -49,10 +48,47 @@ for (let i = 0; i < N; i++) {
   hue[i] = Number.isNaN(c.h) ? -1 : c.h * (c.s > 0.12 ? 1 : 0) - (c.s > 0.12 ? 0 : 1);
 }
 const shuffled = d3.shuffler(d3.randomLcg(0.42))(d3.range(N));
-const land = (() => {
-  const topo = world as unknown as Topology<{ countries: GeometryCollection }>;
-  return feature(topo, topo.objects.countries);
+
+/**
+ * The photo-mosaic arrangement: a rainbow of every photo, red at the top to violet at the
+ * bottom, with DOGS across it in black, also made of photos. scripts/build-mosaic.py measures
+ * each photo (5 bytes): its darkest crop and that crop's lightness, and its most colorful crop
+ * with that crop's hue, chroma and lightness. A crop is the part of the photo a tile shows:
+ * the whole photo or a half-size patch of it. Tiles are drawn as they are, with no tint.
+ */
+const MOSAIC = (() => {
+  const m = mosaicData as { crops: [number, number, number][]; photos: string };
+  const bin = typeof atob === "function" ? atob(m.photos) : Buffer.from(m.photos, "base64").toString("binary");
+  const darkCrop = new Uint8Array(N), colorCrop = new Uint8Array(N), darkL = new Uint8Array(N), hue = new Float32Array(N), chroma = new Uint8Array(N);
+  for (let i = 0; i < N; i++) {
+    const o = i * 5, b = (k: number) => bin.charCodeAt(o + k);
+    darkCrop[i] = b(0) & 15;
+    colorCrop[i] = b(0) >> 4;
+    darkL[i] = b(1);
+    hue[i] = (b(2) / 256) * 360;
+    chroma[i] = b(3);
+  }
+  return { crops: m.crops, darkCrop, colorCrop, darkL, hue, chroma };
 })();
+
+/** The rainbow's bands, top to bottom, by hue (degrees, red wrapping round through 0). */
+const BANDS = [
+  { name: "red", to: 15 },
+  { name: "orange", to: 40 },
+  { name: "yellow", to: 70 },
+  { name: "green", to: 170 },
+  { name: "blue", to: 255 },
+  { name: "violet", to: 345 },
+];
+/** Hue as a sort key that starts at red: 345-360 degrees count as the start, not the end. */
+const hueKey = (h: number) => (h >= 345 ? h - 360 : h);
+const bandOf = (h: number) => {
+  const k = hueKey(h);
+  const i = BANDS.findIndex((b) => k < b.to);
+  return i < 0 ? BANDS.length - 1 : i;
+};
+const WORD = "DOGS";
+const WORD_FONT = '900 100px "Arial Black", "Helvetica Neue", Arial, sans-serif';
 
 type Label = { x: number; y: number; title: string; sub: string; center?: boolean; n?: number };
 type Layout = {
@@ -64,7 +100,15 @@ type Layout = {
   /** tile indices in reading order (grid layouts), for keyboard navigation */
   order: number[] | null;
   cols: number;
-  map: boolean;
+  /** Per-tile widths and heights, when tiles differ (the mosaic); otherwise every tile is `s` square. */
+  sizes?: Float32Array;
+  heights?: Float32Array;
+  /** The mosaic: which crop of its photo each tile shows, and the order to paint tiles in (letters last). */
+  crop?: Uint8Array;
+  paint?: Uint32Array;
+  mosaic?: boolean;
+  /** The mosaic's grid: which photo is in each cell (-1 for none), for instant hit testing. */
+  grid?: { cols: number; rows: number; tw: number; th: number; cell: Int32Array };
   /** Clustered view extras: the wolf hub, the tree drawn over the clusters, grid cells. */
   cluster?: {
     hub: { x: number; y: number; r: number };
@@ -102,11 +146,11 @@ function groupLayout(groups: { title: string; tiles: number[]; breeds: number }[
     });
     cy += Math.ceil(g.tiles.length / cols) * step + GROUP_GAP;
   }
-  return { x, y, s, height: cy + 40, labels, order, cols, map: false };
+  return { x, y, s, height: cy + 40, labels, order, cols };
 }
 
 function computeLayout(arrange: Arrange, width: number, height: number, s: number): Layout {
-  if (arrange === "map") return mapLayout(width, height);
+  if (arrange === "mosaic") return mosaicLayout(width, height);
   if (arrange === "cluster") return clusterLayout(width);
   if (arrange === "color") {
     const bands = [
@@ -156,7 +200,7 @@ function clusterLayout(width: number): Layout {
   }
   const fmtN = d3.format(",");
   return {
-    x, y, s, height: cy0 + maxY * step + 50, order: null, cols: 0, map: false,
+    x, y, s, height: cy0 + maxY * step + 50, order: null, cols: 0,
     labels: c.labels.map((l) => ({
       x: cx0 + l.x * step, y: cy0 + l.y * step, title: l.title, center: true, n: l.n,
       sub: `${fmtN(l.n)} photos${l.breeds > 1 ? ` · ${l.breeds} breeds` : ""}`,
@@ -169,53 +213,106 @@ function clusterLayout(width: number): Layout {
   };
 }
 
-let mapCache: { w: number; h: number; layout: Layout; proj: d3.GeoProjection } | null = null;
-function mapLayout(width: number, height: number): Layout {
-  if (mapCache && mapCache.w === width && mapCache.h === height) return mapCache.layout;
-  const x = new Float32Array(N), y = new Float32Array(N);
-  const homeless = BREEDS.filter((b) => b.lat == null);
-  const stripH = 70;
-  const proj = d3.geoNaturalEarth1().fitExtent([[MARGIN, 10], [width - MARGIN, height - stripH - 10]], { type: "Sphere" });
-  // Tile size so that all photos fit in a sensible fraction of the land area.
-  const s = Math.max(3, Math.min(6, Math.sqrt((width * height * 0.05) / N)));
-  type Node = { b: ExBreed; side: number; x: number; y: number; ax: number; ay: number };
-  const nodes: Node[] = BREEDS.filter((b) => b.lat != null).map((b) => {
-    const [px, py] = proj([b.lon!, b.lat!])!;
-    const side = Math.ceil(Math.sqrt(b.files.length)) * s;
-    return { b, side, x: px, y: py, ax: px, ay: py };
-  });
-  const sim = d3.forceSimulation(nodes)
-    .force("x", d3.forceX<Node>((d) => d.ax).strength(0.12))
-    .force("y", d3.forceY<Node>((d) => d.ay).strength(0.12))
-    // Circles inscribed between a square's half-side and half-diagonal: clusters may
-    // touch at the corners but stay near their true homes.
-    .force("c", d3.forceCollide<Node>((d) => d.side * 0.6 + 0.5).iterations(4))
-    .stop();
-  for (let i = 0; i < 260; i++) sim.tick();
-  for (const n of nodes) {
-    const per = Math.ceil(Math.sqrt(n.b.files.length));
-    tilesOf(n.b).forEach((t, k) => {
-      x[t] = n.x - n.side / 2 + (k % per) * s;
-      y[t] = n.y - n.side / 2 + Math.floor(k / per) * s;
-    });
+/**
+ * The rainbow mosaic, filling the whole visible area (width x height) with one grid of
+ * equal tiles.
+ *
+ * 1. DOGS is drawn as big as fits; the darkest photos (their darkest crops) fill the
+ *    letters' cells.
+ * 2. Every other photo fills the remaining cells row by row from the top, in rainbow
+ *    order of its most colorful crop's hue: red, orange, yellow, green, blue, violet. Each
+ *    color's band is as tall as the collection has photos of that color.
+ * The grid is chosen to hold as close to all 18,006 photos as the screen's shape allows;
+ * the few that don't fit (fewer than one row) are the least colorful ones.
+ */
+function mosaicLayout(width: number, height: number): Layout {
+  const W = width, H = height;
+  const x = new Float32Array(N).fill(-1e5), y = new Float32Array(N).fill(-1e5);
+  const w = new Float32Array(N), h = new Float32Array(N);
+  const crop = new Uint8Array(N);
+
+  // ---------- one grid of equal, near-square tiles, as many as there are photos ----------
+  const s0 = Math.sqrt((W * H) / N);
+  let cols = 1, rows = 1, bestScore = Infinity;
+  for (let c = Math.max(1, Math.floor(W / s0) - 6); c <= Math.ceil(W / s0) + 6; c++) {
+    const r = Math.floor(N / c);
+    if (r < 1) continue;
+    const aspect = (W / c) / (H / r);
+    if (aspect < 0.8 || aspect > 1.25) continue;
+    const score = N - c * r + Math.abs(Math.log(aspect)) * 400;
+    if (score < bestScore) { bestScore = score; cols = c; rows = r; }
   }
-  // Designer crosses and mixed breeds have no single homeland: a strip along the bottom.
-  let cx = MARGIN + 150;
-  for (const b of homeless) {
-    const rows = 6;
-    tilesOf(b).forEach((t, k) => {
-      x[t] = cx + Math.floor(k / rows) * s;
-      y[t] = height - stripH + 18 + (k % rows) * s;
-    });
-    cx += Math.ceil(b.files.length / rows) * s + 10;
+  const tw = W / cols, th = H / rows;
+
+  // ---------- the word, measured at grid resolution (4 samples per cell) ----------
+  const ss = 4;
+  const mw = cols * ss, mh = rows * ss;
+  const cv = document.createElement("canvas");
+  cv.width = mw;
+  cv.height = mh;
+  const c2 = cv.getContext("2d", { willReadFrequently: true })!;
+  // Draw in screen proportions (cells may be a little off square), then sample per cell.
+  c2.scale(mw / W, mh / H);
+  c2.font = WORD_FONT;
+  const m = c2.measureText(WORD);
+  const capH = (m.actualBoundingBoxAscent + m.actualBoundingBoxDescent) || 72;
+  const k = Math.min((W * 0.92) / m.width, (H * 0.62) / capH);
+  c2.font = WORD_FONT.replace("100px", `${100 * k}px`);
+  c2.textAlign = "center";
+  c2.textBaseline = "alphabetic";
+  const m2 = c2.measureText(WORD);
+  c2.fillText(WORD, W / 2, H / 2 + (m2.actualBoundingBoxAscent - m2.actualBoundingBoxDescent) / 2);
+  const px = c2.getImageData(0, 0, mw, mh).data;
+  const letter = new Uint8Array(cols * rows);
+  let T = 0;
+  for (let r = 0; r < rows; r++)
+    for (let c = 0; c < cols; c++) {
+      let on = 0;
+      for (let dy = 0; dy < ss; dy++) for (let dx = 0; dx < ss; dx++) if (px[((r * ss + dy) * mw + c * ss + dx) * 4 + 3] > 127) on++;
+      if (on * 2 >= ss * ss) { letter[r * cols + c] = 1; T++; }
+    }
+
+  // ---------- photos: dark, dull ones to the letters, the rest in rainbow order ----------
+  // Letters want black, and colorful photos are worth more to the rainbow, so rank by
+  // darkness with a penalty for color.
+  const byDark = d3.range(N).sort((a, b) => MOSAIC.darkL[a] + 0.6 * MOSAIC.chroma[a] - (MOSAIC.darkL[b] + 0.6 * MOSAIC.chroma[b]));
+  const inLetters = byDark.slice(0, T);
+  let rest = byDark.slice(T);
+  const spare = rest.length - (cols * rows - T);
+  if (spare > 0) {
+    // Leave out the least colorful photos, the ones that would blur the bands.
+    rest.sort((a, b) => MOSAIC.chroma[b] - MOSAIC.chroma[a]);
+    rest = rest.slice(0, rest.length - spare);
   }
-  const layout: Layout = {
-    x, y, s, height,
-    labels: [{ x: MARGIN, y: height - stripH + 14, title: "", sub: "No single homeland" }],
-    order: null, cols: 0, map: true,
+  // Hue is stored in coarse steps, so many photos share a value; a small fixed jitter mixes
+  // them, so the bands blend instead of forming streaks of one tone.
+  const jitter = (p: number) => (((p * 2654435761) >>> 0) / 4294967296 - 0.5) * 6;
+  const key = new Float32Array(N);
+  for (const p of rest) key[p] = bandOf(MOSAIC.hue[p]) * 1000 + hueKey(MOSAIC.hue[p]) + jitter(p);
+  rest.sort((a, b) => key[a] - key[b]);
+
+  const paint: number[] = [];
+  const cellOf = new Int32Array(cols * rows).fill(-1);
+  let li = 0, ri = 0;
+  for (let r = 0; r < rows; r++)
+    for (let c = 0; c < cols; c++) {
+      const isLetter = letter[r * cols + c] === 1;
+      const p = isLetter ? inLetters[li++] : rest[ri++];
+      if (p == null) continue;
+      // Snap edges to whole pixels so neighbors meet exactly.
+      const x0 = Math.round(c * tw), y0 = Math.round(r * th);
+      x[p] = x0; y[p] = y0;
+      w[p] = Math.round((c + 1) * tw) - x0;
+      h[p] = Math.round((r + 1) * th) - y0;
+      crop[p] = isLetter ? MOSAIC.darkCrop[p] : MOSAIC.colorCrop[p];
+      paint.push(p);
+      cellOf[r * cols + c] = p;
+    }
+  return {
+    x, y, s: Math.min(tw, th), sizes: w, heights: h, crop, paint: Uint32Array.from(paint),
+    height: H, labels: [], order: null, cols: 0, mosaic: true,
+    grid: { cols, rows, tw, th, cell: cellOf },
   };
-  mapCache = { w: width, h: height, layout, proj };
-  return layout;
 }
 
 export default function ExplorerMosaic({ arrange, tileSize, spotlight, selected, onOpen, onProgress, showTree }: Props) {
@@ -263,10 +360,12 @@ export default function ExplorerMosaic({ arrange, tileSize, spotlight, selected,
 
     // ---------- state ----------
     let W = 0, H = 0;
-    let arrangeNow: Arrange = "cluster";
+    let arrangeNow: Arrange = "mosaic";
     let sizeNow = 22;
     let layout: Layout | null = null;
     const cx = new Float32Array(N), cy = new Float32Array(N), cs = new Float32Array(N).fill(0);
+    // Tile heights: equal to the widths except in the mosaic, whose tiles are fitted to their rows.
+    const ch = new Float32Array(N).fill(0);
     let animating = false;
     let labelAlpha = 1;
     let hover = -1;
@@ -276,7 +375,7 @@ export default function ExplorerMosaic({ arrange, tileSize, spotlight, selected,
     let showTree = true;
     let quad: d3.Quadtree<number> | null = null;
 
-    const offset = () => (layout?.map ? 0 : Math.max(0, barH() - host.getBoundingClientRect().top));
+    const offset = () => Math.max(0, barH() - host.getBoundingClientRect().top);
 
     function resize() {
       // The control bar wraps on narrow screens; stick the canvas right below it.
@@ -289,67 +388,100 @@ export default function ExplorerMosaic({ arrange, tileSize, spotlight, selected,
       canvas.style.height = `${H}px`;
     }
 
-    function draw() {
+    /** Paint the tiles into a context whose origin is `off` pixels down the layout. */
+    function paintTiles(g: CanvasRenderingContext2D, off: number, viewH: number) {
       if (!layout) return;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      ctx.clearRect(0, 0, W, H);
-      const off = offset();
-      if (layout.map && mapCache) {
-        const path = d3.geoPath(mapCache.proj, ctx);
-        ctx.beginPath();
-        path({ type: "Sphere" });
-        ctx.fillStyle = "#0f1614";
-        ctx.fill();
-        ctx.beginPath();
-        path(land);
-        ctx.fillStyle = "#222b27";
-        ctx.fill();
-      }
+      // In the mosaic each tile shows its chosen crop, cut to the tile's shape (the whole
+      // photo while tiles fly into place); the letters paint last, on top.
+      const cropping = !!layout.mosaic && !animating && !!layout.crop;
+      g.imageSmoothingQuality = "high";
       const T = EX.tile, cols = EX.cols;
       const dimOthers = spot != null;
-      for (let i = 0; i < N; i++) {
-        const s = cs[i];
+      const order = layout.paint;
+      const count = order ? order.length : N;
+      for (let n = 0; n < count; n++) {
+        const i = order ? order[n] : n;
+        const s = cs[i], sh = ch[i];
         const yy = cy[i] - off;
-        if (yy + s < 0 || yy > H) continue;
+        if (yy + sh < 0 || yy > viewH) continue;
         const img = sheets[(i / EX.perSheet) | 0];
-        ctx.globalAlpha = dimOthers && tileBreed[i] !== spot ? 0.12 : 1;
+        g.globalAlpha = dimOthers && tileBreed[i] !== spot ? 0.12 : 1;
         if (img) {
           const slot = i % EX.perSheet;
-          ctx.drawImage(img, (slot % cols) * T, ((slot / cols) | 0) * T, T, T, cx[i], yy, s, s);
+          const sx = (slot % cols) * T, sy = ((slot / cols) | 0) * T;
+          if (cropping) {
+            const [ox, oy, cw] = MOSAIC.crops[layout.crop![i]];
+            // Keep the photo's proportions: take the middle of the crop at the tile's aspect.
+            const a = s / sh;
+            const sw = a >= 1 ? cw : cw * a, shh = a >= 1 ? cw / a : cw;
+            g.drawImage(img, sx + ox + (cw - sw) / 2, sy + oy + (cw - shh) / 2, sw, shh, cx[i], yy, s, sh);
+          } else g.drawImage(img, sx, sy, T, T, cx[i], yy, s, sh);
         } else {
-          ctx.fillStyle = "#1b2320";
-          ctx.fillRect(cx[i], yy, s, s);
+          g.fillStyle = tone("#1b2320", LIGHT.card);
+          g.fillRect(cx[i], yy, s, sh);
         }
       }
-      ctx.globalAlpha = 1;
+      g.globalAlpha = 1;
+    }
+
+    // The settled mosaic is painted once into an off-screen canvas; hovering only copies it
+    // back and draws the outlines, instead of redrawing 18,006 photos per pointer move.
+    const cache = document.createElement("canvas");
+    const cacheCtx = cache.getContext("2d")!;
+    let cacheKey = "";
+    let layoutSerial = 0;
+
+    function draw() {
+      if (!layout) return;
+      GOLD = tone("#e8b74a", LIGHT.gold);
+      const off = offset();
+      if (layout.mosaic && !animating) {
+        const key = `${layoutSerial}|${sheets.filter(Boolean).length}|${spot}|${W}x${layout.height}|${dpr}`;
+        if (key !== cacheKey) {
+          cache.width = Math.ceil(W * dpr);
+          cache.height = Math.ceil(layout.height * dpr);
+          cacheCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          cacheCtx.clearRect(0, 0, W, layout.height);
+          paintTiles(cacheCtx, 0, layout.height);
+          cacheKey = key;
+        }
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(cache, 0, -Math.round(off * dpr));
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      } else {
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.clearRect(0, 0, W, H);
+        paintTiles(ctx, off, H);
+      }
       // Outline every photo of the hovered / selected breed.
       const ring = (breed: number, color: string, w: number) => {
         const b = BREEDS[breed];
         ctx.strokeStyle = color;
         ctx.lineWidth = w;
-        for (let i = b.start; i < b.start + b.files.length; i++) ctx.strokeRect(cx[i] + 0.5, cy[i] - off + 0.5, cs[i] - 1, cs[i] - 1);
+        for (let i = b.start; i < b.start + b.files.length; i++) ctx.strokeRect(cx[i] + 0.5, cy[i] - off + 0.5, cs[i] - 1, ch[i] - 1);
       };
-      if (hover >= 0 && !animating) ring(tileBreed[hover], "rgba(232,183,74,0.85)", 1);
+      if (hover >= 0 && !animating) ring(tileBreed[hover], tone("rgba(232,183,74,0.85)", "rgba(141,98,12,0.85)"), 1);
       if (sel) {
         const b = BREEDS[sel.breed];
-        ring(sel.breed, "rgba(232,183,74,0.6)", 1);
+        ring(sel.breed, tone("rgba(232,183,74,0.6)", "rgba(141,98,12,0.6)"), 1);
         const t = b.start + sel.photo;
-        ctx.strokeStyle = "#fff";
+        ctx.strokeStyle = tone("#fff", LIGHT.hi);
         ctx.lineWidth = 2;
-        ctx.strokeRect(cx[t] - 1, cy[t] - off - 1, cs[t] + 2, cs[t] + 2);
+        ctx.strokeRect(cx[t] - 1, cy[t] - off - 1, cs[t] + 2, ch[t] + 2);
       }
       for (const t of [hover, cursor]) {
         if (t < 0 || animating) continue;
-        ctx.strokeStyle = t === cursor ? GOLD : "#fff";
+        ctx.strokeStyle = t === cursor ? GOLD : tone("#fff", LIGHT.hi);
         ctx.lineWidth = 2;
-        ctx.strokeRect(cx[t] - 1, cy[t] - off - 1, cs[t] + 2, cs[t] + 2);
+        ctx.strokeRect(cx[t] - 1, cy[t] - off - 1, cs[t] + 2, ch[t] + 2);
       }
       // Clustered view: the family tree linking the clusters back to the grey wolf.
       const cl = layout.cluster;
       if (cl && labelAlpha > 0) {
         ctx.globalAlpha = labelAlpha;
         if (showTree) {
-          ctx.strokeStyle = "rgba(233,226,208,0.32)";
+          ctx.strokeStyle = tone("rgba(233,226,208,0.32)", "rgba(32,37,31,0.32)");
           ctx.lineWidth = 1;
           ctx.beginPath();
           for (const [a, b, p, q] of cl.tree) {
@@ -361,7 +493,7 @@ export default function ExplorerMosaic({ arrange, tileSize, spotlight, selected,
         const hy = cl.hub.y - off;
         ctx.beginPath();
         ctx.arc(cl.hub.x, hy, cl.hub.r, 0, Math.PI * 2);
-        ctx.fillStyle = "#0d1110";
+        ctx.fillStyle = tone("#0d1110", LIGHT.bg);
         ctx.fill();
         ctx.strokeStyle = GOLD;
         ctx.lineWidth = 1.5;
@@ -371,7 +503,7 @@ export default function ExplorerMosaic({ arrange, tileSize, spotlight, selected,
         ctx.font = `500 ${Math.max(12, Math.min(18, cl.hub.r / 2.6))}px 'Bodoni Moda', Georgia, serif`;
         ctx.fillText("Grey wolf", cl.hub.x, hy + 2);
         ctx.font = "500 9.5px 'IBM Plex Sans Condensed', sans-serif";
-        ctx.fillStyle = "#b9b3a3";
+        ctx.fillStyle = tone("#b9b3a3", LIGHT.ink2);
         ctx.fillText("SHARED ANCESTOR", cl.hub.x, hy + 16);
         ctx.textAlign = "start";
         ctx.globalAlpha = 1;
@@ -389,26 +521,26 @@ export default function ExplorerMosaic({ arrange, tileSize, spotlight, selected,
             ctx.textAlign = "center";
             ctx.lineJoin = "round";
             ctx.font = "500 16px 'Bodoni Moda', Georgia, serif";
-            ctx.strokeStyle = "rgba(10,13,12,0.92)";
+            ctx.strokeStyle = tone("rgba(10,13,12,0.92)", "rgba(246,242,232,0.92)");
             ctx.lineWidth = 5;
             ctx.strokeText(l.title, l.x, ly);
-            ctx.fillStyle = "#fffaf0";
+            ctx.fillStyle = tone("#fffaf0", LIGHT.hi);
             ctx.fillText(l.title, l.x, ly);
             ctx.font = "600 10px 'IBM Plex Sans Condensed', sans-serif";
             ctx.lineWidth = 4;
             ctx.strokeText(l.sub.toUpperCase(), l.x, ly + 14);
-            ctx.fillStyle = "#d8d2c2";
+            ctx.fillStyle = tone("#d8d2c2", LIGHT.ink2);
             ctx.fillText(l.sub.toUpperCase(), l.x, ly + 14);
             ctx.textAlign = "start";
             continue;
           }
           if (l.title) {
             ctx.font = "500 22px 'Bodoni Moda', Georgia, serif";
-            ctx.fillStyle = "#ece5d3";
+            ctx.fillStyle = tone("#ece5d3", LIGHT.ink);
             ctx.fillText(l.title, l.x, ly + 24);
           }
           ctx.font = "500 11px 'IBM Plex Sans Condensed', sans-serif";
-          ctx.fillStyle = "#8a8a7f";
+          ctx.fillStyle = tone("#8a8a7f", LIGHT.muted);
           ctx.fillText(l.sub.toUpperCase(), l.x, ly + (l.title ? 42 : 0));
         }
         ctx.globalAlpha = 1;
@@ -418,17 +550,23 @@ export default function ExplorerMosaic({ arrange, tileSize, spotlight, selected,
     function relayout(animate: boolean) {
       resize();
       layout = computeLayout(arrangeNow, W, H, sizeNow);
-      host.style.height = `${layout.map ? H : Math.max(H, layout.height)}px`;
+      layoutSerial++;
+      host.style.height = `${Math.max(H, layout.height)}px`;
       quad = null;
-      const tx = layout.x, ty = layout.y, s1 = layout.s;
+      paintRank = null;
+      const tx = layout.x, ty = layout.y, s1 = layout.s, ts = layout.sizes, th = layout.heights ?? layout.sizes;
       if (!animate || reduce || cs[0] === 0) {
-        cx.set(tx); cy.set(ty); cs.fill(s1);
+        cx.set(tx); cy.set(ty);
+        if (ts) cs.set(ts);
+        else cs.fill(s1);
+        if (th) ch.set(th);
+        else ch.fill(s1);
         animating = false;
         labelAlpha = 1;
         draw();
         return;
       }
-      const x0 = cx.slice(), y0 = cy.slice(), s0 = cs.slice();
+      const x0 = cx.slice(), y0 = cy.slice(), s0 = cs.slice(), h0 = ch.slice();
       // Stagger by destination so tiles sweep into place, Pudding-style.
       const delay = new Float32Array(N);
       const maxY = d3.max(ty) || 1;
@@ -442,7 +580,8 @@ export default function ExplorerMosaic({ arrange, tileSize, spotlight, selected,
           const k = d3.easeCubicInOut(Math.max(0, Math.min(1, (el - delay[i]) / dur)));
           cx[i] = x0[i] + (tx[i] - x0[i]) * k;
           cy[i] = y0[i] + (ty[i] - y0[i]) * k;
-          cs[i] = s0[i] + (s1 - s0[i]) * k;
+          cs[i] = s0[i] + ((ts ? ts[i] : s1) - s0[i]) * k;
+          ch[i] = h0[i] + ((th ? th[i] : s1) - h0[i]) * k;
         }
         if (el >= total) {
           timer.stop();
@@ -453,48 +592,121 @@ export default function ExplorerMosaic({ arrange, tileSize, spotlight, selected,
       });
     }
 
+    // Canvas listeners share one abort signal and are removed when the effect cleans up.
+    const listeners = new AbortController();
+    const opts = { signal: listeners.signal };
+
     // ---------- hit testing ----------
+    let paintRank: Uint32Array | null = null;
+    let reach = 0, reachOf: Layout | null = null;
     function tileAt(px: number, py: number) {
       if (!layout || animating) return -1;
-      if (!quad) quad = d3.quadtree<number>().x((i) => cx[i] + cs[i] / 2).y((i) => cy[i] + cs[i] / 2).addAll(d3.range(N));
-      const t = quad.find(px, py + offset(), Math.max(4, layout.s));
-      if (t == null) return -1;
-      const s = cs[t];
-      const yy = cy[t] - offset();
-      return px >= cx[t] - 1 && px <= cx[t] + s + 1 && py >= yy - 1 && py <= yy + s + 1 ? t : -1;
+      if (layout.paint && !paintRank) {
+        paintRank = new Uint32Array(N);
+        layout.paint.forEach((i, r) => (paintRank![i] = r));
+      }
+      const qy = py + offset();
+      const gr = layout.grid;
+      if (gr) {
+        const c = Math.floor(px / gr.tw), r = Math.floor(qy / gr.th);
+        return c >= 0 && c < gr.cols && r >= 0 && r < gr.rows ? gr.cell[r * gr.cols + c] : -1;
+      }
+      if (!quad) quad = d3.quadtree<number>().x((i) => cx[i] + cs[i] / 2).y((i) => cy[i] + ch[i] / 2).addAll(d3.range(N));
+      if (!layout.sizes) {
+        const t = quad.find(px, qy, Math.max(4, layout.s));
+        if (t == null) return -1;
+        return px >= cx[t] - 1 && px <= cx[t] + cs[t] + 1 && qy >= cy[t] - 1 && qy <= cy[t] + ch[t] + 1 ? t : -1;
+      }
+      // Tiles of different sizes (and the letters painted over the rainbow): the last-painted
+      // tile that contains the point.
+      if (reachOf !== layout) {
+        reach = Math.max(d3.max(layout.sizes)!, d3.max(layout.heights ?? layout.sizes)!);
+        reachOf = layout;
+      }
+      let best = -1, bestRank = -1;
+      quad.visit((node, x0, y0, x1, y1) => {
+        if (!("length" in node)) {
+          let d: typeof node | undefined = node;
+          while (d) {
+            const i = d.data;
+            if (px >= cx[i] && px < cx[i] + cs[i] && qy >= cy[i] && qy < cy[i] + ch[i]) {
+              const rank = paintRank ? paintRank[i] : i;
+              if (rank > bestRank) { best = i; bestRank = rank; }
+            }
+            d = d.next;
+          }
+        }
+        return x0 > px + reach || x1 < px - reach || y0 > qy + reach || y1 < qy - reach;
+      });
+      return best;
     }
+    let fullTimer = 0;
     function showTip(t: number, px: number, py: number) {
       if (t < 0) {
         tip.classList.remove("on");
         return;
       }
       const b = BREEDS[tileBreed[t]];
-      // Rebuild only when the breed changes, not on every pointer move.
-      if (tip.dataset.breed !== String(b.index)) {
-        tip.dataset.breed = String(b.index);
-        tip.innerHTML = `<strong>${b.name}</strong><span>${b.files.length} photo${b.files.length === 1 ? "" : "s"} · ${b.familyName}</span>${factsHtml(b.code, null, b.name)}`;
+      // The mosaic's tiles are too small to make out, so its tooltip also shows the hovered
+      // photo: the sprite thumbnail at once, then the full-size picture over it.
+      const withPhoto = !!layout?.mosaic;
+      const key = `${b.index}|${withPhoto ? t : ""}`;
+      // Rebuild only when the breed (or, in the mosaic, the photo) changes, not on every move.
+      if (tip.dataset.key !== key) {
+        tip.dataset.key = key;
+        let photo = "";
+        if (withPhoto) {
+          const sheet = (t / EX.perSheet) | 0, slot = t % EX.perSheet, k = 240 / EX.tile;
+          const thumb = `background-image:url(${BASE}/explorer/sheet-${sheet}.jpg);background-size:${EX.cols * EX.tile * k}px auto;background-position:-${(slot % EX.cols) * EX.tile * k}px -${((slot / EX.cols) | 0) * EX.tile * k}px`;
+          photo = `<span class="ex-tip-photo" style="${thumb}"><img alt="" referrerpolicy="no-referrer" onload="this.classList.add('on')" /></span>`;
+        }
+        tip.classList.toggle("has-photo", withPhoto);
+        tip.innerHTML = `${photo}<strong>${b.name}</strong><span>${b.files.length} photo${b.files.length === 1 ? "" : "s"} · ${b.familyName}</span>${factsHtml(b.code, null, b.name)}`;
+        // Sweeping across the mosaic shouldn't fire a download per tile: the thumbnail shows
+        // at once, the full-size photo once the pointer rests on a tile.
+        clearTimeout(fullTimer);
+        if (withPhoto) {
+          const url = photoUrl(b, tilePhoto[t]);
+          fullTimer = window.setTimeout(() => {
+            const img = tip.querySelector<HTMLImageElement>(".ex-tip-photo img");
+            if (img && tip.dataset.key === key) img.src = url;
+          }, 140);
+        }
       }
       tip.classList.add("on");
       const r = tip.getBoundingClientRect();
       tip.style.left = `${Math.min(px + 14, W - r.width - 8)}px`;
-      tip.style.top = `${py + 16 + r.height > H ? py - r.height - 10 : py + 16}px`;
+      // Below the pointer if it fits, else above; never past the top or bottom edge.
+      const below = py + 16, above = py - r.height - 10;
+      tip.style.top = `${Math.max(8, Math.min(below + r.height > H ? above : below, H - r.height - 8))}px`;
     }
+    // Pointer moves come faster than frames: handle only the latest one each frame.
+    let moveRaf = 0, lastMove: PointerEvent | null = null;
     canvas.addEventListener("pointermove", (ev) => {
-      const r = canvas.getBoundingClientRect();
-      const px = ev.clientX - r.left, py = ev.clientY - r.top;
-      const t = tileAt(px, py);
-      if (t !== hover) {
-        hover = t;
-        canvas.style.cursor = t >= 0 ? "pointer" : "default";
-        draw();
-      }
-      showTip(t, px, py);
-    });
+      lastMove = ev;
+      if (moveRaf) return;
+      moveRaf = requestAnimationFrame(() => {
+        moveRaf = 0;
+        const e = lastMove!;
+        const r = canvas.getBoundingClientRect();
+        const px = e.clientX - r.left, py = e.clientY - r.top;
+        const t = tileAt(px, py);
+        if (t !== hover) {
+          hover = t;
+          canvas.style.cursor = t >= 0 ? "pointer" : "default";
+          draw();
+        }
+        showTip(t, px, py);
+      });
+    }, opts);
     canvas.addEventListener("pointerleave", () => {
+      cancelAnimationFrame(moveRaf);
+      moveRaf = 0;
+      clearTimeout(fullTimer);
       hover = -1;
       tip.classList.remove("on");
       draw();
-    });
+    }, opts);
     canvas.addEventListener("click", (ev) => {
       const r = canvas.getBoundingClientRect();
       const t = tileAt(ev.clientX - r.left, ev.clientY - r.top);
@@ -502,7 +714,7 @@ export default function ExplorerMosaic({ arrange, tileSize, spotlight, selected,
         cursor = t;
         cb.current.onOpen(tileBreed[t], tilePhoto[t]);
       }
-    });
+    }, opts);
     // Keyboard: arrows move through the mosaic, Enter opens the photo.
     canvas.addEventListener("keydown", (ev) => {
       // While a photo is open, the arrow keys belong to the drawer.
@@ -533,6 +745,36 @@ export default function ExplorerMosaic({ arrange, tileSize, spotlight, selected,
         }
         return;
       }
+      if (layout.mosaic) {
+        const d: Record<string, [number, number]> = { ArrowRight: [1, 0], ArrowLeft: [-1, 0], ArrowDown: [0, 1], ArrowUp: [0, -1] };
+        if (ev.key in d) {
+          ev.preventDefault();
+          if (cursor < 0) {
+            // Start at the tile in the middle of the picture.
+            const mx = d3.mean(cx)!, my = d3.mean(cy)!;
+            cursor = d3.minIndex(d3.range(N), (i) => (cx[i] - mx) ** 2 + (cy[i] - my) ** 2);
+          } else {
+            const [dx, dy] = d[ev.key];
+            const ox = cx[cursor] + cs[cursor] / 2, oy = cy[cursor] + ch[cursor] / 2;
+            let best = -1, bd = Infinity;
+            for (let i = 0; i < N; i++) {
+              const vx = cx[i] + cs[i] / 2 - ox, vy = cy[i] + ch[i] / 2 - oy;
+              const along = vx * dx + vy * dy;
+              if (along <= 0.5) continue;
+              const score = along + 2.5 * Math.abs(vx * dy - vy * dx);
+              if (score < bd) { bd = score; best = i; }
+            }
+            if (best >= 0) cursor = best;
+          }
+          const yy = cy[cursor] - offset();
+          if (yy < 40 || yy > H - 60) window.scrollBy({ top: yy - H / 2, behavior: "auto" });
+          draw();
+        } else if (ev.key === "Enter" && cursor >= 0) {
+          ev.preventDefault();
+          cb.current.onOpen(tileBreed[cursor], tilePhoto[cursor]);
+        }
+        return;
+      }
       if (!layout.order) return;
       const order = layout.order;
       let k = cursor >= 0 ? order.indexOf(cursor) : -1;
@@ -549,7 +791,7 @@ export default function ExplorerMosaic({ arrange, tileSize, spotlight, selected,
         ev.preventDefault();
         cb.current.onOpen(tileBreed[cursor], tilePhoto[cursor]);
       }
-    });
+    }, opts);
 
     let raf = 0;
     const onScroll = () => {
@@ -567,7 +809,7 @@ export default function ExplorerMosaic({ arrange, tileSize, spotlight, selected,
         const rearranged = a !== arrangeNow;
         arrangeNow = a;
         sizeNow = s;
-        // A new arrangement starts from the top of the mosaic (the map needs the full view).
+        // A new arrangement starts from the top of the wall.
         if (rearranged && layout) {
           const top = host.getBoundingClientRect().top + window.scrollY - barH();
           if (window.scrollY > top) window.scrollTo({ top });
@@ -580,7 +822,7 @@ export default function ExplorerMosaic({ arrange, tileSize, spotlight, selected,
       },
       style: (sp, se) => {
         // Bring a newly searched breed into view.
-        if (sp != null && sp !== spot && layout && !layout.map) {
+        if (sp != null && sp !== spot && layout) {
           const t = BREEDS[sp].start;
           const yy = cy[t] - offset();
           if (yy < 60 || yy > H - 120) window.scrollTo({ top: window.scrollY + yy - 140, behavior: reduce ? "auto" : "smooth" });
@@ -591,7 +833,10 @@ export default function ExplorerMosaic({ arrange, tileSize, spotlight, selected,
       },
     };
     document.fonts?.ready.then(() => draw());
+    const offTheme = onThemeChange(() => draw());
     return () => {
+      listeners.abort();
+      offTheme();
       ro.disconnect();
       window.removeEventListener("scroll", onScroll);
       api.current = null;

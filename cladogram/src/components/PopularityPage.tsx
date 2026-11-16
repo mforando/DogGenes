@@ -5,7 +5,7 @@ import { useMemo, useState } from "react";
 import * as d3 from "d3";
 import raw from "@/data/akc.json";
 import { data } from "@/lib/tree";
-import { cladeColor } from "@/lib/palette";
+import { cladeVar } from "@/lib/palette";
 import { photoOf, photoOfAkc } from "@/lib/photos";
 import { factsText } from "@/lib/breedFacts";
 import { Lv } from "@/lib/readingLevel";
@@ -20,7 +20,7 @@ const LAST = YEARS.length - 1;
 const FIRST_YEAR = YEARS[0];
 const LAST_YEAR = YEARS[LAST];
 
-const colorOf = (b: { code: string | null }) => (b.code ? cladeColor(data.breeds[b.code]?.clade ?? null, b.code) : "#7d847e");
+const colorOf = (b: { code: string | null }) => (b.code ? cladeVar(data.breeds[b.code]?.clade ?? null, b.code) : cladeVar(null));
 const cladeName = (code: string | null) => {
   const c = code ? data.breeds[code]?.clade : null;
   return c ? data.clades[c] : null;
@@ -59,7 +59,7 @@ function Disc({ b, x, y, r }: { b: Breed | Era; x: number; y: number; r: number 
       <clipPath id={id}>
         <circle r={r} />
       </clipPath>
-      <circle r={r + 1.5} fill="#1a211e" stroke={colorOf({ code })} strokeWidth={2} />
+      <circle r={r + 1.5} fill="var(--bg-photo, #1a211e)" stroke={colorOf({ code })} strokeWidth={2} />
       {url ? (
         <image href={url} x={-r} y={-r} width={2 * r} height={2 * r} preserveAspectRatio="xMidYMid slice" clipPath={`url(#${id})`} {...NO_REFERRER} />
       ) : (
@@ -244,7 +244,7 @@ function Bump({ n }: { n: number }) {
                   <line key={`h${s.i}`} x1={s.x1} y1={s.y1} x2={s.x2} y2={s.y2} stroke="transparent" strokeWidth={12} />
                 ))}
                 {b.r.map((r, i) =>
-                  r !== null && r <= n ? <circle key={i} cx={x(YEARS[i])} cy={y(r)} r={3.6} fill={c} stroke="#0d1110" strokeWidth={1.5} /> : null,
+                  r !== null && r <= n ? <circle key={i} cx={x(YEARS[i])} cy={y(r)} r={3.6} fill={c} stroke="var(--bg, #0d1110)" strokeWidth={1.5} /> : null,
                 )}
                 {b.r[0] !== null && b.r[0] <= n && (
                   <text className="pop-lab" x={LX - 12} y={y(b.r[0])} dy="0.35em" textAnchor="end">
@@ -302,7 +302,7 @@ function Movers({ dir }: { dir: "up" | "down" }) {
             <text className="pop-lab" x={34} y={yy} dy="0.35em">{b.name}</text>
             <line x1={a} x2={z} y1={yy} y2={yy} stroke={c} strokeWidth={2.2} />
             <path d={dir === "up" ? `M${z - 7},${yy - 5} L${z},${yy} L${z - 7},${yy + 5}` : `M${z + 7},${yy - 5} L${z},${yy} L${z + 7},${yy + 5}`} fill="none" stroke={c} strokeWidth={2.2} strokeLinejoin="round" />
-            <circle cx={a} cy={yy} r={3.5} fill="#0d1110" stroke={c} strokeWidth={1.8} />
+            <circle cx={a} cy={yy} r={3.5} fill="var(--bg, #0d1110)" stroke={c} strokeWidth={1.8} />
             <text className="pop-val" x={a + (dir === "up" ? -6 : 6)} y={yy - 9} textAnchor={dir === "up" ? "end" : "start"}>#{b.r[0]}</text>
             <text className="pop-val strong" x={z + (dir === "up" ? 6 : -6)} y={yy - 9} textAnchor={dir === "up" ? "start" : "end"}>#{b.r[LAST]}</text>
           </g>
@@ -375,7 +375,7 @@ function Lookup() {
             {pts.map((p) => (
               <g key={p.yy}>
                 <title>{`${p.yy}: #${p.r}`}</title>
-                <circle cx={x(p.yy)} cy={y(p.r)} r={4} fill={colorOf(b)} stroke="#141a18" strokeWidth={1.5} />
+                <circle cx={x(p.yy)} cy={y(p.r)} r={4} fill={colorOf(b)} stroke="var(--bg-raise, #141a18)" strokeWidth={1.5} />
                 {(p.yy === pts[0].yy || p.yy === pts[pts.length - 1].yy) && (
                   <text className="pop-val strong" x={x(p.yy)} y={y(p.r) - 9} textAnchor="middle">#{p.r}</text>
                 )}

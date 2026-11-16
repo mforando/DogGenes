@@ -10,6 +10,7 @@ import { ORIGINS } from "@/lib/origins";
 import { data } from "@/lib/tree";
 import { photoOf } from "@/lib/photos";
 import { factsHtml } from "@/lib/breedFacts";
+import { useTheme } from "@/lib/useTheme";
 
 const W = 480;
 const H = 270;
@@ -54,7 +55,7 @@ export default function JobMap({
     proj.fitExtent([[6, 6], [W - 6, H - 6]], { type: "Sphere" });
     const path = d3.geoPath(proj);
     const svg = d3.select(el).append("svg").attr("viewBox", `0 0 ${W} ${H}`)
-      .attr("role", "img").attr("aria-label", "World map of where these breeds come from");
+      .attr("role", "group").attr("aria-label", "World map of where these breeds come from");
     const sphere = { type: "Sphere" } as d3.GeoPermissibleObjects;
     // Armadillo folds the far side of the globe out of sight but doesn't clip it, so clip
     // the land and graticule to the projection's outline.
@@ -75,6 +76,7 @@ export default function JobMap({
     };
   }, []);
 
+  const theme = useTheme(); // rebuild when the light/dark switch changes
   useEffect(() => {
     const b = base.current;
     if (!b) return;
@@ -147,7 +149,7 @@ export default function JobMap({
     };
     api.current(null);
     return () => cleanup.current?.();
-  }, [codes, colorOf]);
+  }, [codes, colorOf, theme]);
 
   useEffect(() => {
     api.current?.(hovered);

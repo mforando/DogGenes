@@ -14,7 +14,7 @@ import { Lv } from "@/lib/readingLevel";
 
 // Four founder lines; validated as a set (all pairs) on the card surface #141a18:
 // lightness band, chroma, CVD and normal-vision separation all pass.
-const LINE_COLORS = ["#2d88e2", "#d35e2c", "#199e6e", "#b75fb8"];
+const LINE_COLORS = ["var(--clade-NewWorld, #2d88e2)", "var(--clade-Alpine, #d35e2c)", "var(--clade-Hungarian, #199e6e)", "var(--clade-SmallSpitz, #b75fb8)"];
 const W = 420;
 const R = 3.1;
 const BIN = 2 * R + 0.8;
@@ -92,7 +92,7 @@ function SimPanel({ mode, gens, gen, y }: { mode: Mode; gens: Dog[][]; gen: numb
           className="sel-dot"
           r={R}
           style={{ transform: `translate(${pos[i][0]}px,${pos[i][1]}px)`, fill: LINE_COLORS[d.lin] }}
-          stroke={d.carrier ? "#ece5d3" : "none"}
+          stroke={d.carrier ? "var(--ink, #ece5d3)" : "none"}
           strokeWidth={d.carrier ? 1.6 : 0}
         >
           <title>{`Founder line ${d.lin + 1} · size ${d.t.toFixed(2)}${d.carrier ? " · carries the hidden variant" : ""}`}</title>

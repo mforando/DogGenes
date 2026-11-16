@@ -4,7 +4,7 @@ import { SiteNav } from "@/components/shared";
 import JsonLd, { breadcrumbs } from "@/components/JsonLd";
 import { BREED_CODES, breedPath } from "@/lib/breeds";
 import { data, ringOrder } from "@/lib/tree";
-import { CLADE_COLOR, cladeColor } from "@/lib/palette";
+import { cladeVar } from "@/lib/palette";
 import { pageMeta } from "@/lib/seo";
 import { abs } from "@/lib/site";
 
@@ -58,7 +58,7 @@ export default function Page() {
           {ordered.map(([key, codes]) => (
             <section key={key}>
               <h2>
-                <i className="bp-swatch" style={{ background: key === "_none" ? cladeColor(null, "") : CLADE_COLOR[key] }} aria-hidden />
+                <i className="bp-swatch" style={{ background: key === "_none" ? cladeVar(null, "") : cladeVar(key) }} aria-hidden />
                 {key === "_none" ? "No clear family" : `${data.clades[key]} family`}
               </h2>
               <ul>

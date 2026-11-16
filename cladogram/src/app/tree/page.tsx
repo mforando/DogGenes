@@ -14,7 +14,7 @@ export default function Page() {
       <JsonLd
         data={[
           article({ headline: TITLE, description: DESCRIPTION, path: "/tree/", image: "og/tree.png" }),
-          breadcrumbs([["Family tree & DNA web", "/tree/"]]),
+          breadcrumbs([["Family Tree", "/tree/"]]),
         ]}
       />
       <Story />

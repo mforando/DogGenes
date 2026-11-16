@@ -7,6 +7,8 @@ import { photoOf } from "@/lib/photos";
 import { factsText } from "@/lib/breedFacts";
 import { data } from "@/lib/tree";
 import { cladeColor } from "@/lib/palette";
+import { LIGHT, tone } from "@/lib/theme";
+import { useTheme } from "@/lib/useTheme";
 
 /**
  * `mode: "modern"` shows the last ~230 years with dated breeds; `"deep"` (default) shows the
@@ -24,12 +26,8 @@ const LANE = 48;
 const X0 = 70;
 const X1 = 930;
 const MODERN_SPAN = NOW - 1795; // years shown in the modern view
-const COLOR: Record<HistoryEvent["kind"], string> = {
-  dog: "#e8b74a",
-  wolf: "#8fb3c9",
-  human: "#e9e2d0",
-  theory: "#c58fb8",
-};
+// Refreshed when the chart is (re)built, so light mode gets its own set.
+let COLOR: Record<HistoryEvent["kind"], string> = { dog: "#e8b74a", wolf: "#8fb3c9", human: "#e9e2d0", theory: "#c58fb8" };
 const LEGEND: [HistoryEvent["kind"], string][] = [
   ["wolf", "wolves"],
   ["dog", "dogs"],
@@ -50,7 +48,9 @@ export default function Timeline({ view, spot = null }: { view: TimelineView; sp
   const host = useRef<HTMLDivElement>(null);
   const api = useRef<((v: TimelineView) => void) | null>(null);
 
+  const theme = useTheme(); // rebuild when the light/dark switch changes
   useEffect(() => {
+    COLOR = { dog: tone("#e8b74a", LIGHT.gold), wolf: tone("#8fb3c9", LIGHT.ice), human: tone("#e9e2d0", LIGHT.ink), theory: tone("#c58fb8", LIGHT.theory) };
     const el = host.current!;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const DUR = reduce ? 0 : 700;
@@ -69,19 +69,19 @@ export default function Timeline({ view, spot = null }: { view: TimelineView; sp
     const ICE_END = 11700, LGM: [number, number] = [26000, 20000];
     const bandY = 24, bandH = 18;
     const wash = defs.append("linearGradient").attr("id", "ice").attr("x1", 0).attr("x2", 0).attr("y1", 0).attr("y2", 1);
-    wash.append("stop").attr("offset", "0%").attr("stop-color", "#8fb3c9").attr("stop-opacity", 0.1);
-    wash.append("stop").attr("offset", "100%").attr("stop-color", "#8fb3c9").attr("stop-opacity", 0.02);
+    wash.append("stop").attr("offset", "0%").attr("stop-color", tone("#8fb3c9", LIGHT.ice)).attr("stop-opacity", 0.1);
+    wash.append("stop").attr("offset", "100%").attr("stop-color", tone("#8fb3c9", LIGHT.ice)).attr("stop-opacity", 0.02);
     const ice = plot.append("g").attr("class", "tl-ice");
     const iceWash = ice.append("rect").attr("y", bandY + bandH).attr("height", AXIS_Y - bandY - bandH).attr("fill", "url(#ice)");
-    const iceBand = ice.append("path").attr("fill", "#8fb3c9").attr("fill-opacity", 0.22).attr("stroke", "#8fb3c9").attr("stroke-opacity", 0.5);
-    const iceLgm = ice.append("rect").attr("y", bandY).attr("height", bandH).attr("fill", "#8fb3c9").attr("fill-opacity", 0.45);
-    const iceEnd = ice.append("line").attr("y1", bandY).attr("y2", AXIS_Y).attr("stroke", "#8fb3c9").attr("stroke-opacity", 0.45).attr("stroke-dasharray", "2 3");
+    const iceBand = ice.append("path").attr("fill", tone("#8fb3c9", LIGHT.ice)).attr("fill-opacity", 0.22).attr("stroke", tone("#8fb3c9", LIGHT.ice)).attr("stroke-opacity", 0.5);
+    const iceLgm = ice.append("rect").attr("y", bandY).attr("height", bandH).attr("fill", tone("#8fb3c9", LIGHT.ice)).attr("fill-opacity", 0.45);
+    const iceEnd = ice.append("line").attr("y1", bandY).attr("y2", AXIS_Y).attr("stroke", tone("#8fb3c9", LIGHT.ice)).attr("stroke-opacity", 0.45).attr("stroke-dasharray", "2 3");
     const iceL1 = ice.append("text").attr("y", bandY + bandH / 2).attr("dy", "0.35em").attr("class", "tl-ice-label").text("◂ Last Ice Age · began ~115,000 years ago");
     const iceL2 = ice.append("text").attr("y", bandY + bandH / 2).attr("dy", "0.35em").attr("text-anchor", "middle").attr("class", "tl-ice-label strong").text("coldest");
     const iceL3 = ice.append("text").attr("y", bandY + bandH / 2).attr("dy", "0.35em").attr("class", "tl-ice-label").text("ends 11,700 years ago");
 
     // ---------- axis ----------
-    svg.append("line").attr("x1", X0).attr("x2", X1).attr("y1", AXIS_Y).attr("y2", AXIS_Y).attr("stroke", "#e9e2d0").attr("stroke-opacity", 0.5);
+    svg.append("line").attr("x1", X0).attr("x2", X1).attr("y1", AXIS_Y).attr("y2", AXIS_Y).attr("stroke", tone("#e9e2d0", LIGHT.ink)).attr("stroke-opacity", 0.5);
     const ticks = svg.append("g").attr("transform", `translate(0,${AXIS_Y})`);
     const axisLabel = svg.append("text").attr("x", X0).attr("y", AXIS_Y + 38).attr("class", "tl-axis-label");
 
@@ -105,7 +105,7 @@ export default function Timeline({ view, spot = null }: { view: TimelineView; sp
       if (Array.isArray(d.at)) {
         g.append("rect").attr("class", "band").attr("height", 12).attr("rx", 6).attr("fill", c).attr("fill-opacity", d.kind === "theory" ? 0.55 : 0.8);
       } else {
-        g.append("circle").attr("r", 6).attr("fill", d.debated ? "#0d1110" : c).attr("stroke", c).attr("stroke-width", 2)
+        g.append("circle").attr("r", 6).attr("fill", d.debated ? tone("#0d1110", LIGHT.bg) : c).attr("stroke", c).attr("stroke-width", 2)
           .attr("stroke-dasharray", d.debated ? "2 2" : null);
       }
       g.append("text").attr("class", "tl-label lab").text(d.label);
@@ -117,8 +117,8 @@ export default function Timeline({ view, spot = null }: { view: TimelineView; sp
     const ms = modern.append("g").selectAll("g.ms").data(MILESTONES).join("g").attr("class", "ms");
         // Along the bottom edge, below the breed rows; they step down because they're close in time.
     const msY = (i: number) => H - 52 + i * 17;
-    ms.append("line").attr("y1", AXIS_Y).attr("y2", (_, i) => msY(i)).attr("stroke", "#e9e2d0").attr("stroke-opacity", 0.18).attr("stroke-dasharray", "2 4");
-    ms.append("circle").attr("cy", (_, i) => msY(i)).attr("r", 2.5).attr("fill", "#e9e2d0");
+    ms.append("line").attr("y1", AXIS_Y).attr("y2", (_, i) => msY(i)).attr("stroke", tone("#e9e2d0", LIGHT.ink)).attr("stroke-opacity", 0.18).attr("stroke-dasharray", "2 4");
+    ms.append("circle").attr("cy", (_, i) => msY(i)).attr("r", 2.5).attr("fill", tone("#e9e2d0", LIGHT.ink));
     ms.append("text").attr("x", 6).attr("y", (_, i) => msY(i)).attr("dy", "0.35em").attr("class", "tl-ms").text((d) => `${d.label}, ${d.year}`);
 
     /**
@@ -142,7 +142,7 @@ export default function Timeline({ view, spot = null }: { view: TimelineView; sp
         defs.append("clipPath").attr("id", clipId).append("circle").attr("r", PHOTO_R);
         const ph = g.append("g").attr("class", "ph");
         const url = photoOf(d.code);
-        ph.append("circle").attr("r", PHOTO_R + 1.5).attr("fill", "#1a211e").attr("stroke", color).attr("stroke-width", 2);
+        ph.append("circle").attr("r", PHOTO_R + 1.5).attr("fill", tone("#1a211e", LIGHT.card)).attr("stroke", color).attr("stroke-width", 2);
         if (url) {
           ph.append("image").attr("href", url).attr("x", -PHOTO_R).attr("y", -PHOTO_R).attr("width", PHOTO_R * 2).attr("height", PHOTO_R * 2)
             .attr("preserveAspectRatio", "xMidYMid slice").attr("clip-path", `url(#${clipId})`).attr("referrerpolicy", "no-referrer");
@@ -236,7 +236,7 @@ export default function Timeline({ view, spot = null }: { view: TimelineView; sp
       const g = d3.select(this);
       const clipId = `unk-clip-${a.code}`;
       defs.append("clipPath").attr("id", clipId).append("circle").attr("r", UR);
-      g.append("circle").attr("r", UR + 1.5).attr("fill", "#1a211e").attr("stroke", "#7d847e").attr("stroke-width", 1.5).attr("stroke-dasharray", "3 2");
+      g.append("circle").attr("r", UR + 1.5).attr("fill", tone("#1a211e", LIGHT.card)).attr("stroke", tone("#7d847e", LIGHT.unclustered)).attr("stroke-width", 1.5).attr("stroke-dasharray", "3 2");
       const url = photoOf(a.code);
       if (url) {
         g.append("image").attr("href", url).attr("x", -UR).attr("y", -UR).attr("width", UR * 2).attr("height", UR * 2)
@@ -267,7 +267,7 @@ export default function Timeline({ view, spot = null }: { view: TimelineView; sp
       const tk = ticks.selectAll<SVGGElement, { at: number; label: string }>("g").data(tv, (d) => d.label)
         .join((e) => {
           const g = e.append("g");
-          g.append("line").attr("y1", -4).attr("y2", 4).attr("stroke", "#e9e2d0").attr("stroke-opacity", 0.5);
+          g.append("line").attr("y1", -4).attr("y2", 4).attr("stroke", tone("#e9e2d0", LIGHT.ink)).attr("stroke-opacity", 0.5);
           g.append("text").attr("y", 20).attr("text-anchor", "middle").attr("class", "tl-tick");
           return g;
         })
@@ -384,7 +384,7 @@ export default function Timeline({ view, spot = null }: { view: TimelineView; sp
       d3.select(el).selectAll("*").remove();
       api.current = null;
     };
-  }, []);
+  }, [theme]);
 
   useEffect(() => {
     api.current?.(view);
@@ -397,5 +397,40 @@ export default function Timeline({ view, spot = null }: { view: TimelineView; sp
       .classed("is-dim", (d) => spot !== null && d.code !== spot);
   }, [spot]);
 
-  return <div ref={host} className="timeline" />;
+  return (
+    <>
+      {/* On phones the timeline scrolls sideways: focusable so arrow keys can scroll it too. */}
+      <div ref={host} className="timeline" role="region" tabIndex={0} aria-label="Timeline of dog history" />
+      {/* The chart's contents as text, for screen readers (the drawing itself is one image). */}
+      <div className="sr-only">
+        <h2>The timeline, as text</h2>
+        <h3>Timeline events</h3>
+        <ul>
+          {EVENTS.map((e) => (
+            <li key={e.id}>
+              {e.label}: {e.sub}
+              {e.debated ? " (debated)" : ""}
+            </li>
+          ))}
+        </ul>
+        <h3>Breeds by founding year</h3>
+        <ul>
+          {MODERN_BREEDS.map((b) => (
+            <li key={b.code}>
+              {b.name}: {b.approx ? "about " : ""}
+              {b.year}, {b.note}
+            </li>
+          ))}
+        </ul>
+        <h3>Older breed types</h3>
+        <ul>
+          {ANCIENT_BREEDS.map((a) => (
+            <li key={a.code}>
+              {a.name}, {a.from}: {agoLabel(a)}. {a.note}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </>
+  );
 }

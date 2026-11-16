@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import faces from "@/data/faces.json";
+import { motionPaused, useMotionPaused } from "@/lib/motion";
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
@@ -28,10 +29,15 @@ export default function FaceMorph() {
   const video = useRef<HTMLVideoElement>(null);
   const [label, setLabel] = useState(faces.segments[0].name);
 
+  // Holds on the current face while animation is paused (or reduced motion is on).
+  const paused = useMotionPaused();
+
   useEffect(() => {
     const v = video.current!;
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduce) return;
+    if (paused || motionPaused()) {
+      v.pause();
+      return;
+    }
     let raf = 0;
     const tick = () => {
       setLabel(labelAt(v.currentTime));
@@ -52,7 +58,7 @@ export default function FaceMorph() {
       cancelAnimationFrame(raf);
       v.pause();
     };
-  }, []);
+  }, [paused]);
 
   return (
     <div className="face-morph">

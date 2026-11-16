@@ -16,17 +16,17 @@ const withRibbons = nodes.filter((n) => n.degree > 0).length;
 
 /** Legend entries: the wolf, each family group in ring order, then the loners. */
 const GROUPS: { key: string; label: string; color: string; codes: string[] }[] = [
-  { key: "_wild", label: "Wild relative (wolf)", color: nodeByCode.get("WOLF")!.color, codes: ["WOLF"] },
+  { key: "_wild", label: "Wild relative (wolf)", color: nodeByCode.get("WOLF")!.cssColor, codes: ["WOLF"] },
   ...cladeArcs.map((c) => ({
     key: c.clade,
     label: circosData.clades[c.clade],
-    color: nodes.find((n) => n.clade === c.clade)!.color,
+    color: nodes.find((n) => n.clade === c.clade)!.cssColor,
     codes: nodes.filter((n) => n.clade === c.clade).map((n) => n.code),
   })),
   {
     key: "_loners",
     label: "Loners (no clear family)",
-    color: nodeByCode.get("EURA")!.color,
+    color: nodeByCode.get("EURA")!.cssColor,
     codes: nodes.filter((n) => !n.clade && n.code !== "WOLF").map((n) => n.code),
   },
 ];
@@ -73,7 +73,7 @@ export default function CircosReplica({ embedded = false }: { embedded?: boolean
       <Wrapper embedded={embedded}>
 
         <div className="replica-body">
-          <aside className="replica-side" aria-label="Figure key and controls">
+          <section className="replica-side" aria-label="Figure key and controls">
             <header className="replica-head">
               <p className="eyebrow">Recreated from Parker et al. 2017, Figure 4</p>
               {/* Embedded under the story, the page already has its own <h1>. */}
@@ -158,7 +158,7 @@ export default function CircosReplica({ embedded = false }: { embedded?: boolean
                 families.{groupLock && !groupHover ? " Click it again to unlock." : groupHover && groupLock !== groupHover ? " Click to lock." : ""}
               </p>
             )}
-          </aside>
+          </section>
           <div className="replica-figure">
             <Circos
               compact={phone}
@@ -178,7 +178,7 @@ export default function CircosReplica({ embedded = false }: { embedded?: boolean
               ariaLabel="Replica of Figure 4: circos plot of cross-clade haplotype sharing among 168 dog breed populations."
             />
           </div>
-          <aside className="replica-details" aria-label="Details for the hovered breed or ribbon">
+          <section className="replica-details" aria-label="Details for the hovered breed or ribbon">
             <CircosDetails
               hover={pick ? null : hover}
               pinned={pick}
@@ -191,7 +191,7 @@ export default function CircosReplica({ embedded = false }: { embedded?: boolean
               }}
               onShowTree={setTreeFor}
             />
-          </aside>
+          </section>
         </div>
 
 

@@ -7,10 +7,12 @@ import { data } from "@/lib/tree";
 import { cladeColor } from "@/lib/palette";
 import { FAMILIES } from "@/lib/purpose";
 import { MIXED_FREQ, VARIANTS, familiesOf } from "@/lib/health";
+import { LIGHT, tone } from "@/lib/theme";
+import { useTheme } from "@/lib/useTheme";
 
-const INK = "#e9e2d0";
-const GOLD = "#e8b74a";
-const famColor = (f: string) => (f === "_none" ? "#7d847e" : cladeColor(f));
+let INK = "#e9e2d0";
+let GOLD = "#e8b74a";
+const famColor = (f: string) => (f === "_none" ? cladeColor(null) : cladeColor(f));
 
 /**
  * Variant × family matrix. Each row is a disease variant; each column a family group from
@@ -28,7 +30,10 @@ export function TraitMatrix({ selected, onSelect }: { selected: string; onSelect
   // a phone without scrolling sideways.
   const tall = useMedia("(max-width: 640px)");
 
+  const theme = useTheme(); // rebuild when the light/dark switch changes
   useEffect(() => {
+    INK = tone("#e9e2d0", LIGHT.ink);
+    GOLD = tone("#e8b74a", LIGHT.gold);
     const el = host.current!;
     const vars = [...VARIANTS].sort((a, b) => familiesOf(b).length - familiesOf(a).length);
     const left = tall ? 152 : 210, top = tall ? 138 : 150, right = tall ? 56 : 100, cell = tall ? 40 : 30, rowH = tall ? 30 : 40;
@@ -37,7 +42,7 @@ export function TraitMatrix({ selected, onSelect }: { selected: string; onSelect
     // Centre of the cell for variant i and family j, in either layout.
     const X = (i: number, j: number) => left + (tall ? i : j) * cell + cell / 2;
     const Y = (i: number, j: number) => top + (tall ? j : i) * rowH + rowH / 2;
-    const svg = d3.select(el).append("svg").attr("viewBox", `0 0 ${W} ${H}`).attr("role", "img")
+    const svg = d3.select(el).append("svg").attr("viewBox", `0 0 ${W} ${H}`).attr("role", "group")
       .attr("aria-label", "Matrix of inherited disease variants by family group; dot size shows how many breeds in each family carry the variant.");
     const tip = d3.select(el).append("div").attr("class", "tip").attr("role", "status");
     const famOf = (c: string) => data.breeds[c]?.clade ?? "_none";
@@ -60,12 +65,12 @@ export function TraitMatrix({ selected, onSelect }: { selected: string; onSelect
     FAMILIES.forEach((f, j) => {
       if (tall) {
         const y = Y(0, j);
-        svg.append("line").attr("x1", left - 4).attr("x2", W - right).attr("y1", y).attr("y2", y).attr("stroke", "#171e1b");
+        svg.append("line").attr("x1", left - 4).attr("x2", W - right).attr("y1", y).attr("y2", y).attr("stroke", tone("#171e1b", LIGHT.grid));
         svg.append("rect").attr("x", left - 10).attr("y", y - 5).attr("width", 4).attr("height", 10).attr("rx", 1).attr("fill", famColor(f.id));
         svg.append("text").attr("x", left - 16).attr("y", y).attr("dy", "0.35em").attr("text-anchor", "end").attr("class", "pm-fam").text(f.name);
       } else {
         const x = X(0, j);
-        svg.append("line").attr("x1", x).attr("x2", x).attr("y1", top - 6).attr("y2", H - 6).attr("stroke", "#1b2320");
+        svg.append("line").attr("x1", x).attr("x2", x).attr("y1", top - 6).attr("y2", H - 6).attr("stroke", tone("#1b2320", LIGHT.grid));
         svg.append("rect").attr("x", x - 5).attr("y", top - 14).attr("width", 10).attr("height", 4).attr("rx", 1).attr("fill", famColor(f.id));
         svg.append("text").attr("transform", `translate(${x + 3},${top - 20}) rotate(-55)`).attr("class", "pm-col").text(f.name);
       }
@@ -84,7 +89,7 @@ export function TraitMatrix({ selected, onSelect }: { selected: string; onSelect
       });
     if (tall) {
       row.append("rect").attr("class", "pm-band").attr("x", (_, i) => X(i, 0) - cell / 2 + 2).attr("y", top - 8).attr("width", cell - 4).attr("height", H - top + 2).attr("rx", 4);
-      row.append("line").attr("x1", (_, i) => X(i, 0)).attr("x2", (_, i) => X(i, 0)).attr("y1", top - 6).attr("y2", H - 6).attr("stroke", "#1b2320");
+      row.append("line").attr("x1", (_, i) => X(i, 0)).attr("x2", (_, i) => X(i, 0)).attr("y1", top - 6).attr("y2", H - 6).attr("stroke", tone("#1b2320", LIGHT.grid));
       row.append("text").attr("transform", (_, i) => `translate(${X(i, 0) + 4},${top - 14}) rotate(-62)`).attr("class", "pm-name").text((v) => v.short);
     } else {
       row.append("rect").attr("class", "pm-band").attr("x", 0).attr("y", (_, i) => Y(i, 0) - rowH / 2 + 2).attr("width", W).attr("height", rowH - 4).attr("rx", 4);
@@ -102,7 +107,7 @@ export function TraitMatrix({ selected, onSelect }: { selected: string; onSelect
         const list = by.get(f.id);
         if (!list) return;
         const dot = g.append("g").attr("class", "pm-dot").attr("transform", `translate(${X(i, j)},${Y(i, j)})`);
-        dot.append("circle").attr("r", r(list.length)).attr("fill", famColor(f.id)).attr("stroke", "#0d1110").attr("stroke-width", 1.5);
+        dot.append("circle").attr("r", r(list.length)).attr("fill", famColor(f.id)).attr("stroke", tone("#0d1110", LIGHT.bg)).attr("stroke-width", 1.5);
         if (list.length > 1) dot.append("text").attr("dy", "0.35em").attr("text-anchor", "middle").attr("class", "pm-n").text(list.length);
         const html = () => `<div class="tip-name">${f.name}</div><div class="tip-sub">${v.short} · ${list.length} carrier breed${list.length === 1 ? "" : "s"}</div><div class="tip-list">${list.map((c) => data.breeds[c].name).join("<br>")}</div>`;
         // Mouse: follows the pointer. Touch: a tap shows it until a tap elsewhere.
@@ -132,7 +137,7 @@ export function TraitMatrix({ selected, onSelect }: { selected: string; onSelect
       d3.select(el).selectAll("*").remove();
       api.current = null;
     };
-  }, [tall]);
+  }, [tall, theme]);
 
   useEffect(() => api.current?.(selected), [selected]);
   return <div ref={host} className={`purpose-matrix${tall ? " tall" : ""}`} />;
@@ -143,7 +148,10 @@ export function FreqBars() {
   const host = useRef<HTMLDivElement>(null);
   // Narrow screens: each name sits above its bar, so the text stays readable.
   const narrow = useMedia("(max-width: 640px)");
+  const theme = useTheme(); // rebuild when the light/dark switch changes
   useEffect(() => {
+    INK = tone("#e9e2d0", LIGHT.ink);
+    GOLD = tone("#e8b74a", LIGHT.gold);
     const el = host.current!;
     const left = narrow ? 2 : 250, right = narrow ? 52 : 70, rowH = narrow ? 44 : 34, top = narrow ? 8 : 30;
     const W = narrow ? 400 : 860, H = top + MIXED_FREQ.length * rowH + 28;
@@ -152,7 +160,7 @@ export function FreqBars() {
     const svg = d3.select(el).append("svg").attr("viewBox", `0 0 ${W} ${H}`).attr("role", "img")
       .attr("aria-label", "Bar chart of disease variant frequency in mixed-breed dogs");
     for (const t of x.ticks(4)) {
-      svg.append("line").attr("x1", x(t)).attr("x2", x(t)).attr("y1", top - 8).attr("y2", H - 22).attr("stroke", "#1c2420");
+      svg.append("line").attr("x1", x(t)).attr("x2", x(t)).attr("y1", top - 8).attr("y2", H - 22).attr("stroke", tone("#1c2420", LIGHT.grid));
       svg.append("text").attr("x", x(t)).attr("y", H - 6).attr("text-anchor", "middle").attr("class", "mb-tick").text(`${t}%`);
     }
     if (!narrow) svg.append("text").attr("x", left).attr("y", 14).attr("class", "mb-axis")
@@ -165,6 +173,6 @@ export function FreqBars() {
     return () => {
       d3.select(el).selectAll("*").remove();
     };
-  }, [narrow]);
+  }, [narrow, theme]);
   return <div ref={host} className="mixing-bars" />;
 }

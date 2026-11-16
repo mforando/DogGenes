@@ -1,7 +1,7 @@
 import akc from "@/data/akc.json";
 import nyc from "@/data/nycnames.json";
 import { data } from "./tree";
-import { cladeColor } from "./palette";
+import { cladeVar } from "./palette";
 import { PURPOSES, purposeOf } from "./purpose";
 import { ORIGINS } from "./origins";
 import { factsFor, factsUrl } from "./breedFacts";
@@ -50,7 +50,7 @@ export function breedPage(code: string) {
     slug: slugOf(code),
     clade,
     cladeName: clade ? data.clades[clade] : null,
-    color: cladeColor(clade, code),
+    color: cladeVar(clade, code),
     purpose,
     origin,
     facts,

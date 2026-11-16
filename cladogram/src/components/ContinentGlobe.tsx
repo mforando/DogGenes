@@ -4,10 +4,12 @@ import { useEffect, useState } from "react";
 import Globe, { type FlyTarget } from "./Globe";
 import { CONTINENTS, CONTINENT_BREEDS, WORLD, continentOf, type Continent } from "@/lib/regions";
 import { ORIGINS } from "@/lib/origins";
+import { LIGHT, tone } from "@/lib/theme";
 
-const PICKED = "#e8b74a";
-const IDLE = "#b9b3a3";
-const DIM = "#4a5450";
+// Read when the globe asks, so light mode gets its own ink.
+const PICKED = () => tone("#e8b74a", LIGHT.gold);
+const IDLE = () => tone("#b9b3a3", LIGHT.ink2);
+const DIM = () => tone("#4a5450", LIGHT.dim);
 
 /**
  * The breed origins globe, with one twist: clicking any breed's dot picks its whole
@@ -18,6 +20,7 @@ export default function ContinentGlobe({
   onPick,
   spotlight = null,
   onHoverBreed,
+  quietTip = false,
 }: {
   continent: Continent | null;
   onPick?: (c: Continent | null) => void;
@@ -25,6 +28,8 @@ export default function ContinentGlobe({
   spotlight?: string | null;
   /** Hovering a dot: highlight that breed elsewhere (the story's circle chart). */
   onHoverBreed?: (code: string | null) => void;
+  /** No floating tooltip on mouse hover: the page shows the breed in its side panel. */
+  quietTip?: boolean;
 }) {
   const [fly, setFly] = useState<FlyTarget | null>(null);
   // Spin to a hovered photo's breed; spin back to the picked continent (or the world) after.
@@ -52,7 +57,7 @@ export default function ContinentGlobe({
   }, [continent]);
 
   const colorOf = (code: string) =>
-    spotlight && ORIGINS[spotlight] ? (code === spotlight ? PICKED : DIM) : !continent ? IDLE : continentOf(code) === continent ? PICKED : DIM;
+    spotlight && ORIGINS[spotlight] ? (code === spotlight ? PICKED() : DIM()) : !continent ? IDLE() : continentOf(code) === continent ? PICKED() : DIM();
   return (
     <div className="rg">
       <div className="rg-globe">
@@ -67,6 +72,7 @@ export default function ContinentGlobe({
           }}
           fly={fly}
           onHover={onHoverBreed}
+          quietTip={quietTip}
         />
       </div>
       <div className="job-chips rg-chips" role="group" aria-label="Pick a continent">

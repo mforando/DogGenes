@@ -3,7 +3,7 @@
 import { useMemo, useState, type ReactNode } from "react";
 import * as d3 from "d3";
 import { data } from "@/lib/tree";
-import { cladeColor } from "@/lib/palette";
+import { cladeVar } from "@/lib/palette";
 import { PHOTOS } from "@/lib/photos";
 import { cousinPairs, crossPairs, lineagePairs, type PairRow } from "@/lib/pairs";
 import { Term } from "./Hints";
@@ -24,7 +24,7 @@ const familyOf = (c: string) => {
 
 function Breed({ code }: { code: string }) {
   const url = PHOTOS[code]?.urls[0];
-  const color = cladeColor(data.breeds[code]?.clade ?? null, code);
+  const color = cladeVar(data.breeds[code]?.clade ?? null, code);
   return (
     <div className="pair-breed">
       {url ? (

@@ -6,19 +6,20 @@ import { breedPath, hasBreedPage } from "@/lib/breedLinks";
 import Cladogram from "./Cladogram";
 import { STEPS, STEP_ALIASES } from "@/lib/steps";
 import { data, ringOrder } from "@/lib/tree";
-import { CLADE_COLOR, cladeColor } from "@/lib/palette";
+import { cladeVar } from "@/lib/palette";
 import { PHOTOS } from "@/lib/photos";
 import { CITATION, PHONE, RotateHint, SiteNav, Specimens, useActiveStep, useMedia } from "./shared";
 import Primer, { type TermId } from "./Primer";
 import GlossaryButton from "./GlossaryButton";
 import DnaHelix from "./DnaHelix";
-import { HintProvider } from "./Hints";
+import { HintBody, HintProvider } from "./Hints";
 import { Lv, useReadingLevel } from "@/lib/readingLevel";
 import { LEVEL_BODIES } from "@/lib/levels";
 import Circos from "./Circos";
 import CircosReplica from "./CircosReplica";
 import ContinentGlobe from "./ContinentGlobe";
 import { CONTINENT_BREEDS, type Continent } from "@/lib/regions";
+import MotionToggle from "./MotionToggle";
 
 const GLOSSARY: TermId[] = ["dna", "cladogram", "clade", "bootstrap", "haplotype"];
 // The "?" shows from the glossary section through the end of the scroller.
@@ -78,6 +79,10 @@ function StoryBody() {
     return () => window.removeEventListener("hashchange", go);
   }, []);
   const pointed = photoHover ?? textBreed ?? (step.continentGlobe ? globeHover : null);
+  // Desktop: whatever breed the reader points at in the step (a word, a photo, a globe dot)
+  // pops out in the panel on the right, the same way; a family named in the text does too.
+  const dockBreed = phone ? null : textBreed ?? photoHover ?? (step.continentGlobe ? globeHover : null);
+  const dockClade = phone || dockBreed ? null : textClade;
   const sel = pointed && !step.circos ? pointed : null;
   // While a photo is hovered, the step's own highlights step aside so only that breed shows.
   const treeView = useMemo(() => {
@@ -107,10 +112,10 @@ function StoryBody() {
         : treeView.codes ?? [];
     const clades = (c ? c.clades : treeView.clades) ?? [];
     const names = new Map<string, string>();
-    for (const cl of clades) names.set(data.clades[cl], CLADE_COLOR[cl]);
+    for (const cl of clades) names.set(data.clades[cl], cladeVar(cl));
     for (const code of codes) {
       const b = data.breeds[code];
-      if (b) names.set(b.name, cladeColor(b.clade, code));
+      if (b) names.set(b.name, cladeVar(b.clade, code));
     }
     const all = [...names];
     return { shown: all.slice(0, 6), more: Math.max(0, all.length - 6) };
@@ -128,7 +133,8 @@ function StoryBody() {
   }, []);
 
   return (
-    <HintProvider onBreed={setTextBreed} onClade={setTextClade}>
+    <HintProvider onBreed={setTextBreed} onClade={setTextClade} docked={phone ? [] : ["breed", "clade"]}>
+      {/* Desktop: a breed or family named in the text pops out in the panel on the right; phones keep the small pop-up. */}
       <SiteNav />
       <header className="hero">
         <DnaHelix />
@@ -154,6 +160,7 @@ function StoryBody() {
             <span>scroll</span>
           </div>
         </div>
+        <MotionToggle />
       </header>
 
       <Primer
@@ -173,7 +180,11 @@ function StoryBody() {
 
       <GlossaryButton terms={GLOSSARY} watch={GLOSSARY_WATCH} />
       <main className="scrolly">
-        <div className="figure" aria-live="polite">
+        <div className="figure">
+          {/* Screen readers hear one short line per step; the charts themselves aren't live regions. */}
+          <p className="sr-only" aria-live="polite" aria-atomic="true">
+            {`Step ${active + 1} of ${STEPS.length}: ${step.title}.`}
+          </p>
           <div className="figure-meta">
             <span className="counter">
               {String(active + 1).padStart(2, "0")}
@@ -183,16 +194,22 @@ function StoryBody() {
           </div>
           <div className={`figure-stage docked${step.circos ? " circos-on" : ""}`}>
             <div className="stage-chart">
-              <div className="stage-circle">
+              <div className="stage-circle" aria-hidden={!!step.circos} inert={!!step.circos}>
                 <Cladogram view={treeView} selected={sel} onSelect={() => {}} onHover={step.continentGlobe ? setTreeHover : undefined} tipDock={tipDock} compact={phone} />
               </div>
-              <div className="stage-circos" aria-hidden={!step.circos}>
+              <div className="stage-circos" aria-hidden={!step.circos} inert={!step.circos}>
                 <Circos view={step.circos ?? lastCircos} spotlight={step.circos ? photoHover ?? textBreed : null} ariaLabel="Chord diagram of DNA shared between dog breeds from different family groups" tipDock={tipDock} compact={phone} />
               </div>
             </div>
             {/* Chart tooltips show here, in a fixed panel, instead of following the pointer. */}
-            <aside ref={tipDock} className="tip-dock" aria-live="polite">
+            <aside ref={tipDock} className="tip-dock" aria-live="polite" aria-label="Chart details">
               <p className="tip-dock-empty">Hover over or tap a breed on the chart to see its photo, family and history here.</p>
+              {/* The breed or family named in the text, popped out beside the chart (desktop). */}
+              {(dockBreed || dockClade) && (
+                <div key={dockBreed ?? dockClade!} className="tip on dock-hint">
+                  <HintBody kind={dockBreed ? "breed" : "clade"} id={(dockBreed ?? dockClade)!} docked />
+                </div>
+              )}
             </aside>
           </div>
           {phone && chips.shown.length > 0 && (
@@ -229,6 +246,7 @@ function StoryBody() {
                     onPick={i === active ? setContinent : undefined}
                     spotlight={i === active ? photoHover ?? textBreed ?? treeHover : null}
                     onHoverBreed={i === active ? setGlobeHover : undefined}
+                    quietTip={!phone}
                   />
                 )}
               </div>
@@ -248,7 +266,7 @@ function StoryBody() {
                 <h3>
                   <i
                     style={{
-                      background: key.startsWith("_") ? cladeColor(null, key === "_wild" ? "WOLF" : "") : CLADE_COLOR[key],
+                      background: key.startsWith("_") ? cladeVar(null, key === "_wild" ? "WOLF" : "") : cladeVar(key),
                     }}
                   />
                   {key === "_wild" ? "Wild relatives" : key === "_none" ? "Loners (no clear family)" : data.clades[key]}

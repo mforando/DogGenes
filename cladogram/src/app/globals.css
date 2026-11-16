@@ -22,6 +22,10 @@
 
   --gutter: clamp(16px, 3vw, 40px);
   color-scheme: dark;
+  /* Colors that React draws by variable (so light mode can switch them). Dark values. */
+  --bg-photo: #1a211e;
+  --dim-fill: #4a5450;
+  --clade-Alpine: #d35e2c; --clade-EuropeanMastiff: #1ca8b7; --clade-Drover: #d4556c; --clade-UKRural: #19ad94; --clade-ContinentalHerder: #c459a1; --clade-Retriever: #309f47; --clade-PointerSetter: #a665cb; --clade-Spaniel: #90a013; --clade-ScentHound: #7976e3; --clade-Mediterranean: #b88f1b; --clade-NewWorld: #2d88e2; --clade-Terrier: #c76a00; --clade-Pinscher: #1794b5; --clade-AmericanTerrier: #e7685d; --clade-AmericanToy: #1f9996; --clade-Poodle: #df6597; --clade-Hungarian: #199e6e; --clade-SmallSpitz: #b75fb8; --clade-ToySpitz: #60991d; --clade-Schnauzer: #a17dea; --clade-NordicSpitz: #968800; --clade-AsianToy: #698ff7; --clade-AsianSpitz: #b6770b; --clade-none: #7d847e; --clade-wild: #d9d3c4;
 }
 
 * { box-sizing: border-box; }
@@ -590,7 +594,7 @@ body::before {
 }
 
 /* ---------- breed pairs page ---------- */
-.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; border: 0; }
 .pairs { padding: 84px var(--gutter) 4rem; max-width: 1340px; margin: 0 auto; }
 .pairs-head { max-width: 50rem; margin-bottom: 2.5rem; }
 .pairs-head h1 { font-family: var(--font-display); font-weight: 500; font-size: var(--step-2); line-height: 1.08; margin: 0 0 1rem; }
@@ -948,6 +952,11 @@ body::before {
 }
 .ex-tip .bf { white-space: normal; }
 .ex-tip.on { opacity: 1; }
+/* Mosaic: the hovered photo itself, at the top of the tooltip (thumbnail first, then full size). */
+.ex-tip.has-photo { width: 256px; max-width: 256px; white-space: normal; }
+.ex-tip-photo { display: block; position: relative; width: 240px; height: 240px; margin-bottom: 0.35rem; background-color: var(--bg-photo, #1a211e); background-repeat: no-repeat; overflow: hidden; }
+.ex-tip-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .15s ease; }
+.ex-tip-photo img.on { opacity: 1; }
 .ex-tip strong { font-family: var(--font-display); font-weight: 500; font-size: 1.05rem; color: var(--ink); }
 .ex-canvas { will-change: transform; }
 
@@ -1587,7 +1596,8 @@ body::before {
 }
 
 /* ---------- reading level on every page (SiteNav) ---------- */
-.site-nav .level-nav { margin-left: auto; align-self: center; letter-spacing: 0; text-transform: none; box-shadow: none; flex: none; }
+.site-nav .nav-tools { margin-left: auto; align-self: center; flex: none; position: relative; display: flex; align-items: center; }
+.site-nav .level-nav { letter-spacing: 0; text-transform: none; box-shadow: none; flex: none; }
 .level-pin { position: fixed; top: 14px; right: 16px; z-index: 30; opacity: 0; pointer-events: none; transform: translateY(-6px); transition: opacity .25s ease, transform .25s ease; }
 .level-pin.on { opacity: 1; pointer-events: auto; transform: none; }
 .level-pin .level-toggle { letter-spacing: 0; text-transform: none; }
@@ -1595,7 +1605,7 @@ body::before {
   /* Phones: the reading level gets its own row under the swipeable page links. */
   .site-nav { flex-wrap: wrap; row-gap: 8px; }
   .site-nav > ul { flex: 1 1 100%; }
-  .site-nav .level-nav { margin-left: 0; }
+  .site-nav .nav-tools { margin-left: 0; }
   .purpose, .pairs, .geo, .replica:not(.embedded), .explorer { padding-top: 112px; }
 }
 
@@ -1650,7 +1660,7 @@ body::before {
 @media (max-height: 520px) and (orientation: landscape) {
   .site-nav { flex-wrap: nowrap; padding: 8px max(16px, env(safe-area-inset-left)); font-size: 0.68rem; }
   .site-nav > ul { flex: 1 1 0; min-width: 0; }
-  .site-nav .level-nav { margin-left: 0; }
+  .site-nav .nav-tools { margin-left: 0; }
   .hero { padding: 48px max(16px, env(safe-area-inset-left)) 20px; }
   .hero h1 { font-size: clamp(1.9rem, 9svh, 2.6rem); margin-bottom: 0.7rem; }
   .hero .dek { font-size: 0.95rem; margin-bottom: 0.6rem; max-width: 34rem; }
@@ -1864,3 +1874,191 @@ a.bp-link:hover { color: var(--gold); }
 .dg-end-actions { display: flex; flex-wrap: wrap; gap: 0.7rem; align-items: center; }
 .dg-secondary { font: inherit; font-size: 0.95rem; font-weight: 600; color: var(--gold); background: transparent; border: 1px solid var(--gold-dim); border-radius: 2px; padding: 0.55rem 1.05rem; cursor: pointer; }
 .dg-secondary:hover { border-color: var(--gold); }
+
+/* ---------- family tree: hovering a breed traces its line back to the grey wolf ---------- */
+/* White text, with a dark halo so it stays readable over the tree's lines in either theme. */
+.cladogram .wolf-label { font-family: var(--font-label); font-size: 20px; font-weight: 600; letter-spacing: 0.04em; fill: #ffffff; paint-order: stroke; stroke: #0d1110; stroke-width: 5px; stroke-linejoin: round; }
+
+/* ---------- family tree page: a breed or family named in the text pops out in the right panel ---------- */
+.tip-dock .dock-hint { border-top-color: var(--gold); animation: dock-pop .32s cubic-bezier(.2, .9, .3, 1.25) both; }
+.tip-dock .dock-hint .tip-photo { height: 190px; }
+@keyframes dock-pop { from { opacity: 0; transform: translateX(14px) scale(.94); } to { opacity: 1; transform: none; } }
+.dock-thumbs { list-style: none; margin: 0.6rem 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px 6px; }
+.dock-thumbs li { font-size: 0.72rem; line-height: 1.2; color: var(--ink-2); min-width: 0; overflow-wrap: break-word; hyphens: auto; }
+.dock-thumbs img, .dock-thumbs span { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; background: var(--bg-photo); margin-bottom: 3px; }
+
+/* ================================================================ accessibility
+   Features that don't change the page's content, layout, colors or type: a skip link, a
+   pause control for the header animation, and keyboard-focus rings. */
+
+/* Skip link: off screen until it receives keyboard focus. */
+.skip-link {
+  position: fixed; left: 12px; top: -100px; z-index: 1000;
+  padding: 0.6rem 1rem; border-radius: 3px;
+  background: var(--gold); color: var(--bg);
+  font-family: var(--font-label); font-weight: 600; text-decoration: none;
+}
+.skip-link:focus { top: 12px; outline: 2px solid var(--ink); outline-offset: 2px; }
+/* The skip target (the page headline) takes focus without drawing a ring around it. */
+h1[tabindex="-1"]:focus { outline: none; }
+
+/* Pause / play for the header animation, in the hero's corner. */
+.motion-toggle {
+  position: absolute; right: var(--gutter); bottom: 14px; z-index: 3;
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  padding: 0.3rem 0.6rem; border: 1px solid var(--rule); border-radius: 999px;
+  background: rgba(13, 17, 16, 0.7); color: var(--ink-2);
+  font: 500 0.75rem var(--font-label); letter-spacing: 0.04em; cursor: pointer;
+}
+.motion-toggle:hover { color: var(--ink); border-color: var(--ink-3); }
+@media (prefers-reduced-motion: reduce) { .motion-toggle { display: none; } }
+
+/* Breadcrumb links: underlined, so they don't rely on color alone. */
+.bp-crumbs a { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+
+/* Keyboard focus on chart marks drawn in SVG (wedges, blocks, dots, rows). */
+svg [tabindex]:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+/* Windows high contrast and other forced-color modes: the browser supplies every color;
+   this only makes sure the keyboard focus ring uses the system highlight. */
+@media (forced-colors: active) {
+  :focus-visible { outline: 2px solid Highlight; }
+}
+
+
+/* ================================================================ light mode
+   Opt-in with the switch in the top-right corner; <html data-theme="light"> carries the
+   choice. Everything below applies only then: dark mode's rules above are untouched. */
+
+/* The light-mode switch (new in both themes; it uses the existing tokens). */
+.theme-toggle { display: inline-flex; align-items: center; gap: 7px; color: var(--ink-2); font-family: var(--font-label); }
+.theme-toggle.is-light { color: var(--gold); }
+.tt-bulb { display: block; flex: none; }
+.tt-switch { position: relative; flex: none; width: 40px; height: 22px; border-radius: 999px; border: 1px solid var(--rule); background: rgba(13, 17, 16, 0.92); box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35); cursor: pointer; padding: 0; }
+.tt-knob { position: absolute; top: 3px; left: 3px; width: 14px; height: 14px; border-radius: 50%; background: var(--ink-2); transition: transform .2s ease, background .2s ease; }
+.tt-switch[aria-checked="true"] .tt-knob { transform: translateX(18px); background: var(--gold); }
+.tt-switch:hover .tt-knob { background: var(--ink); }
+.tt-switch[aria-checked="true"]:hover .tt-knob { background: var(--gold); }
+.tt-switch:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+/* Where it lives: hanging off the reading-level pill, out of the flow, so the pill (and the
+   "?" button on the family-tree page) stay exactly where they are. */
+.nav-tools .theme-toggle, .level-pin .theme-toggle, .gloss .theme-toggle { position: absolute; right: calc(100% + 12px); top: 50%; transform: translateY(-50%); }
+@media (max-width: 900px) and (orientation: portrait) {
+  /* Phones held upright: the pill sits at the left on its own row, so the switch goes to its right. */
+  .nav-tools .theme-toggle { right: auto; left: calc(100% + 12px); }
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #f3f8f5;
+  --bg-raise: #e5efea;
+  --bg-card: rgba(255, 255, 255, 0.86);
+  --rule: #c7d9d0;
+  --ink: #0d1f18;
+  --ink-2: #24453a;
+  --ink-3: #3e5f53;
+  --gold: #9c5800;
+  --gold-dim: #b07400;
+  --bg-photo: #d9e6e0;
+  --dim-fill: #9fb3aa;
+  --clade-Alpine: #d35e2c; --clade-EuropeanMastiff: #169caa; --clade-Drover: #d4556c; --clade-UKRural: #11a189; --clade-ContinentalHerder: #c459a1; --clade-Retriever: #309f47; --clade-PointerSetter: #a665cb; --clade-Spaniel: #87960b; --clade-ScentHound: #7976e3; --clade-Mediterranean: #b2890d; --clade-NewWorld: #2d88e2; --clade-Terrier: #c76a00; --clade-Pinscher: #1694b5; --clade-AmericanTerrier: #e5665c; --clade-AmericanToy: #0a9a97; --clade-Poodle: #df6597; --clade-Hungarian: #199e6e; --clade-SmallSpitz: #b75fb8; --clade-ToySpitz: #60991d; --clade-Schnauzer: #9f7be8; --clade-NordicSpitz: #968800; --clade-AsianToy: #658af2; --clade-AsianSpitz: #b6770b; --clade-none: #76877f; --clade-wild: #1d3a30;
+}
+:root[data-theme="light"] body::before { opacity: 0.05; }
+:root[data-theme="light"] .hero { background: radial-gradient(60vmax 60vmax at 82% 30%, rgba(232, 183, 74, 0.26), transparent 60%), radial-gradient(50vmax 50vmax at 10% 100%, rgba(28, 168, 183, 0.16), transparent 60%); }
+:root[data-theme="light"] .hero::after { background: repeating-radial-gradient(circle, transparent 0 34px, rgba(13, 31, 24, 0.07) 34px 35px); }
+:root[data-theme="light"] .hero-circos { background: radial-gradient(60vmax 60vmax at 80% 35%, rgba(223, 101, 151, 0.18), transparent 60%), radial-gradient(50vmax 50vmax at 10% 100%, rgba(232, 183, 74, 0.22), transparent 60%); }
+:root[data-theme="light"] .hero-circos::after { background: repeating-conic-gradient(from 0deg, rgba(13, 31, 24, 0.08) 0 0.6deg, transparent 0.6deg 2.14deg); }
+:root[data-theme="light"] .hero-history { background: radial-gradient(60vmax 60vmax at 78% 30%, rgba(143, 179, 201, 0.30), transparent 60%), radial-gradient(50vmax 50vmax at 10% 100%, rgba(232, 183, 74, 0.22), transparent 60%); }
+/* Tooltips, pop-ups and panels that were near-black glass become near-white paper. */
+:root[data-theme="light"] .tip, :root[data-theme="light"] .hint-pop, :root[data-theme="light"] .ex-tip { background: rgba(255, 255, 255, 0.97); box-shadow: 0 12px 30px rgba(13, 31, 24, 0.18); }
+:root[data-theme="light"] .tip-dock .tip { box-shadow: 0 -8px 20px rgba(13, 31, 24, 0.14); }
+:root[data-theme="light"] .level-toggle, :root[data-theme="light"] .tt-switch { background: rgba(243, 248, 245, 0.94); box-shadow: 0 4px 14px rgba(13, 31, 24, 0.14); }
+:root[data-theme="light"] .motion-toggle { background: rgba(243, 248, 245, 0.8); }
+:root[data-theme="light"] .hi-chips li { background: rgba(243, 248, 245, 0.9); }
+:root[data-theme="light"] .ex-bar { background: rgba(243, 248, 245, 0.94); }
+:root[data-theme="light"] .ex-drawer { background: #e5efea; box-shadow: -20px 0 40px rgba(13, 31, 24, 0.18); }
+:root[data-theme="light"] .ex-prev, :root[data-theme="light"] .ex-next, :root[data-theme="light"] .bg-prev, :root[data-theme="light"] .bg-next { background: rgba(243, 248, 245, 0.75); }
+:root[data-theme="light"] .bg-prev:hover, :root[data-theme="light"] .bg-next:hover { background: rgba(243, 248, 245, 0.92); }
+:root[data-theme="light"] .lt-zoom button { background: rgba(236, 231, 218, 0.92); }
+:root[data-theme="light"] .gloss-backdrop { background: rgba(13, 31, 24, 0.45); }
+:root[data-theme="light"] .gloss-dialog { box-shadow: 0 24px 60px rgba(13, 31, 24, 0.25); }
+:root[data-theme="light"] .site-footer { background: #e5efea; }
+:root[data-theme="light"] .sf-cites a { border-bottom-color: #b5cbbf; }
+/* Image placeholders and photo frames. */
+:root[data-theme="light"] .tip-photo, :root[data-theme="light"] .specimens img, :root[data-theme="light"] .rel-bar, :root[data-theme="light"] .job-gallery img, :root[data-theme="light"] .job-nophoto,
+:root[data-theme="light"] .cd-breed img, :root[data-theme="light"] .cd-noimg, :root[data-theme="light"] .cd-thumb, :root[data-theme="light"] .tip-photos img, :root[data-theme="light"] .tip-photos span,
+:root[data-theme="light"] .tip-thumbs img, :root[data-theme="light"] .ancient-card img, :root[data-theme="light"] .ancient-noimg, :root[data-theme="light"] .pop-photo, :root[data-theme="light"] .nm-photo,
+:root[data-theme="light"] .nm-tphoto, :root[data-theme="light"] .hint-photo, :root[data-theme="light"] .hint-thumbs img, :root[data-theme="light"] .ex-strip button, :root[data-theme="light"] .ex-photo,
+:root[data-theme="light"] .bg-frame, :root[data-theme="light"] .dg-photo { background-color: var(--bg-photo); }
+:root[data-theme="light"] .term svg, :root[data-theme="light"] .hint-fig svg { background: var(--bg-raise); }
+/* Rules, bands and tracks. */
+:root[data-theme="light"] .rel-list li, :root[data-theme="light"] .pair-table td, :root[data-theme="light"] .hl-cands li, :root[data-theme="light"] .dg-history td { border-bottom-color: #d8e6df; }
+:root[data-theme="light"] .pair-table th { background: var(--bg-raise); }
+:root[data-theme="light"] .pair-table tbody tr:hover td, :root[data-theme="light"] .history-cta:hover, :root[data-theme="light"] .clade-key button:hover, :root[data-theme="light"] .clade-key button.on { background: #dcebe4; }
+:root[data-theme="light"] .show-all { background: var(--bg-raise); }
+:root[data-theme="light"] .show-all:hover { background: #dcebe4; }
+:root[data-theme="light"] .share-bar, :root[data-theme="light"] .cd-bar, :root[data-theme="light"] .ex-loadbar, :root[data-theme="light"] .pop-erabar { background: #d2e2da; }
+:root[data-theme="light"] .nm-card.has-photo .nm-chead { background: var(--bg-raise); }
+:root[data-theme="light"] .sel-ring { background: #9fb3aa; }
+:root[data-theme="light"] .job-table tr.is-sel td { background: rgba(232, 183, 74, 0.13); }
+:root[data-theme="light"] .pm-row:hover .pm-band { fill: #dcebe4; }
+:root[data-theme="light"] .pm-row.is-selected .pm-band { fill: rgba(232, 183, 74, 0.26); stroke: rgba(232, 183, 74, 0.9); }
+:root[data-theme="light"] .pm-n { fill: #fff; }
+:root[data-theme="light"] .cd-locked button:hover, :root[data-theme="light"] .hint:focus-visible { background: rgba(232, 183, 74, 0.28); }
+:root[data-theme="light"] .rotate-hint { background: rgba(232, 183, 74, 0.24); }
+:root[data-theme="light"] .ml-fig-ghost { fill: rgba(232, 183, 74, 0.28); }
+:root[data-theme="light"] .cd-treebtn:hover, :root[data-theme="light"] .dg-primary:hover { background: #f0c45c; }
+/* The origins maps drawn with classes. */
+:root[data-theme="light"] .jm-sphere { fill: #d6ebf0; }
+:root[data-theme="light"] .jm-grat { stroke: rgba(13, 31, 24, 0.08); }
+:root[data-theme="light"] .jm-land { fill: #b5d0c0; stroke: #f3f8f5; }
+:root[data-theme="light"] .jm-lead { stroke: rgba(13, 31, 24, 0.35); }
+:root[data-theme="light"] .jm-pt { stroke: #f3f8f5; }
+/* Chart text halos (paint-order strokes) take the paper color. */
+:root[data-theme="light"] .circos .ct-label, :root[data-theme="light"] .tl-mb-name, :root[data-theme="light"] .tl-mb-year, :root[data-theme="light"] .dig-label { stroke: #f3f8f5; }
+:root[data-theme="light"] .tl-era { fill: #1f6a94; }
+:root[data-theme="light"] .tl-ice-label { fill: #1a5a80; }
+:root[data-theme="light"] .tl-ice-label.strong { fill: #134a6b; }
+/* The game's verdict colors. */
+:root[data-theme="light"] .dg-error, :root[data-theme="light"] .dg-verdict.no::before { color: #c0392b; }
+:root[data-theme="light"] .dg-verdict.yes::before, :root[data-theme="light"] .dg-ai li.hit { color: #0e7743; }
+:root[data-theme="light"] .dg-ai li.hit .dg-ai-bar span { background: #0e7743; }
+/* The face in the history header. */
+:root[data-theme="light"] .face-ring { box-shadow: 0 0 0 1px rgba(13, 31, 24, 0.25), 0 0 0 10px rgba(13, 31, 24, 0.04), 0 20px 60px rgba(13, 31, 24, 0.25); }
+
+/* Fills use the dark theme's own bright gold with dark ink on top (9:1); --gold above is the
+   deeper amber that text and thin chart marks need on white. */
+:root[data-theme="light"] :is(.level-toggle button.on, .dg-primary, .cd-treebtn, .ex-open, .lineage-toggle, .sel-controls button, .tw-replay,
+  .ancient-badge, .sf-linkedin:hover, .skip-link, .job-chips button.on, .seg button[aria-pressed="true"]) { background: #e8b74a; color: #0d1f18; border-color: #e8b74a; }
+:root[data-theme="light"] :is(.mk-gold, .share-bar span, .cd-bar span, .cd-swatch, .ex-loadbar span, .dg-progress span, .tt-switch[aria-checked="true"] .tt-knob) { background: #e8b74a; }
+:root[data-theme="light"] .tt-switch[aria-checked="true"] { border-color: #b07400; }
+:root[data-theme="light"] .theme-toggle.is-light .tt-glass, :root[data-theme="light"] .theme-toggle.is-light .tt-rays { color: #e8b74a; }
+:root[data-theme="light"] .theme-toggle.is-light .tt-glass { stroke: #b07400; }
+:root[data-theme="light"] .theme-toggle.is-light { color: #b07400; }
+/* Links and the active-page underline keep the dark theme's gold rule. */
+:root[data-theme="light"] .site-nav a[aria-current="page"] { border-bottom-color: #e8b74a; }
+:root[data-theme="light"] .step.is-active .card { border-color: #e8b74a; }
+:root[data-theme="light"] .job-table tr.is-sel .job-cell { color: #874d00; }
+
+/* Wide screens (kept last, so it wins over the light theme's card shadow): the hover panel beside the chart is open space, not a card. It takes the
+   full height of the stage and whatever width the circle doesn't need, with no border,
+   background or shadow, and a larger photo and type. (Mid-size screens float it over the
+   chart's corner, where it keeps its card so it stays readable.) */
+@media (min-width: 1181px) {
+  /* The circle keeps the size it had with the narrow panel: the chart asks for a square as
+     tall as the stage (100cqh) and the panel keeps its original 220-260px; the panel only
+     grows into width the circle can't use (screens where the circle is height-limited). */
+  .figure-stage.docked { container-type: size; }
+  .figure-stage.docked .stage-chart { flex: 0 1 100cqh; }
+  .figure-stage.docked .tip-dock { flex: 1 0 clamp(220px, 17vw, 260px); max-width: 460px; align-self: stretch; max-height: none; align-content: center; padding-right: 4px; }
+  .tip-dock .tip, :root[data-theme="light"] .tip-dock .tip { background: none; border: 0; box-shadow: none; padding: 0; font-size: 0.92rem; line-height: 1.45; }
+  .tip-dock .tip .tip-photo, .tip-dock .dock-hint .tip-photo { height: auto; aspect-ratio: 4 / 3; max-height: 42svh; margin-bottom: 0.9rem; }
+  .tip-dock .tip .tip-name { font-size: clamp(1.5rem, 1.1rem + 0.8vw, 2rem); line-height: 1.1; margin-bottom: 0.35rem; }
+  .tip-dock .tip .tip-sub, .tip-dock .tip .hint-fam, .tip-dock .tip .tip-clade { font-size: 0.95rem; }
+  .figure-stage.docked .tip-dock { container-type: inline-size; }
+  .tip-dock .dock-thumbs { gap: 10px 8px; }
+  /* Four across only when the panel has grown into spare width. */
+  @container (min-width: 320px) { .tip-dock .dock-thumbs { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  .tip-dock .dock-thumbs li { font-size: 0.78rem; }
+  .tip-dock-empty { border: 0; padding: 0; font-size: 0.9rem; align-self: center; }
+}

@@ -6,7 +6,7 @@ import JobMap from "./JobMap";
 import { MixingBars, PurposeMatrix } from "./PurposeCharts";
 import { PHONE, SiteNav, useMedia } from "./shared";
 import { data } from "@/lib/tree";
-import { cladeColor } from "@/lib/palette";
+import { cladeVar } from "@/lib/palette";
 import { photoOf } from "@/lib/photos";
 import { FAMILIES, PURPOSE_LEVELS, PURPOSE_NOTE, PURPOSES, SUMMARIES, type PurposeId } from "@/lib/purpose";
 import { Lv, useReadingLevel } from "@/lib/readingLevel";
@@ -33,7 +33,7 @@ export default function PurposePage() {
   // Leaving one breed only clears the hover if nothing else has been entered since (the map's
   // and the gallery's enter/leave events can arrive in either order).
   const hover = useCallback((c: string, on: boolean) => setHovered((h) => (on ? c : h === c ? null : h)), []);
-  const famColor = (f: string) => (f === "_none" ? "#7d847e" : cladeColor(f));
+  const famColor = (f: string) => (f === "_none" ? cladeVar(null) : cladeVar(f));
   const colorOf = useCallback(
     (c: string) => famColor(s.families.find((f) => s.byFamily[f].includes(c))!),
     [s],
@@ -183,7 +183,7 @@ export default function PurposePage() {
                 <JobMap codes={s.codes} colorOf={colorOf} hovered={hovered} onHover={hover} />
               </div>
             </div>
-            <div className="job-gallery" aria-label={`${purpose.name} breeds by family`}>
+            <div className="job-gallery" role="region" tabIndex={0} aria-label={`${purpose.name} breeds by family`}>
               <div className="job-masonry">
               {[...s.families].sort((a, b) => s.byFamily[b].length - s.byFamily[a].length).map((f) => (
                 <section key={f}>
@@ -201,7 +201,7 @@ export default function PurposePage() {
                         onPointerLeave={() => hover(c, false)}
                       >
                         {photoOf(c) ? (
-                          <img src={photoOf(c)} alt={data.breeds[c]?.name ?? ""} loading="lazy" referrerPolicy="no-referrer" />
+                          <img src={photoOf(c)} alt="" loading="lazy" referrerPolicy="no-referrer" />
                         ) : (
                           <span className="job-nophoto" />
                         )}

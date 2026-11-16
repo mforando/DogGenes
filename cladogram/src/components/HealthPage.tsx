@@ -5,7 +5,7 @@ import Cladogram from "./Cladogram";
 import { FreqBars, TraitMatrix } from "./HealthCharts";
 import { PHONE, SiteNav, useMedia } from "./shared";
 import { data } from "@/lib/tree";
-import { cladeColor } from "@/lib/palette";
+import { cladeVar } from "@/lib/palette";
 import { photoOf } from "@/lib/photos";
 import { VARIANT_LEVELS, VARIANTS, candidates, familiesOf, type Variant } from "@/lib/health";
 import { Lv, useReadingLevel, type ReadingLevel } from "@/lib/readingLevel";
@@ -20,9 +20,9 @@ function Chip({ code }: { code: string }) {
   return (
     <li className="hl-chip">
       {url ? (
-        <img src={url} alt={nameOf(code)} loading="lazy" referrerPolicy="no-referrer" />
+        <img src={url} alt="" loading="lazy" referrerPolicy="no-referrer" />
       ) : (
-        <span className="hl-noimg" style={{ borderColor: cladeColor(data.breeds[code]?.clade ?? null, code) }} aria-hidden />
+        <span className="hl-noimg" style={{ borderColor: cladeVar(data.breeds[code]?.clade ?? null, code) }} aria-hidden />
       )}
       <span>{nameOf(code)}</span>
     </li>
@@ -257,7 +257,7 @@ export default function HealthPage() {
               <ul className="hl-cands">
                 {cand.map((c) => (
                   <li key={c.code}>
-                    <i style={{ background: cladeColor(data.breeds[c.code]?.clade ?? null, c.code) }} aria-hidden />
+                    <i style={{ background: cladeVar(data.breeds[c.code]?.clade ?? null, c.code) }} aria-hidden />
                     <span className="hl-cname">{nameOf(c.code)}</span>
                     <span className="hl-cmeta">
                       linked to {c.links} carrier{c.links === 1 ? "" : "s"}

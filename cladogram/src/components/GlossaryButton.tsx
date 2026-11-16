@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { TermCard, type TermId } from "./Primer";
 import LevelToggle from "./LevelToggle";
+import { trapTab } from "@/lib/focusTrap";
+import ThemeToggle from "./ThemeToggle";
 
 /**
  * A red "?" fixed in the top-right corner while the glossary or the scroller is on screen.
@@ -13,6 +15,7 @@ export default function GlossaryButton({ terms, watch }: { terms: TermId[]; watc
   const [open, setOpen] = useState(false);
   const btn = useRef<HTMLButtonElement>(null);
   const closeBtn = useRef<HTMLButtonElement>(null);
+  const dialog = useRef<HTMLDivElement>(null);
 
   // Show it from the moment the glossary's top enters the screen until the scroller's
   // bottom leaves it, computed straight from scroll position on every frame that scrolls.
@@ -45,6 +48,7 @@ export default function GlossaryButton({ terms, watch }: { terms: TermId[]; watc
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setOpen(false);
+      trapTab(e, dialog.current);
     };
     window.addEventListener("keydown", onKey);
     const overflow = document.body.style.overflow;
@@ -60,8 +64,10 @@ export default function GlossaryButton({ terms, watch }: { terms: TermId[]; watc
 
   return (
     <>
-      <div className={`gloss${visible ? " on" : ""}`}>
+      {/* Off screen (opacity 0) the reading level and "?" must not take keyboard focus either. */}
+      <aside className={`gloss${visible ? " on" : ""}`} aria-label="Reading level and glossary" inert={!visible}>
         <LevelToggle className="level-fixed" />
+        <ThemeToggle />
         <button
           ref={btn}
           type="button"
@@ -74,10 +80,10 @@ export default function GlossaryButton({ terms, watch }: { terms: TermId[]; watc
         >
           ?
         </button>
-      </div>
+      </aside>
       {open && (
         <div className="gloss-backdrop" onClick={(e) => e.target === e.currentTarget && setOpen(false)}>
-          <div className="gloss-dialog" role="dialog" aria-modal="true" aria-labelledby="gloss-h">
+          <div ref={dialog} className="gloss-dialog" role="dialog" aria-modal="true" aria-labelledby="gloss-h">
             <div className="gloss-head">
               <div>
                 <p className="eyebrow">Quick glossary</p>

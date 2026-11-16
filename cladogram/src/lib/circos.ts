@@ -1,5 +1,5 @@
 import raw from "@/data/circos.json";
-import { cladeColor } from "./palette";
+import { cladeColor, cladeVar } from "./palette";
 import { isLeaf, layout } from "./tree";
 
 export type CNode = {
@@ -13,6 +13,8 @@ export type CNode = {
   a1: number;
   mid: number;
   color: string;
+  /** The same color as a CSS variable, for inline styles in React (follows the theme by itself). */
+  cssColor: string;
   /** number of cross-clade partners */
   degree: number;
 };
@@ -83,7 +85,11 @@ export const nodes: CNode[] = circosData.nodes.map((n, i) => {
     a0: hi - SEG + PAD / 2,
     a1: hi - PAD / 2,
     mid: hi - SEG / 2,
-    color: cladeColor(n.clade, n.code === "WOLF" ? "WOLF" : n.code),
+    // Looked up when read, so the chord diagram follows the light/dark switch.
+    get color() {
+      return cladeColor(n.clade, n.code === "WOLF" ? "WOLF" : n.code);
+    },
+    cssColor: cladeVar(n.clade, n.code === "WOLF" ? "WOLF" : n.code),
     degree: degree[n.code] ?? 0,
   };
 });

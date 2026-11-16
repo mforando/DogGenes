@@ -3,10 +3,12 @@
 import { useEffect, useRef, type RefObject } from "react";
 import * as d3 from "d3";
 import { ANCESTOR, ANCESTOR_BREED, data, GEOM, isLeaf, layout, nodeIdOf, type TNode } from "@/lib/tree";
-import { cladeColor, OUTGROUP } from "@/lib/palette";
+import { cladeColor } from "@/lib/palette";
 import type { View } from "@/lib/steps";
 import { photoOf } from "@/lib/photos";
 import { factsHtml } from "@/lib/breedFacts";
+import { LIGHT, tone } from "@/lib/theme";
+import { useTheme } from "@/lib/useTheme";
 
 type Props = {
   view: View;
@@ -25,9 +27,9 @@ type LinkGeom = { pa: number; pr: number; a: number; r: number };
 type WedgeGeom = { a: number; r: number; a0: number; a1: number };
 type ArcGeom = { a0: number; a1: number };
 
-const INK = "#e9e2d0";
-const INK_DIM = "#3a423d";
-const GOLD = "#e8b74a";
+let INK = "#e9e2d0";
+let INK_DIM = "#3a423d";
+let GOLD = "#e8b74a";
 const W = GEOM.size;
 
 const pol = (a: number, r: number): [number, number] => [r * Math.sin(a), -r * Math.cos(a)];
@@ -142,7 +144,11 @@ export default function Cladogram({ view, selected, onSelect, onHover, tipDock, 
   onSelectRef.current = onSelect;
 
   // Build the SVG scaffold once.
+  const theme = useTheme(); // rebuild when the light/dark switch changes
   useEffect(() => {
+    INK = tone("#e9e2d0", LIGHT.ink);
+    INK_DIM = tone("#3a423d", LIGHT.dim);
+    GOLD = tone("#e8b74a", LIGHT.gold);
     const el = host.current!;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const DUR = reduce ? 0 : 900;
@@ -151,7 +157,7 @@ export default function Cladogram({ view, selected, onSelect, onHover, tipDock, 
       .select(el)
       .append("svg")
       .attr("viewBox", `${-W / 2} ${-W / 2} ${W} ${W}`)
-      .attr("role", "img")
+      .attr("role", "group")
       .attr(
         "aria-label",
         `Circular cladogram of ${data.stats.dogs} dogs from 161 breeds, rooted on the golden jackal.`,
@@ -159,15 +165,15 @@ export default function Cladogram({ view, selected, onSelect, onHover, tipDock, 
 
     const defs = svg.append("defs");
     const glow = defs.append("radialGradient").attr("id", "halo");
-    glow.append("stop").attr("offset", "0%").attr("stop-color", "#1f2a25").attr("stop-opacity", 0.9);
-    glow.append("stop").attr("offset", "100%").attr("stop-color", "#0d1110").attr("stop-opacity", 0);
+    glow.append("stop").attr("offset", "0%").attr("stop-color", tone("#1f2a25", LIGHT.raise)).attr("stop-opacity", 0.9);
+    glow.append("stop").attr("offset", "100%").attr("stop-color", tone("#0d1110", LIGHT.bg)).attr("stop-opacity", 0);
 
     const zoomG = svg.append("g").attr("class", "zoom");
     zoomG.append("circle").attr("r", GEOM.rWedge + 40).attr("fill", "url(#halo)");
     const guides = zoomG.append("g").attr("class", "guides");
     for (const f of [0.25, 0.5, 0.75, 1]) {
       guides.append("circle").attr("r", GEOM.rTree * f).attr("fill", "none")
-        .attr("stroke", "#1e2723").attr("stroke-width", 0.6);
+        .attr("stroke", tone("#1e2723", LIGHT.grid)).attr("stroke-width", 0.6);
     }
 
     const gLinks = zoomG.append("g").attr("class", "links").attr("fill", "none");
@@ -178,6 +184,8 @@ export default function Cladogram({ view, selected, onSelect, onHover, tipDock, 
     const gClade = zoomG.append("g").attr("class", "clade-ring");
     const gLabels = zoomG.append("g").attr("class", "labels");
     const gMarks = zoomG.append("g").attr("class", "marks");
+    // Hovering a breed traces its line back to the grey wolf (drawn above the step's own paths).
+    const gWolf = zoomG.append("g").attr("class", "wolf-trace").attr("fill", "none").attr("pointer-events", "none");
     const gHit = zoomG.append("g").attr("class", "hits");
 
     const tip = d3.select(tipDock?.current ?? el).append("div").attr("class", "tip").attr("role", "status");
@@ -230,9 +238,9 @@ export default function Cladogram({ view, selected, onSelect, onHover, tipDock, 
       })
       .attr("fill", (d) => {
         const bs = (d.data as { bs: number }).bs;
-        return bs >= 90 ? GOLD : bs >= 70 ? INK : "#0d1110";
+        return bs >= 90 ? GOLD : bs >= 70 ? INK : tone("#0d1110", LIGHT.bg);
       })
-      .attr("stroke", (d) => ((d.data as { bs: number }).bs >= 70 ? "#0d1110" : INK))
+      .attr("stroke", (d) => ((d.data as { bs: number }).bs >= 70 ? tone("#0d1110", LIGHT.bg) : INK))
       .attr("stroke-width", 0.8)
       .attr("opacity", 0);
 
@@ -295,10 +303,12 @@ export default function Cladogram({ view, selected, onSelect, onHover, tipDock, 
       .on("focus", (ev, d) => showTip(ev, d))
       .on("pointerenter.report focus.report", (_, d) => {
         if (isLeaf(d) && d.data.code !== ANCESTOR) onHoverRef.current?.(d.data.code);
+        traceToWolf(d);
       })
       .on("pointerleave blur", () => {
         tip.classed("on", false);
         onHoverRef.current?.(null);
+        traceToWolf(null);
       })
       .on("click", (_, d) => {
         if (!current.explore || !isLeaf(d)) return;
@@ -468,7 +478,7 @@ export default function Cladogram({ view, selected, onSelect, onHover, tipDock, 
       labelSel
         .classed("hi", (d) => hasFocus && onIds.has(d.data.id))
         .transition(T)
-        .attr("fill", (d) => (isAncestor(d) ? GOLD : onIds.has(d.data.id) ? (hasFocus ? "#fffaf0" : "#b9b3a3") : "#4a524c"))
+        .attr("fill", (d) => (isAncestor(d) ? GOLD : onIds.has(d.data.id) ? (hasFocus ? tone("#fffaf0", LIGHT.hi) : tone("#b9b3a3", LIGHT.ink2)) : tone("#4a524c", LIGHT.dim)))
         .attr("fill-opacity", (d) => (isAncestor(d) ? (ancOn ? 1 : 0) : 1));
       hitSel.attr("pointer-events", (d) => (isAncestor(d) && !ancOn ? "none" : null));
       supportSel.transition(T).attr("opacity", v.support ? 1 : 0);
@@ -535,7 +545,7 @@ export default function Cladogram({ view, selected, onSelect, onHover, tipDock, 
           (enter) => {
             const g = enter.append("g").attr("class", "mrca").attr("opacity", 0);
             g.append("circle").attr("class", "pulse").attr("r", 5);
-            g.append("circle").attr("r", 3.4).attr("fill", GOLD).attr("stroke", "#0d1110").attr("stroke-width", 1.5);
+            g.append("circle").attr("r", 3.4).attr("fill", GOLD).attr("stroke", tone("#0d1110", LIGHT.bg)).attr("stroke-width", 1.5);
             return g;
           },
           (u) => u,
@@ -559,12 +569,63 @@ export default function Cladogram({ view, selected, onSelect, onHover, tipDock, 
         .join((enter) => {
           const g = enter.append("g").attr("class", "root-mk").attr("opacity", 0);
           g.append("circle").attr("class", "pulse").attr("r", 10);
-          g.append("circle").attr("r", 5).attr("fill", OUTGROUP).attr("stroke", "#0d1110").attr("stroke-width", 1.5);
+          g.append("circle").attr("r", 5).attr("fill", cladeColor(null, "WOLF")).attr("stroke", tone("#0d1110", LIGHT.bg)).attr("stroke-width", 1.5);
           g.append("text").attr("x", 12).attr("y", -10).attr("class", "mk-label").text("root");
           return g;
         });
       rootMk.transition().duration(DUR).attr("opacity", 1);
       gMarks.selectAll("g.root-mk").filter(() => !showRoot).remove();
+    }
+
+    // ---------- hover: the hovered breed's line back to the grey wolf ----------
+    // Whenever the whole circle is showing (not zoomed into a few wedges), pointing at a breed
+    // draws its path through the tree to where it meets the grey wolf's branch, and labels the
+    // wolf's end of the line in white.
+    function traceToWolf(d: TNode | null) {
+      const wolf = mainLeaf("WOLF");
+      const on = d && isLeaf(d) && d.data.code !== "WOLF" && d.data.code !== ANCESTOR && !current.zoom && wolf ? d : null;
+      const nodes = on && wolf ? ((on as TNode).path(wolf as TNode) as TNode[]) : [];
+      // (each node's own segment runs from its parent out to it; the leaves' wedges sit further out)
+      const top = nodes.length ? nodes.reduce((x, y) => (y.depth < x.depth ? y : x)) : null;
+      const iTop = top ? nodes.indexOf(top) : 0;
+      const segs = nodes.filter((n) => n !== top).map((n) => ({ n, breedSide: nodes.indexOf(n) < iTop }));
+      gWolf.selectAll<SVGPathElement, (typeof segs)[number]>("path")
+        .data(segs, (s) => String(s.n.data.id))
+        .join("path")
+        .attr("d", (s) => linkPath(linkGeom(s.n)))
+        .attr("stroke", (s) => (s.breedSide ? GOLD : INK))
+        .attr("stroke-width", (s) => (s.breedSide ? 2.6 : 2))
+        .attr("stroke-linecap", "round")
+        .attr("stroke-opacity", 0.95);
+      // Carry both ends out to the rim, where each breed's wedge (its data point) is drawn.
+      const spokes = on && wolf ? [{ key: "breed", a: on.a, r0: on.r, color: GOLD, w: 2.6 }, { key: "wolf", a: wolf.a, r0: wolf.r, color: INK, w: 2 }] : [];
+      gWolf.selectAll<SVGLineElement, (typeof spokes)[number]>("line.spoke")
+        .data(spokes, (k) => k.key)
+        .join("line")
+        .attr("class", "spoke")
+        .attr("x1", (k) => pol(k.a, k.r0)[0]).attr("y1", (k) => pol(k.a, k.r0)[1])
+        .attr("x2", (k) => pol(k.a, GEOM.rWedge)[0]).attr("y2", (k) => pol(k.a, GEOM.rWedge)[1])
+        .attr("stroke", (k) => k.color).attr("stroke-width", (k) => k.w).attr("stroke-linecap", "round").attr("stroke-opacity", 0.95);
+      const marks = on && wolf && top ? [{ kind: "meet", a: top.a, r: top.r }, { kind: "wolf", a: wolf.a, r: GEOM.rWedge }] : [];
+      const m = gWolf.selectAll<SVGGElement, (typeof marks)[number]>("g.wolf-mk")
+        .data(marks, (k) => k.kind)
+        .join((enter) => {
+          const g = enter.append("g").attr("class", (k) => `wolf-mk ${k.kind}`);
+          g.append("circle").attr("r", (k) => (k.kind === "wolf" ? 4.5 : 3.4))
+            .attr("fill", (k) => (k.kind === "wolf" ? "#ffffff" : GOLD))
+            .attr("stroke", tone("#0d1110", LIGHT.bg)).attr("stroke-width", 1.5);
+          g.filter((k) => k.kind === "wolf").append("text").attr("class", "wolf-label").attr("text-anchor", "middle").text("Grey wolf");
+          return g;
+        })
+        .attr("transform", (k) => {
+          const [x, y] = pol(k.a, k.r);
+          return `translate(${x},${y})`;
+        });
+      // The label sits just inside the circle, toward the centre, so it never covers the ring names.
+      m.select("text.wolf-label").each(function (k) {
+        const [dx, dy] = pol(k.a, -30);
+        d3.select(this).attr("x", dx).attr("y", dy).attr("dy", "0.35em");
+      });
     }
 
     // ---------- haplotype-sharing bundles ----------
@@ -633,7 +694,7 @@ export default function Cladogram({ view, selected, onSelect, onHover, tipDock, 
           (u) => u,
           (exit) => exit.transition().duration(250).attr("opacity", 0).remove(),
         )
-        .attr("fill", "#0d1110")
+        .attr("fill", tone("#0d1110", LIGHT.bg))
         .attr("cx", (d) => pol(d.a, GEOM.rWedge - 5)[0])
         .attr("cy", (d) => pol(d.a, GEOM.rWedge - 5)[1])
         .transition("dogs").delay((_, i) => DUR + i * 40).duration(250)
@@ -662,7 +723,7 @@ export default function Cladogram({ view, selected, onSelect, onHover, tipDock, 
       tip.remove();
       api.current = null;
     };
-  }, []);
+  }, [theme]);
 
   useEffect(() => {
     api.current?.update(view, selected);

@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 import * as d3 from "d3";
 import { data } from "@/lib/tree";
-import { cladeColor } from "@/lib/palette";
+import { cladeVar } from "@/lib/palette";
 import { dnaRelatives, treeRelatives } from "@/lib/relatives";
 import { B, Term } from "./Hints";
 
@@ -12,7 +12,7 @@ const MAX_DNA = 8;
 function BreedButton({ code, onSelect }: { code: string; onSelect: (c: string) => void }) {
   return (
     <button type="button" className="rel-name" onClick={() => onSelect(code)}>
-      <i style={{ background: cladeColor(data.breeds[code].clade, code) }} aria-hidden />
+      <i style={{ background: cladeVar(data.breeds[code].clade, code) }} aria-hidden />
       {data.breeds[code].name}
     </button>
   );
@@ -48,7 +48,7 @@ export default function RelatedBreeds({ code, onSelect }: { code: string; onSele
               <li key={r.code}>
                 <BreedButton code={r.code} onSelect={onSelect} />
                 <span className="rel-bar" aria-hidden>
-                  <span style={{ width: `${x(r.pct)}%`, background: cladeColor(data.breeds[r.code].clade, r.code) }} />
+                  <span style={{ width: `${x(r.pct)}%`, background: cladeVar(data.breeds[r.code].clade, r.code) }} />
                 </span>
                 <span className="rel-pct">{r.pct < 1 ? r.pct.toFixed(1) : Math.round(r.pct)}%</span>
               </li>

@@ -7,6 +7,8 @@ import { photoOf } from "@/lib/photos";
 import { factsHtml } from "@/lib/breedFacts";
 import { circosTree, elbow, treeCodeOf, type CTNode } from "@/lib/circosTree";
 import { descendantsOf } from "@/lib/pairs";
+import { LIGHT, tone } from "@/lib/theme";
+import { useTheme } from "@/lib/useTheme";
 
 /** What the circos figure should emphasise. */
 export type CircosView = {
@@ -32,12 +34,13 @@ export type CircosView = {
   frozen?: boolean;
 };
 
-const INK = "#e9e2d0";
+let INK = "#e9e2d0";
 /** Sister groups up to this many breeds get white lines all the way to their blocks. */
 const RELATIVE_LIMIT = 6;
-const DIM = "#2c3430";
+let GOLD = "#e8b74a";
+let DIM = "#2c3430";
 /** Labels of breeds that share DNA with the selected breed (full chart). */
-const CYAN = "#5fd3e2";
+let CYAN = "#5fd3e2";
 const W = CGEOM.size;
 const mb = (v: number) => `${(v / 1e6).toFixed(1)} Mb`;
 const pol = (a: number, r: number): [number, number] => [r * Math.sin(a), -r * Math.cos(a)];
@@ -93,20 +96,25 @@ export default function Circos({
   const host = useRef<HTMLDivElement>(null);
   const api = useRef<{ update: (v: CircosView) => void; spot: (code: string | null) => void } | null>(null);
 
+  const theme = useTheme(); // rebuild when the light/dark switch changes
   useEffect(() => {
+    INK = tone("#e9e2d0", LIGHT.ink);
+    DIM = tone("#2c3430", LIGHT.dim);
+    CYAN = tone("#5fd3e2", LIGHT.cyan);
+    GOLD = tone("#e8b74a", LIGHT.gold);
     const el = host.current!;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const DUR = reduce ? 0 : 750;
 
     const svg = d3.select(el).append("svg")
       .attr("viewBox", `${-W / 2} ${-W / 2} ${W} ${W}`)
-      .attr("role", "img")
+      .attr("role", "group")
       .attr("aria-label", ariaLabel ?? "Circos plot of haplotype sharing between dog breeds from different clades.");
 
     const defs = svg.append("defs");
     const halo = defs.append("radialGradient").attr("id", "c-halo");
-    halo.append("stop").attr("offset", "0%").attr("stop-color", "#18211d");
-    halo.append("stop").attr("offset", "100%").attr("stop-color", "#0d1110").attr("stop-opacity", 0);
+    halo.append("stop").attr("offset", "0%").attr("stop-color", tone("#18211d", LIGHT.raise));
+    halo.append("stop").attr("offset", "100%").attr("stop-color", tone("#0d1110", LIGHT.bg)).attr("stop-opacity", 0);
     svg.append("circle").attr("r", CGEOM.rOut + 20).attr("fill", "url(#c-halo)");
 
     // Family tree (under the ribbons) and its highlighted paths (over them).
@@ -138,14 +146,14 @@ export default function Circos({
     // "Start" marker beside the wolf, pointing counter-clockwise.
     defs.append("marker").attr("id", "arrowhead").attr("viewBox", "0 0 10 10").attr("refX", 6).attr("refY", 5)
       .attr("markerWidth", 7).attr("markerHeight", 7).attr("orient", "auto-start-reverse")
-      .append("path").attr("d", "M0,0L10,5L0,10z").attr("fill", "#e8b74a");
+      .append("path").attr("d", "M0,0L10,5L0,10z").attr("fill", GOLD);
     const wolf = nodeByCode.get("WOLF")!;
     const gStart = svg.append("g").attr("class", "start-mk").attr("opacity", 0);
     {
       const r = CGEOM.rIn - 16;
       const a0 = wolf.mid, a1 = wolf.mid - 0.32;
       const [x0, y0] = pol(a0, r), [x1, y1] = pol(a1, r);
-      gStart.append("path").attr("fill", "none").attr("stroke", "#e8b74a").attr("stroke-width", 1.6)
+      gStart.append("path").attr("fill", "none").attr("stroke", GOLD).attr("stroke-width", 1.6)
         .attr("marker-end", "url(#arrowhead)")
         .attr("d", `M${x0},${y0}A${r},${r} 0 0 0 ${x1},${y1}`);
       const [tx, ty] = pol(a0 + 0.02, r - 18);
@@ -251,11 +259,11 @@ export default function Circos({
         const breed = active(v) || (!hoverRibbon && v.treePath) || null;
         if (hoverRibbon) {
           const a = leafOf(hoverRibbon.a), b = leafOf(hoverRibbon.b);
-          if (a && b) trace(a, b, "#e8b74a", "#e8b74a", "lines meet");
+          if (a && b) trace(a, b, GOLD, GOLD, "lines meet");
         } else if (breed && breed !== "WOLF") {
           const a = leafOf(breed), w = circosTree.mainLeaf.get("WOLF");
           if (a && w) {
-            trace(a, w, "#e8b74a", INK, "split from wolves");
+            trace(a, w, GOLD, INK, "split from wolves");
             // Branches out to the relatives that split off along the breed's line.
             const self = treeCodeOf(breed);
             const skip = new Set([self, ...descendantsOf(self)]);
@@ -286,7 +294,7 @@ export default function Circos({
       gTreeHi.selectAll<SVGPathElement, Seg>("path")
         .data(segs, (d) => d.key)
         .join("path")
-        .sort((x, y) => (x.color === "#e8b74a" ? 1 : 0) - (y.color === "#e8b74a" ? 1 : 0))
+        .sort((x, y) => (x.color === GOLD ? 1 : 0) - (y.color === GOLD ? 1 : 0))
         .attr("d", (d) => {
           const p = d.n.parent as CTNode;
           // Stubs stop a little way out so they read as "a big group branches off here".
@@ -305,7 +313,7 @@ export default function Circos({
         .join((enter) => {
           const g = enter.append("g").attr("class", "ct-mark");
           g.append("circle").attr("r", 9).attr("class", "ct-pulse");
-          g.append("circle").attr("r", 4.5).attr("fill", "#e8b74a").attr("stroke", "#0d1110").attr("stroke-width", 1.5);
+          g.append("circle").attr("r", 4.5).attr("fill", GOLD).attr("stroke", tone("#0d1110", LIGHT.bg)).attr("stroke-width", 1.5);
           g.append("text").attr("class", "ct-label").attr("dy", "-0.9em").attr("text-anchor", "middle");
           return g;
         })
@@ -369,7 +377,7 @@ export default function Circos({
         .classed("kin", isKin)
         .transition(T)
         .attr("fill", (d) =>
-          isPartner(d) ? CYAN : isKin(d) ? "#fffaf0" : on(d) ? (hasFocus ? "#fffaf0" : "#b9b3a3") : isEnd(d) ? "#ffffff" : "#4a524c",
+          isPartner(d) ? CYAN : isKin(d) ? tone("#fffaf0", LIGHT.hi) : on(d) ? (hasFocus ? tone("#fffaf0", LIGHT.hi) : tone("#b9b3a3", LIGHT.ink2)) : isEnd(d) ? tone("#ffffff", LIGHT.hi) : tone("#4a524c", LIGHT.dim),
         )
         .attr("fill-opacity", (d) => (isPartner(d) || isKin(d) ? 1 : isEnd(d) ? 0.6 : 1));
       gStart.transition(T).attr("opacity", v.start ? 1 : 0);
@@ -533,7 +541,7 @@ export default function Circos({
       tip.remove();
       api.current = null;
     };
-  }, [ariaLabel]);
+  }, [ariaLabel, theme]);
 
   useEffect(() => {
     api.current?.update(view);

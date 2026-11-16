@@ -6,6 +6,7 @@ import SiteFooter from "@/components/SiteFooter";
 import { ReadingLevelProvider } from "@/lib/readingLevel";
 import { AUTHOR, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
 import JsonLd from "@/components/JsonLd";
+import SkipLink from "@/components/SkipLink";
 
 const display = Bodoni_Moda({ subsets: ["latin"], style: ["normal", "italic"], variable: "--font-display", display: "swap" });
 const body = Spectral({ subsets: ["latin"], weight: ["300", "400", "600"], style: ["normal", "italic"], variable: "--font-body", display: "swap" });
@@ -23,6 +24,8 @@ export const metadata: Metadata = {
   // Paste the Search Console token into NEXT_PUBLIC_GSC_VERIFICATION to verify ownership.
   ...(process.env.NEXT_PUBLIC_GSC_VERIFICATION ? { verification: { google: process.env.NEXT_PUBLIC_GSC_VERIFICATION } } : {}),
 };
+
+const THEME_BOOT = `try{if(localStorage.getItem("dg-theme")==="light")document.documentElement.dataset.theme="light"}catch(e){}`;
 
 const WEBSITE_LD = {
   "@context": "https://schema.org",
@@ -43,8 +46,13 @@ const GA_ID = "G-C0J6DE3KL8";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${display.variable} ${body.variable} ${label.variable}`}>
+    <html lang="en" className={`${display.variable} ${body.variable} ${label.variable}`} suppressHydrationWarning>
+      <head>
+        {/* Light mode, if chosen, before first paint: no dark flash. Dark needs no attribute. */}
+        <script dangerouslySetInnerHTML={{ __html: THEME_BOOT }} />
+      </head>
       <body>
+        <SkipLink />
         <JsonLd data={WEBSITE_LD} />
         <ReadingLevelProvider>
           {children}

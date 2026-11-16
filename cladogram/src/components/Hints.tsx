@@ -5,7 +5,7 @@ import { track } from "@/lib/track";
 import { createPortal } from "react-dom";
 import { TERMS, TermBody, TermFigure, type TermId } from "./Primer";
 import { data } from "@/lib/tree";
-import { cladeColor } from "@/lib/palette";
+import { cladeVar } from "@/lib/palette";
 import { photoOf } from "@/lib/photos";
 import { BreedFactsBlock } from "@/lib/breedFacts";
 
@@ -25,16 +25,21 @@ const HintCtx = createContext<{
   close: (id: string) => void;
   onBreed?: (code: string | null) => void;
   onClade?: (id: string | null) => void;
+  /** The word whose pop-up is open, for aria-expanded. */
+  openId: string | null;
 } | null>(null);
 
 export function HintProvider({
   children,
   onBreed,
   onClade,
+  docked = [],
 }: {
   children: ReactNode;
   onBreed?: (code: string | null) => void;
   onClade?: (id: string | null) => void;
+  /** Kinds of word whose card the page shows in a panel of its own (no floating pop-up). */
+  docked?: Pop["kind"][];
 }) {
   const [pop, setPop] = useState<Pop | null>(null);
   // The last word opened, so re-hovering the same word isn't counted twice.
@@ -54,13 +59,18 @@ export function HintProvider({
       onBreed?.(null);
       onClade?.(null);
     };
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && hide();
     window.addEventListener("scroll", hide, { passive: true });
-    return () => window.removeEventListener("scroll", hide);
+    window.addEventListener("keydown", onKey);
+    return () => {
+      window.removeEventListener("scroll", hide);
+      window.removeEventListener("keydown", onKey);
+    };
   }, [pop, onBreed, onClade]);
   return (
-    <HintCtx.Provider value={{ open, close, onBreed, onClade }}>
+    <HintCtx.Provider value={{ open, close, onBreed, onClade, openId: pop?.id ?? null }}>
       {children}
-      {pop && typeof document !== "undefined" && createPortal(<HintPop pop={pop} />, document.body)}
+      {pop && !docked.includes(pop.kind) && typeof document !== "undefined" && createPortal(<HintPop pop={pop} />, document.body)}
     </HintCtx.Provider>
   );
 }
@@ -89,7 +99,16 @@ function Trigger({ kind, id, className, label, children }: { kind: Pop["kind"]; 
       ref={ref}
       className={`hint ${className}`}
       tabIndex={0}
+      role="button"
       aria-label={label}
+      aria-expanded={ctx.openId === id}
+      onKeyDown={(e) => {
+        // Enter / Space open it like a button; Escape puts it away (WCAG 1.4.13).
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          enter();
+        } else if (e.key === "Escape") leave();
+      }}
       onPointerEnter={(e) => e.pointerType === "mouse" && enter()}
       onPointerLeave={(e) => e.pointerType === "mouse" && leave()}
       onClick={enter}
@@ -125,6 +144,74 @@ export function Clade({ id, children }: { id: string; children: ReactNode }) {
 /** Breeds in a family, in the order the tree draws them. */
 const cladeBreeds = (id: string) => Object.entries(data.breeds).filter(([, b]) => b.clade === id).map(([c]) => c);
 
+/**
+ * What a word's card shows: a breed's photo, family and facts; a glossary diagram and
+ * definition; or a family's breeds. `docked` is the larger version for a side panel.
+ */
+export function HintBody({ kind, id, docked = false }: { kind: Pop["kind"]; id: string; docked?: boolean }) {
+  if (kind === "breed") {
+    const b = data.breeds[id];
+    const src = photoOf(id);
+    return (
+      <>
+        {src && <img className={docked ? "tip-photo" : "hint-photo"} src={src} alt="" referrerPolicy="no-referrer" />}
+        <div className="tip-name">{b?.name}</div>
+        <div className="hint-fam">
+          <i style={{ background: cladeVar(b?.clade ?? null, id) }} />
+          {b?.clade ? `${data.clades[b.clade]} family` : id === "WOLF" || id === "GDJK" ? "Wild relative" : "No clear family"}
+        </div>
+        <BreedFactsBlock code={id} />
+      </>
+    );
+  }
+  if (kind === "term") {
+    const t = TERMS[id as TermId];
+    return (
+      <>
+        <div className="hint-fig"><TermFigure id={id as TermId} /></div>
+        <div className="tip-name">
+          {t.word}
+          {t.say && <span className="say"> {t.say}</span>}
+        </div>
+        <div className="hint-def">
+          <TermBody id={id as TermId} />
+        </div>
+      </>
+    );
+  }
+  const codes = cladeBreeds(id);
+  return (
+    <>
+      <div className="tip-name">
+        <i className="hint-swatch" style={{ background: cladeVar(id) }} />
+        {data.clades[id]} family
+      </div>
+      <div className="tip-sub">{codes.length} breeds, highlighted on the chart</div>
+      {docked ? (
+        <ul className="dock-thumbs">
+          {codes.slice(0, 12).map((c) => {
+            const src = photoOf(c);
+            return (
+              <li key={c}>
+                {src ? <img src={src} alt="" referrerPolicy="no-referrer" /> : <span />}
+                {data.breeds[c].name}
+              </li>
+            );
+          })}
+        </ul>
+      ) : (
+        <div className="hint-thumbs">
+          {codes.slice(0, 8).map((c) => {
+            const src = photoOf(c);
+            return src ? <img key={c} src={src} alt={data.breeds[c].name} title={data.breeds[c].name} referrerPolicy="no-referrer" /> : null;
+          })}
+        </div>
+      )}
+      {docked && codes.length > 12 && <div className="tip-sub">and {codes.length - 12} more</div>}
+    </>
+  );
+}
+
 function HintPop({ pop }: { pop: Pop }) {
   const box = useRef<HTMLDivElement>(null);
   const [pos, setPos] = useState<{ left: number; top: number } | null>(null);
@@ -138,53 +225,7 @@ function HintPop({ pop }: { pop: Pop }) {
     setPos({ left, top });
   }, [pop]);
 
-  let body: ReactNode;
-  if (pop.kind === "breed") {
-    const b = data.breeds[pop.id];
-    const src = photoOf(pop.id);
-    body = (
-      <>
-        {src && <img className="hint-photo" src={src} alt="" referrerPolicy="no-referrer" />}
-        <div className="tip-name">{b?.name}</div>
-        <div className="hint-fam">
-          <i style={{ background: cladeColor(b?.clade ?? null, pop.id) }} />
-          {b?.clade ? `${data.clades[b.clade]} family` : pop.id === "WOLF" || pop.id === "GDJK" ? "Wild relative" : "No clear family"}
-        </div>
-        <BreedFactsBlock code={pop.id} />
-      </>
-    );
-  } else if (pop.kind === "term") {
-    const t = TERMS[pop.id as TermId];
-    body = (
-      <>
-        <div className="hint-fig"><TermFigure id={pop.id as TermId} /></div>
-        <div className="tip-name">
-          {t.word}
-          {t.say && <span className="say"> {t.say}</span>}
-        </div>
-        <div className="hint-def">
-          <TermBody id={pop.id as TermId} />
-        </div>
-      </>
-    );
-  } else {
-    const codes = cladeBreeds(pop.id);
-    body = (
-      <>
-        <div className="tip-name">
-          <i className="hint-swatch" style={{ background: cladeColor(pop.id) }} />
-          {data.clades[pop.id]} family
-        </div>
-        <div className="tip-sub">{codes.length} breeds, highlighted on the chart</div>
-        <div className="hint-thumbs">
-          {codes.slice(0, 8).map((c) => {
-            const src = photoOf(c);
-            return src ? <img key={c} src={src} alt={data.breeds[c].name} title={data.breeds[c].name} referrerPolicy="no-referrer" /> : null;
-          })}
-        </div>
-      </>
-    );
-  }
+  const body = <HintBody kind={pop.kind} id={pop.id} />;
   return (
     <div
       ref={box}

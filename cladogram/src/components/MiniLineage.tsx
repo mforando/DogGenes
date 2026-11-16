@@ -5,11 +5,13 @@ import * as d3 from "d3";
 import { data } from "@/lib/tree";
 import { cladeColor } from "@/lib/palette";
 import { lineage } from "@/lib/relatives";
+import { LIGHT, tone } from "@/lib/theme";
+import { useTheme } from "@/lib/useTheme";
 
-const INK = "#e9e2d0";
-const MUTED = "#8a8a7f";
-const GOLD = "#e8b74a";
-const BG = "#141a18";
+let INK = "#e9e2d0";
+let MUTED = "#8a8a7f";
+let GOLD = "#e8b74a";
+let BG = "#141a18";
 const W = 280;
 const ROW = 20;
 const SPINE = 14;
@@ -27,7 +29,12 @@ export default function MiniLineage({ code, exclude = [] }: { code: string; excl
   const host = useRef<HTMLDivElement>(null);
   const excludeKey = exclude.join(",");
 
+  const theme = useTheme(); // rebuild when the light/dark switch changes
   useEffect(() => {
+    INK = tone("#e9e2d0", LIGHT.ink);
+    MUTED = tone("#8a8a7f", LIGHT.muted);
+    GOLD = tone("#e8b74a", LIGHT.gold);
+    BG = tone("#141a18", LIGHT.raise);
     const el = host.current!;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const skip = new Set(exclude);
@@ -72,7 +79,7 @@ export default function MiniLineage({ code, exclude = [] }: { code: string; excl
       const codes = r.codes;
       let color: string, label: string, sub = "";
       if (r.wolf) {
-        color = "#d9d3c4";
+        color = tone("#d9d3c4", LIGHT.outgroup);
         label = "Grey wolf";
       } else if (codes.length <= 2) {
         color = cladeColor(data.breeds[codes[0]]?.clade ?? null, codes[0]);
@@ -98,7 +105,7 @@ export default function MiniLineage({ code, exclude = [] }: { code: string; excl
       d3.select(el).selectAll("*").remove();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [code, excludeKey]);
+  }, [code, excludeKey, theme]);
 
   return <div ref={host} className="mini-lineage" />;
 }
