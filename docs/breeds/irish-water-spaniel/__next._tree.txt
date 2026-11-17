@@ -1,5 +1,5 @@
 :HL["/DogGenes/_next/static/chunks/0g4-7l39u2q-j.css","style"]
-:HL["/DogGenes/_next/static/chunks/1fk_l-2_mi-z9.css","style"]
+:HL["/DogGenes/_next/static/chunks/3-5ep4hajejhg.css","style"]
 :HL["/DogGenes/_next/static/media/275b667d7e737185-s.p.28g3plnrcjyh3.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
 :HL["/DogGenes/_next/static/media/3f13fb507b6820d6-s.p.2z5t5bl_buaq4.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
 :HL["/DogGenes/_next/static/media/4a50b47c00ce09bf-s.p.0-zxmgh6g2ro_.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
@@ -15,4 +15,4 @@
 3:[["children",{"s":"__PAGE__","h":160}]]
 2:[["children",{"s":{"n":"slug","t":"d","k":"irish-water-spaniel","s":[]},"h":65632,"c":"$Q3"}]]
 1:[["children",{"s":"breeds","h":131168,"c":"$Q2"}]]
-0:{"b":"ldFaBE25gUW-vbOxuFRZf","t":{"t":{"s":"","h":131152,"c":"$Q1"}}}
+0:{"b":"rdP1Ca_KYgQ0QQcTrMNau","t":{"t":{"s":"","h":131152,"c":"$Q1"}}}
