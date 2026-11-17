@@ -59,14 +59,14 @@ export function relatedToClade(clade: string): string[] {
 }
 
 /** The details-panel card for a family: its breeds, and the families they share DNA with. */
-export function cladeTipHtml(clade: string, note = ""): string {
+export function cladeTipHtml(clade: string): string {
   const members = cladeMembers(clade)
     .filter((c) => data.breeds[c])
     .sort((a, b) => data.breeds[a].name.localeCompare(data.breeds[b].name));
   const others = relatedToClade(clade).filter((c) => c !== clade);
   const related = cladePartners(clade).filter((c) => data.breeds[c]).length;
   const MAX = 6;
-  return `${note}<div class="tip-name">${data.clades[clade]} family</div>
+  return `<div class="tip-name">${data.clades[clade]} family</div>
     <div class="tip-clade"><i style="background:${cladeColor(clade)}"></i>${members.length} breed${members.length === 1 ? "" : "s"}</div>
     <div class="tip-note">${members.map((c) => data.breeds[c].name).join(", ")}</div>
     ${others.length

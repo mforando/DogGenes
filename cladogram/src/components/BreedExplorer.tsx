@@ -7,7 +7,7 @@ import { SiteNav } from "./shared";
 import { BREEDS, EX, JOB_GROUPS, photoUrl } from "@/lib/explorer";
 import { cladeVar } from "@/lib/palette";
 import { Lv } from "@/lib/readingLevel";
-import { B, Term } from "./Hints";
+import { Term } from "./Hints";
 
 const fmt = d3.format(",");
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
@@ -19,7 +19,6 @@ const ARRANGE: { id: Arrange; label: string }[] = [
   { id: "region", label: "Region" },
   { id: "color", label: "Photo color" },
 ];
-const dogBreeds = BREEDS.filter((b) => b.family !== "_wild" && b.path !== "mix").length;
 const byName = [...BREEDS].sort((a, b) => a.name.localeCompare(b.name));
 
 /** CSS for drawing one thumbnail straight out of a sprite sheet. */
@@ -154,25 +153,8 @@ export default function BreedExplorer() {
     <>
       <SiteNav />
       <main className={`explorer${sel ? " has-drawer" : ""}`}>
-        <header className="ex-head">
-          <p className="eyebrow">Breed Explorer</p>
-          <h1>
-            {fmt(EX.total)} dogs, <em>one wall</em>
-          </h1>
-          <p className="pairs-lede">
-            <Lv
-              puppy={<>Here are {fmt(EX.total)} dog photos of {dogBreeds} breeds, plus mixed breeds and a few wild cousins, all in one giant family picture! Breeds from the same part of the family tree sit together, and the oldest kinds of dogs sit closest to the <B c="WOLF">grey wolf</B> in the middle. First they make a giant rainbow that spells DOGS, using every single photo! Then try sorting the wall by family, job, where they come from, or color. Point at a photo to see the breed, and click to open it.</>}
-              pro={<>The full Dog CEO image collection ({fmt(EX.total)} images of {dogBreeds} breeds, plus mixed breeds and wild canids), arranged as a single mosaic. Clusters follow clade membership in the phylogeny, with basal lineages placed nearest the <B c="WOLF">grey wolf</B> at the center. The opening view uses every image once in a photo mosaic: a hue-ordered rainbow of equal tiles, each band as tall as the collection has images of that hue, under the word DOGS built from the darkest images. Re-sort by clade, original function, region of origin or mean image color.</>}
-            >
-              Every photo in the Dog CEO collection: {fmt(EX.total)} pictures of {dogBreeds} breeds,
-              plus mixed breeds and a few wild cousins, gathered into one family portrait. Breeds
-              that share a branch of the family tree cluster together, and the oldest lineages sit
-              closest to the <B c="WOLF">grey wolf</B> in the middle. Rearrange the wall by family group, original
-              job, region, or photo color; it opens as a rainbow spelling DOGS, built from every one
-              of the photos. Hover over a photo to see its breed and click to open it.
-            </Lv>
-          </p>
-        </header>
+        {/* The page is just the controls and the photo wall; the heading stays for screen readers and search. */}
+        <h1 className="sr-only">Breed Explorer: {fmt(EX.total)} dog photos in one wall</h1>
 
         <div className="ex-bar" role="toolbar" aria-label="Arrange the photos">
           <div className="seg ex-seg">

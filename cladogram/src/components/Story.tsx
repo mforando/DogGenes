@@ -15,13 +15,14 @@ import DnaHelix from "./DnaHelix";
 import { B, Clade, HintBody, HintProvider } from "./Hints";
 import { Lv, useReadingLevel } from "@/lib/readingLevel";
 import { LEVEL_BODIES } from "@/lib/levels";
-import Circos from "./Circos";
+import Circos, { MORPH_MS, MORPH_OUT_DELAY } from "./Circos";
 import CircosReplica from "./CircosReplica";
 import ContinentGlobe from "./ContinentGlobe";
 import { CONTINENT_BREEDS, type Continent } from "@/lib/regions";
 import MotionToggle from "./MotionToggle";
 import PawPrint from "./PawPrint";
-import { DOCK_PIN, DOCK_UNPINNED, PIN_NOTE } from "@/lib/dockPin";
+import { DOCK_CLADE, DOCK_PIN, DOCK_UNPINNED } from "@/lib/dockPin";
+import { CladePanel } from "./CircosDetails";
 import { hoverGate, STEP_CHANGE } from "@/lib/hoverGate";
 import { cladeOf, cladesOf, relatedClades } from "@/lib/ringClades";
 
@@ -93,11 +94,16 @@ function StoryBody() {
   // While anything is pinned, other hovers leave the panel and the chart alone. See dockPin.ts.
   const [textPin, setTextPin] = useState<{ kind: "breed" | "clade"; id: string } | null>(null);
   const [chartPinned, setChartPinned] = useState(false);
+  // A family hovered (or pinned) on either circle: its full "Family group" panel (desktop).
+  const [chartClade, setChartClade] = useState<{ clade: string; pinned: boolean } | null>(null);
   const frozen = chartPinned || !!textPin;
   const photoHover = frozen ? null : photoHoverRaw;
   const globeHover = frozen ? null : globeHoverRaw;
-  const textBreed = textPin ? (textPin.kind === "breed" ? textPin.id : null) : chartPinned ? null : textBreedRaw;
-  const textClade = textPin ? (textPin.kind === "clade" ? textPin.id : null) : chartPinned ? null : textCladeRaw;
+  // A breed or family name hovered in the text always wins, even over a pin, so the reader can
+  // flick between the text and their selection; leaving the name hands back to the pin.
+  const textHover = !!(textBreedRaw || textCladeRaw);
+  const textBreed = textHover ? textBreedRaw : textPin?.kind === "breed" ? textPin.id : null;
+  const textClade = textHover ? (textBreedRaw ? null : textCladeRaw) : textPin?.kind === "clade" ? textPin.id : null;
   // Phones: the charts are cropped to their rings (names would be a few pixels tall), so the
   // breeds or families a step highlights are listed under the chart instead.
   const phone = useMedia(PHONE);
@@ -110,6 +116,7 @@ function StoryBody() {
     setTextBreed(null);
     setTextClade(null);
     setTextPin(null);
+    setChartClade(null);
     gate.lock();
     tipDock.current?.dispatchEvent(new CustomEvent(STEP_CHANGE)); // the charts clear their own hovers
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -124,13 +131,16 @@ function StoryBody() {
       setChartPinned(true);
     };
     const onUnpinned = () => setChartPinned(false);
+    const onClade = (e: Event) => setChartClade((e as CustomEvent<{ clade: string; pinned: boolean } | null>).detail);
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && setTextPin(null);
     dock.addEventListener(DOCK_PIN, onPin);
     dock.addEventListener(DOCK_UNPINNED, onUnpinned);
+    dock.addEventListener(DOCK_CLADE, onClade);
     window.addEventListener("keydown", onKey);
     return () => {
       dock.removeEventListener(DOCK_PIN, onPin);
       dock.removeEventListener(DOCK_UNPINNED, onUnpinned);
+      dock.removeEventListener(DOCK_CLADE, onClade);
       window.removeEventListener("keydown", onKey);
     };
   }, []);
@@ -142,7 +152,9 @@ function StoryBody() {
     dock.dispatchEvent(new CustomEvent(DOCK_PIN, { detail: "text" }));
   }, [textPin]);
   const pinText = (kind: "breed" | "term" | "clade", id: string) => {
-    if (phone || kind === "term") return;
+    // A selection clicked on the circle plot only ends by a click on the plot or Esc; names in
+    // the text still preview over it while hovered, but a click on one doesn't replace it.
+    if (phone || kind === "term" || chartPinned) return;
     setTextPin((p) => (p && p.kind === kind && p.id === id ? null : { kind, id }));
   };
   // A step with a delayed spin ("neighbors aren't necessarily family") shows the plain view
@@ -205,6 +217,21 @@ function StoryBody() {
   const idx = STEPS.indexOf(step);
   const lastCircos =
     STEPS.slice(0, idx + 1).filter((s) => s.circos).at(-1)?.circos ?? STEPS.find((s) => s.circos)!.circos!;
+  // The tree step next to the chords (the one just left, or the one being entered), whose
+  // layout the chords glide from and back to.
+  const lastTree = useRef(step.circos ? STEPS.find((s) => !s.circos)! : step);
+  if (!step.circos) lastTree.current = step;
+  // The chords stay on screen while the ring glides back to the tree's layout, then hand over.
+  const [circosOn, setCircosOn] = useState(!!step.circos);
+  useEffect(() => {
+    if (step.circos) {
+      setCircosOn(true);
+      return;
+    }
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const t = window.setTimeout(() => setCircosOn(false), reduce ? 0 : MORPH_OUT_DELAY + MORPH_MS);
+    return () => window.clearTimeout(t);
+  }, [step]);
   // A stable object, so the chord diagram only restyles when the step (or its families) change.
   const circosView = useMemo(() => (step.circos ? { ...step.circos, ring: stepClades } : lastCircos), [step, stepClades, lastCircos]);
 
@@ -296,32 +323,37 @@ function StoryBody() {
             </span>
             <span className="figure-title">{step.title}</span>
           </div>
-          <div className={`figure-stage docked${step.circos ? " circos-on" : ""}`}>
+          <div className={`figure-stage docked${circosOn ? " circos-on" : ""}`}>
             <div className="stage-chart">
               <div className="stage-circle" aria-hidden={!!step.circos} inert={!!step.circos}>
-                <Cladogram view={treeView} selected={sel} onSelect={() => {}} onHover={step.continentGlobe ? setTreeHover : undefined} tipDock={tipDock} compact={phone} />
+                <Cladogram view={treeView} selected={sel} textFocus={textHover} onSelect={() => {}} onHover={step.continentGlobe ? setTreeHover : undefined} tipDock={tipDock} compact={phone} />
               </div>
               <div className="stage-circos" aria-hidden={!step.circos} inert={!step.circos}>
-                <Circos view={circosView} spotlight={step.circos ? photoHover ?? textBreed : null} ariaLabel="Chord diagram of DNA shared between dog breeds from different family groups" tipDock={tipDock} compact={phone} />
+                <Circos view={circosView} shown={!!step.circos} treeAncestor={!!lastTree.current.view.ancestor} spotlight={step.circos ? photoHover ?? textBreed : null} ariaLabel="Chord diagram of DNA shared between dog breeds from different family groups" tipDock={tipDock} compact={phone} />
               </div>
             </div>
             {/* Chart tooltips show here, in a fixed panel, instead of following the pointer. */}
-            <aside ref={tipDock} className="tip-dock" data-pinned={textPin ? "text" : undefined} aria-live="polite" aria-label="Chart details">
+            <aside ref={tipDock} className="tip-dock" data-pinned={textPin ? "text" : undefined} data-text-hover={textHover || undefined} aria-live="polite" aria-label="Chart details">
               <p className="tip-dock-empty">
                 Hover over or tap a breed on the chart to see its photo, family and history here. Click one to keep it here while
                 you scroll its details.
               </p>
               {/* The breed or family named in the text, popped out beside the chart (desktop). */}
-              {(dockBreed || dockClade) && (
+              {chartClade && !phone && !textHover ? (
+                <div key={`clade-${chartClade.clade}`} className="tip on dock-hint dock-clade">
+                  <CladePanel clade={chartClade.clade} />
+                </div>
+              ) : (dockBreed || dockClade) && (
                 <div key={dockBreed ?? dockClade!} className="tip on dock-hint">
-                  {textPin && <div className="tip-pin">{PIN_NOTE}</div>}
                   <HintBody kind={dockBreed ? "breed" : "clade"} id={(dockBreed ?? dockClade)!} docked />
                 </div>
               )}
             </aside>
           </div>
-          {phone && chips.shown.length > 0 && (
-            <ul className="hi-chips" aria-label="Highlighted on the chart">
+          {/* Always there on phones (empty when nothing is highlighted), at a fixed height, so
+              the chart keeps the same size and place from step to step. */}
+          {phone && (
+            <ul className="hi-chips" aria-label="Highlighted on the chart" aria-hidden={chips.shown.length === 0 || undefined}>
               {chips.shown.map(([name, color]) => (
                 <li key={name}>
                   <i style={{ background: color }} />

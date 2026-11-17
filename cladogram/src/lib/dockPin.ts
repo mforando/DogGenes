@@ -15,10 +15,23 @@
 export const DOCK_PIN = "dock-pin";
 export const DOCK_UNPIN = "dock-unpin";
 export const DOCK_UNPINNED = "dock-unpinned";
+/** A chart asks the page to show a family's full panel in the side panel (detail: { clade, pinned } or null). */
+export const DOCK_CLADE = "dock-clade";
 
-/** The note at the top of a pinned panel. */
-export const PIN_NOTE = "Pinned · click it again or press Esc to release";
-export const pinNoteHtml = () => `<div class="tip-pin">${PIN_NOTE}</div>`;
+/**
+ * Sends DOCK_CLADE, but only when the family or its pinned state changes (pointer moves repeat).
+ * Returns a function to call with (clade | null, pinned).
+ */
+export function dockCladeSender(dock: HTMLElement | null) {
+  let last = "";
+  return (clade: string | null, pinned = false) => {
+    const key = clade ? `${clade}|${pinned}` : "";
+    if (key === last) return;
+    last = key;
+    dock?.dispatchEvent(new CustomEvent(DOCK_CLADE, { detail: clade ? { clade, pinned } : null }));
+  };
+}
+
 
 export type DockPinner = {
   /** What's pinned (a source-specific key), or null. */

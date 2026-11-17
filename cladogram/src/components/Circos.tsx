@@ -9,9 +9,64 @@ import { circosTree, elbow, treeCodeOf, type CTNode } from "@/lib/circosTree";
 import { descendantsOf } from "@/lib/pairs";
 import { LIGHT, tone } from "@/lib/theme";
 import { useTheme } from "@/lib/useTheme";
-import { dockPinner, pinNoteHtml } from "@/lib/dockPin";
+import { dockCladeSender, dockPinner } from "@/lib/dockPin";
 import { hoverGate, STEP_CHANGE } from "@/lib/hoverGate";
 import { cladeMembers, cladeOf, cladeTipHtml, cladesOf, relatedClades, relatedToClade } from "@/lib/ringClades";
+import { GEOM, data as treeData, isLeaf, layout as treeLayout } from "@/lib/tree";
+
+/** How long the ring takes to glide between the tree's layout and the chords' (ms). */
+export const MORPH_MS = 1100;
+/** Entering the chords, the glide waits for the tree's lines to fade (ms). */
+const MORPH_IN_DELAY = 380;
+/** Leaving the chords, the glide waits for the ribbons to fade (ms); the page holds the chords this long plus MORPH_MS. */
+export const MORPH_OUT_DELAY = 150;
+
+/**
+ * Where the family tree (default layout) draws each breed and family, in the chord diagram's
+ * terms: a breed's wedge and label angle, and each family's band and name tier. Used to start
+ * the chords from the tree's pose (and return to it), so every mark keeps its identity.
+ */
+type TreePose = { byCode: Map<string, { a0: number; a1: number; a: number }>; clades: Map<string, { a0: number; a1: number; mid: number; tier: number }> };
+const treePose = (() => {
+  const cache = new Map<boolean, TreePose>();
+  /** `ancestor`: the tree step shows the hypothetical common ancestor's wedge ("The missing link"). */
+  return (ancestor: boolean): TreePose => {
+    const hit = cache.get(ancestor);
+    if (hit) return hit;
+    const L = treeLayout(new Set(), { withAncestor: true, showAncestor: ancestor });
+    const byCode = new Map<string, { a0: number; a1: number; a: number }>();
+    const spans: { clade: string; a0: number; a1: number }[] = [];
+    for (const l of L.leaves) {
+      if (!isLeaf(l)) continue;
+      const code = l.data.code;
+      if (l.data.main) byCode.set(code, { a0: l.a0, a1: l.a1, a: l.a });
+      const c = treeData.breeds[code]?.clade;
+      if (!c) continue;
+      const last = spans[spans.length - 1];
+      if (last && last.clade === c) last.a1 = l.a1;
+      else spans.push({ clade: c, a0: l.a0, a1: l.a1 });
+    }
+    // The tree's name tiers (as in Cladogram's assignTiers); a family split in two keeps its larger span.
+    const placed: { lo: number; hi: number; tier: number }[] = [];
+    const clades = new Map<string, { a0: number; a1: number; mid: number; tier: number }>();
+    for (const sp of spans) {
+      const mid = (sp.a0 + sp.a1) / 2;
+      const half = (treeData.clades[sp.clade].length * 7.4) / GEOM.rCladeName / 2 + 0.02;
+      let tier = 0;
+      while (placed.some((p) => p.tier === tier && mid - half < p.hi && mid + half > p.lo)) tier++;
+      placed.push({ lo: mid - half, hi: mid + half, tier });
+      const prev = clades.get(sp.clade);
+      if (!prev || sp.a1 - sp.a0 > prev.a1 - prev.a0) clades.set(sp.clade, { ...sp, mid, tier });
+    }
+    const pose = { byCode, clades };
+    cache.set(ancestor, pose);
+    return pose;
+  };
+})();
+/** `a` shifted by whole turns to lie nearest `to`, so a glide takes the short way round. */
+const nearTurn = (a: number, to: number) => a + 2 * Math.PI * Math.round((to - a) / (2 * Math.PI));
+const TAU = 2 * Math.PI;
+const norm = (a: number) => ((a % TAU) + TAU) % TAU;
 
 /** What the circos figure should emphasise. */
 export type CircosView = {
@@ -76,6 +131,8 @@ export default function Circos({
   spotlight = null,
   tipDock,
   compact = false,
+  shown,
+  treeAncestor = false,
 }: {
   view: CircosView;
   ariaLabel?: string;
@@ -91,7 +148,16 @@ export default function Circos({
   tipDock?: RefObject<HTMLElement | null>;
   /** Phone-size screens: crop to the ring of breed blocks (no name labels or family band). */
   compact?: boolean;
+  /**
+   * In the story, whether the chords are the chart on screen. Turning it on glides every
+   * breed and family from the family tree's layout to the chords' (and off, back again).
+   */
+  shown?: boolean;
+  /** The neighbouring tree step shows the hypothetical-ancestor wedge (its layout shifts slightly). */
+  treeAncestor?: boolean;
 }) {
+  const treeAncestorRef = useRef(treeAncestor);
+  treeAncestorRef.current = treeAncestor;
   const onBreedClickRef = useRef(onBreedClick);
   onBreedClickRef.current = onBreedClick;
   const onBgClickRef = useRef(onBackgroundClick);
@@ -99,7 +165,7 @@ export default function Circos({
   const onHoverRef = useRef(onHover);
   onHoverRef.current = onHover;
   const host = useRef<HTMLDivElement>(null);
-  const api = useRef<{ update: (v: CircosView) => void; spot: (code: string | null) => void } | null>(null);
+  const api = useRef<{ update: (v: CircosView) => void; spot: (code: string | null) => void; morph: (dir: "in" | "out", fromHidden: boolean) => void } | null>(null);
   // What's on screen, so a rebuild (theme switch) can restyle to match at once.
   const viewRef = useRef(view);
   viewRef.current = view;
@@ -129,7 +195,7 @@ export default function Circos({
     const halo = defs.append("radialGradient").attr("id", "c-halo");
     halo.append("stop").attr("offset", "0%").attr("stop-color", tone("#18211d", LIGHT.raise));
     halo.append("stop").attr("offset", "100%").attr("stop-color", tone("#0d1110", LIGHT.bg)).attr("stop-opacity", 0);
-    svg.append("circle").attr("r", CGEOM.rOut + 20).attr("fill", "url(#c-halo)");
+    svg.append("circle").attr("r", CGEOM.rOut + 40).attr("fill", "url(#c-halo)");
 
     // Family tree (under the ribbons) and its highlighted paths (over them).
     const gTree = svg.append("g").attr("class", "ctree").attr("fill", "none").attr("opacity", 0);
@@ -152,6 +218,8 @@ export default function Circos({
     // Click a breed or ribbon to pin its details in the side panel (then scroll the panel); see
     // dockPin.ts. Only where the chart reports to the panel: other pages lock on click already.
     const gate = hoverGate();
+    // Families get the full "Family group" panel, which the page draws in the side panel.
+    const cladePanel = dockCladeSender(dock);
     const pinner = dockPinner(
       dock,
       "circos",
@@ -160,6 +228,7 @@ export default function Circos({
         hover = null;
         hoverRibbon = null;
         hoverClade = null;
+        cladePanel(null);
         gRibbons.classed("dim", false).selectAll("path").classed("hot", false);
         render();
       },
@@ -209,19 +278,30 @@ export default function Circos({
       .data(nodes, (d) => d.code)
       .join("text")
       .attr("dy", "0.33em")
-      .attr("text-anchor", (d) => (d.mid % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI) > Math.PI ? "end" : "start")
-      .attr("transform", (d) => {
-        const a = ((d.mid % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
-        const deg = (a * 180) / Math.PI - 90;
-        return `rotate(${deg}) translate(${CGEOM.rLabel},0)${a > Math.PI ? " rotate(180)" : ""}`;
-      })
+      .attr("text-anchor", (d) => labelAnchor(d.mid))
+      .attr("transform", (d) => labelAt(d.mid))
       .text((d) => shortName(d.name));
 
     // ---------- clade ring ----------
+    function labelAnchor(mid: number) {
+      return norm(mid) > Math.PI ? "end" : "start";
+    }
+    function labelAt(mid: number) {
+      const a = norm(mid);
+      return `rotate(${(a * 180) / Math.PI - 90}) translate(${CGEOM.rLabel},0)${a > Math.PI ? " rotate(180)" : ""}`;
+    }
+    function namePath(mid: number, tier: number) {
+      const m = norm(mid);
+      const bottom = m > Math.PI / 2 && m < (3 * Math.PI) / 2;
+      const r = CGEOM.rCladeName + tier * 17 + (bottom ? 9 : 0);
+      const [x0, y0] = pol(bottom ? mid + 0.6 : mid - 0.6, r);
+      const [x1, y1] = pol(bottom ? mid - 0.6 : mid + 0.6, r);
+      return `M${x0},${y0}A${r},${r} 0 0 ${bottom ? 0 : 1} ${x1},${y1}`;
+    }
     const bandArc = d3.arc<{ a0: number; a1: number }>()
       .innerRadius(CGEOM.rClade0).outerRadius(CGEOM.rClade1)
       .startAngle((d) => d.a0).endAngle((d) => d.a1);
-    gClade.selectAll("path.band").data(cladeArcs).join("path").attr("class", "band")
+    const bandSel = gClade.selectAll<SVGPathElement, (typeof cladeArcs)[number]>("path.band").data(cladeArcs).join("path").attr("class", "band")
       .attr("d", (d) => bandArc(d)).attr("fill", (d) => nodes.find((n) => n.clade === d.clade)!.color);
     // Tiered names so short neighbouring clades don't overprint.
     const placed: { lo: number; hi: number; tier: number }[] = [];
@@ -233,25 +313,22 @@ export default function Circos({
       placed.push({ lo: mid - half, hi: mid + half, tier });
       return { ...c, mid, tier };
     });
-    gClade.selectAll("path.tp").data(named).join("path").attr("class", "tp").attr("fill", "none")
+    const tpSel = gClade.selectAll<SVGPathElement, (typeof named)[number]>("path.tp").data(named).join("path").attr("class", "tp").attr("fill", "none")
       .attr("id", (d) => `ctp-${d.clade}`)
-      .attr("d", (d) => {
-        const m = ((d.mid % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
-        const bottom = m > Math.PI / 2 && m < (3 * Math.PI) / 2;
-        const r = CGEOM.rCladeName + d.tier * 15 + (bottom ? 8 : 0);
-        const [x0, y0] = pol(bottom ? d.mid + 0.6 : d.mid - 0.6, r);
-        const [x1, y1] = pol(bottom ? d.mid - 0.6 : d.mid + 0.6, r);
-        return `M${x0},${y0}A${r},${r} 0 0 ${bottom ? 0 : 1} ${x1},${y1}`;
-      });
+      .attr("d", (d) => namePath(d.mid, d.tier));
     gClade.selectAll("text").data(named).join("text").attr("class", "clade-name")
       .append("textPath").attr("href", (d) => `#ctp-${d.clade}`)
       .attr("startOffset", "50%").attr("text-anchor", "middle")
       .text((d) => circosData.clades[d.clade]);
     // With an onHover handler (the full chart), each family's band and name can be hovered.
-    const hitArc = d3.arc<{ a0: number; a1: number }>()
-      .innerRadius(CGEOM.rClade0 - 6).outerRadius(CGEOM.rCladeName + 34)
-      .startAngle((d) => d.a0).endAngle((d) => d.a1);
-    const cladeHits = gClade.selectAll("path.clade-hit").data(onHoverRef.current || hoverLeads() ? cladeArcs : []).join("path")
+    const hitArc = (d: (typeof named)[number]) => {
+      const band = d3.arc()({ innerRadius: CGEOM.rClade0 - 5, outerRadius: CGEOM.rLabel, startAngle: d.a0, endAngle: d.a1 }) ?? "";
+      const half = Math.max((circosData.clades[d.clade].length * 6.6) / CGEOM.rCladeName / 2 + 0.02, (d.a1 - d.a0) / 2);
+      const r = CGEOM.rCladeName + d.tier * 17;
+      const name = d3.arc()({ innerRadius: r - 14, outerRadius: r + 24, startAngle: d.mid - half, endAngle: d.mid + half }) ?? "";
+      return band + name;
+    };
+    const cladeHits = gClade.selectAll("path.clade-hit").data(onHoverRef.current || hoverLeads() ? named : []).join("path")
       .attr("class", "clade-hit").attr("d", (d) => hitArc(d)).attr("fill", "transparent")
       .attr("tabindex", 0).attr("role", "button")
       .attr("aria-label", (d) => `${circosData.clades[d.clade]} family: show its tree and DNA sharing`)
@@ -275,6 +352,7 @@ export default function Circos({
         if (hoverLeads() && hoverClade) {
           hoverClade = null;
           tip.classed("on", false);
+          cladePanel(null);
           render();
         }
       })
@@ -549,13 +627,13 @@ export default function Circos({
     function showSegTip(ev: PointerEvent | FocusEvent, d: CNode) {
       if (onHoverRef.current) return;
       if (pinner.busy && pinner.key !== `seg:${d.code}`) return;
-      const note = pinner.key === `seg:${d.code}` ? pinNoteHtml() : "";
+      cladePanel(null);
       const ps = partnersOf(d.code);
       // A second sampled population (e.g. Italian cane corsos) uses its breed's photo and facts.
       const breed = d.code === "CHTM" ? "TIBM" : d.code === "COOS" ? "SALU" : d.code === "ITCC" ? "CANE" : d.code;
       const photo = photoOf(breed);
       tip.html(
-        `${note}${photo ? `<img class="tip-photo" src="${photo}" alt="" referrerpolicy="no-referrer" />` : ""}
+        `${photo ? `<img class="tip-photo" src="${photo}" alt="" referrerpolicy="no-referrer" />` : ""}
          <div class="tip-name">${d.name}</div>
          <div class="tip-clade"><i style="background:${d.color}"></i>${cladeLabel(d)}</div>
          ${ps.length
@@ -570,16 +648,21 @@ export default function Circos({
     function showCladeTip(ev: PointerEvent | MouseEvent | FocusEvent, clade: string) {
       const key = `clade:${clade}`;
       if (pinner.busy && pinner.key !== key) return;
-      tip.html(cladeTipHtml(clade, pinner.key === key ? pinNoteHtml() : "")).classed("on", true);
+      if (dock && !compactRef.current) {
+        tip.classed("on", false);
+        cladePanel(clade, pinner.key === key);
+        return;
+      }
+      tip.html(cladeTipHtml(clade)).classed("on", true);
       place(ev as PointerEvent);
     }
     function showRibbonTip(ev: PointerEvent, d: CLink) {
       if (onHoverRef.current) return;
       if (pinner.busy && pinner.key !== `rib:${d.key}`) return;
-      const note = pinner.key === `rib:${d.key}` ? pinNoteHtml() : "";
+      cladePanel(null);
       const a = nodeByCode.get(d.a)!, b = nodeByCode.get(d.b)!;
       tip.html(
-        `${note}<div class="tip-name">${a.name} ↔ ${b.name}</div>
+        `<div class="tip-name">${a.name} ↔ ${b.name}</div>
          <dl><dt>Shared DNA</dt><dd>${mb(d.value)}</dd>
          <dt>Color comes from</dt><dd>${nodeByCode.get(d.hub)!.name}</dd></dl>`,
       ).classed("on", true);
@@ -647,6 +730,7 @@ export default function Circos({
       hover = null;
       hoverRibbon = null;
       hoverClade = null;
+      cladePanel(null);
       gRibbons.classed("dim", false).selectAll("path").classed("hot", false);
       render();
       gate.lock();
@@ -657,7 +741,79 @@ export default function Circos({
       onBgClickRef.current?.();
     });
 
+    // ---------- the tree ⇄ chords glide (object constancy) ----------
+    // t = 0: every breed block, breed name, family band and family name where the family tree
+    // draws it; t = 1: where the chords draw it. Ribbons (and the start mark) sit out the glide.
+    type From = { a0: number; a1: number; mid: number };
+    let fromNode = new Map<string, From | null>();
+    let fromClade = new Map<string, (From & { tier: number }) | null>();
+    function setPose(ancestor: boolean) {
+      const pose = treePose(ancestor);
+      fromNode = new Map(
+      nodes.map((n) => {
+        const g = pose.byCode.get(treeCodeOf(n.code));
+        if (!g) return [n.code, null] as const;
+        const s = nearTurn(g.a, n.mid) - g.a;
+        return [n.code, { a0: g.a0 + s, a1: g.a1 + s, mid: g.a + s }] as const;
+      }),
+    );
+      fromClade = new Map(
+      named.map((c) => {
+        const g = pose.clades.get(c.clade);
+        if (!g) return [c.clade, null] as const;
+        const s = nearTurn(g.mid, c.mid) - g.mid;
+        return [c.clade, { a0: g.a0 + s, a1: g.a1 + s, mid: g.mid + s, tier: g.tier }] as const;
+      }),
+    );
+    }
+    setPose(false);
+    let morphT = 1;
+    function setGeom(t: number) {
+      morphT = t;
+      const lerp = (x: number, y: number) => x + (y - x) * t;
+      segSel.attr("d", (d) => {
+        const f = fromNode.get(d.code);
+        return arc(f ? { a0: lerp(f.a0, d.a0), a1: lerp(f.a1, d.a1) } : d);
+      });
+      labelSel.each(function (d) {
+        const f = fromNode.get(d.code);
+        const m = f ? lerp(f.mid, d.mid) : d.mid;
+        d3.select(this).attr("text-anchor", labelAnchor(m)).attr("transform", labelAt(m));
+      });
+      bandSel.attr("d", (d) => {
+        const f = fromClade.get(d.clade);
+        return bandArc(f ? { a0: lerp(f.a0, d.a0), a1: lerp(f.a1, d.a1) } : d);
+      });
+      tpSel.attr("d", (d) => {
+        const f = fromClade.get(d.clade);
+        return f ? namePath(lerp(f.mid, d.mid), lerp(f.tier, d.tier)) : namePath(d.mid, d.tier);
+      });
+    }
+    function morph(dir: "in" | "out", fromHidden: boolean) {
+      svg.interrupt("morph");
+      setPose(treeAncestorRef.current); // the neighbouring tree step's exact layout
+      if (!FULL) {
+        setGeom(dir === "in" ? 1 : 0);
+        svg.classed("morphing", dir === "out");
+        return;
+      }
+      // Coming into view from the tree: start exactly where the tree draws everything.
+      if (dir === "in" && fromHidden && morphT === 1) setGeom(0);
+      svg.classed("morphing", true);
+      const from = morphT, to = dir === "in" ? 1 : 0;
+      const ms = MORPH_MS * Math.abs(to - from);
+      svg.transition("morph")
+        .delay(dir === "in" ? MORPH_IN_DELAY : MORPH_OUT_DELAY)
+        .duration(ms)
+        .ease(d3.easeCubicInOut)
+        .tween("geom", () => (t) => setGeom(from + (to - from) * t))
+        .on("end", () => {
+          if (dir === "in") svg.classed("morphing", false); // the ribbons fade back in (CSS)
+        });
+    }
+
     api.current = {
+      morph,
       spot(code) {
         if (code === spot) return;
         spot = code;
@@ -703,8 +859,22 @@ export default function Circos({
     api.current?.spot(spotlight);
   }, [spotlight]);
 
+  // In the story: glide between the tree's layout and the chords' as the chords come and go.
+  const wasShown = useRef<boolean | undefined>(undefined);
   useEffect(() => {
-    const half = compact ? CGEOM.rOut + 4 : W / 2;
+    if (shown === undefined) return;
+    const prev = wasShown.current;
+    wasShown.current = shown;
+    if (prev === undefined) {
+      // First render: the chords' own layout when on screen, the tree's when waiting off screen.
+      if (!shown) api.current?.morph("out", true);
+      return;
+    }
+    if (shown !== prev) api.current?.morph(shown ? "in" : "out", !prev);
+  }, [shown, theme]);
+
+  useEffect(() => {
+    const half = compact ? CGEOM.rClade1 + 3 : W / 2; // where the tree crops, so the ring matches
     d3.select(host.current).select("svg").attr("viewBox", `${-half} ${-half} ${half * 2} ${half * 2}`);
   }, [compact, ariaLabel, theme]); // the rebuild resets the viewBox
 

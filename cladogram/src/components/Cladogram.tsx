@@ -9,7 +9,7 @@ import { photoOf } from "@/lib/photos";
 import { factsHtml } from "@/lib/breedFacts";
 import { LIGHT, tone } from "@/lib/theme";
 import { useTheme } from "@/lib/useTheme";
-import { dockPinner, pinNoteHtml } from "@/lib/dockPin";
+import { dockCladeSender, dockPinner } from "@/lib/dockPin";
 import { hoverGate, STEP_CHANGE } from "@/lib/hoverGate";
 import { cladeMembers, cladePartners, cladeTipHtml, cladesOf, relatedClades, relatedToClade } from "@/lib/ringClades";
 
@@ -23,6 +23,11 @@ type Props = {
   tipDock?: RefObject<HTMLElement | null>;
   /** Phone-size screens: crop to the ring (no name labels) so the circle fills the space. */
   compact?: boolean;
+  /**
+   * The page's view is pointing at a name hovered in the text: show it even over the chart's own
+   * hover or pin (which comes back when the text hover ends).
+   */
+  textFocus?: boolean;
 };
 
 type Pt = { a: number; r: number };
@@ -152,11 +157,13 @@ function cladeSpans(leaves: TNode[]) {
 const partnersOf = (code: string) =>
   data.links.filter(([a, b]) => a === code || b === code).map(([a, b, v]) => [a === code ? b : a, v] as const);
 
-export default function Cladogram({ view, selected, onSelect, onHover, tipDock, compact = false }: Props) {
+export default function Cladogram({ view, selected, onSelect, onHover, tipDock, compact = false, textFocus = false }: Props) {
   const onHoverRef = useRef(onHover);
   onHoverRef.current = onHover;
   const host = useRef<HTMLDivElement>(null);
-  const api = useRef<{ update: (v: View, sel: string | null, instant?: boolean) => void } | null>(null);
+  const api = useRef<{ update: (v: View, sel: string | null, instant?: boolean, textFocus?: boolean) => void } | null>(null);
+  const textFocusRef = useRef(textFocus);
+  textFocusRef.current = textFocus;
   // The step and selection on screen, so a rebuild (theme switch) can restyle to match at once.
   const viewRef = useRef(view);
   viewRef.current = view;
@@ -224,6 +231,8 @@ export default function Cladogram({ view, selected, onSelect, onHover, tipDock, 
     const tip = d3.select(dock ?? el).append("div").attr("class", "tip").attr("role", "status");
     // Click a breed to pin its details in the side panel (then scroll the panel); see dockPin.ts.
     const gate = hoverGate();
+    // Families get the full "Family group" panel, which the page draws in the side panel.
+    const cladePanel = dockCladeSender(dock);
     const pinner = dockPinner(
       dock,
       "tree",
@@ -232,6 +241,7 @@ export default function Cladogram({ view, selected, onSelect, onHover, tipDock, 
         onHoverRef.current?.(null);
         traceBranch(null);
         setHover(null);
+        cladePanel(null);
       },
       () => !compactRef.current,
     );
@@ -340,6 +350,7 @@ export default function Cladogram({ view, selected, onSelect, onHover, tipDock, 
       if (!h && !hoverOn) return;
       if (hoverKey(h) === hoverKey(hoverOn)) return;
       hoverOn = h;
+      if (textFocusRef.current) return; // the text's highlight is showing; this one waits
       DUR = FULL * 0.35; // hovers restyle quickly
       try {
         update(h ? hoverView(h) : stepView, h ? null : stepSel);
@@ -393,14 +404,19 @@ export default function Cladogram({ view, selected, onSelect, onHover, tipDock, 
     function showCladeTip(ev: PointerEvent | MouseEvent, clade: string) {
       const key = `clade:${clade}`;
       if (pinner.busy && pinner.key !== key) return;
-      tip.html(cladeTipHtml(clade, pinner.key === key ? pinNoteHtml() : "")).classed("on", true);
+      if (dock && !compactRef.current) {
+        tip.classed("on", false);
+        cladePanel(clade, pinner.key === key);
+        return;
+      }
+      tip.html(cladeTipHtml(clade)).classed("on", true);
       placeTip(ev);
     }
     /** A branch: the breeds descended from it and the families they belong to. */
     function showBranchTip(ev: PointerEvent | MouseEvent, n: TNode) {
       const key = `node:${n.data.id}`;
       if (pinner.busy && pinner.key !== key) return;
-      const note = pinner.key === key ? pinNoteHtml() : "";
+      cladePanel(null);
       const codes = [...new Set((n.leaves() as TNode[]).filter((l) => isLeaf(l) && l.data.code !== ANCESTOR).map((l) => (l as TNode & { data: { code: string } }).data.code))];
       const wild: string[] = codes.filter((c) => c === "WOLF" || c === "GDJK");
       const breeds = codes.filter((c) => !wild.includes(c)).sort((x, y) => data.breeds[x].name.localeCompare(data.breeds[y].name));
@@ -410,7 +426,7 @@ export default function Cladogram({ view, selected, onSelect, onHover, tipDock, 
       const MAX = 14;
       const wildNote = wild.length ? ` and the ${wild.map((c) => data.breeds[c].name.toLowerCase()).join(" and ")}` : "";
       tip.html(
-        `${note}<div class="tip-name">A branch of the tree</div>
+        `<div class="tip-name">A branch of the tree</div>
          <div class="tip-sub">${breeds.length} breed${breeds.length === 1 ? "" : "s"}${wildNote} descend from this fork</div>
          ${clades.slice(0, 6).map((c) => `<div class="tip-clade"><i style="background:${cladeColor(c)}"></i>${data.clades[c]}</div>`).join("")}
          ${clades.length > 6 ? `<div class="tip-more">+ ${clades.length - 6} more families</div>` : ""}
@@ -424,10 +440,10 @@ export default function Cladogram({ view, selected, onSelect, onHover, tipDock, 
     function showTip(ev: PointerEvent | FocusEvent, d: TNode) {
       if (!isLeaf(d)) return;
       if (pinner.busy && pinner.key !== d.data.code) return;
-      const note = pinner.key === d.data.code ? pinNoteHtml() : "";
+      cladePanel(null);
       if (d.data.code === ANCESTOR) {
         tip.html(
-          `${note}<div class="tip-name">${ANCESTOR_BREED.name}</div>
+          `<div class="tip-name">${ANCESTOR_BREED.name}</div>
            <div class="tip-note">Where DNA from the wolf population that dogs came from would join the tree, if anyone had it.</div>`,
         ).classed("on", true);
         const box = el.getBoundingClientRect();
@@ -441,7 +457,7 @@ export default function Cladogram({ view, selected, onSelect, onHover, tipDock, 
       const cladeName = b.clade ? data.clades[b.clade] : d.data.code === "WOLF" || d.data.code === "GDJK" ? "Wild relative" : "Loner (no clear family)";
       const photo = photoOf(d.data.code);
       tip.html(
-        `${note}${photo ? `<img class="tip-photo" src="${photo}" alt="" referrerpolicy="no-referrer" />` : ""}
+        `${photo ? `<img class="tip-photo" src="${photo}" alt="" referrerpolicy="no-referrer" />` : ""}
          <div class="tip-name">${b.name}</div>
          <div class="tip-clade"><i style="background:${cladeColor(b.clade, d.data.code)}"></i>${cladeName}</div>
          <dl>
@@ -573,6 +589,7 @@ export default function Cladogram({ view, selected, onSelect, onHover, tipDock, 
         .on("pointerleave", () => {
           if (pinner.busy) return;
           tip.classed("on", false);
+          cladePanel(null);
           setHover(null);
         })
         .on("click", (ev: MouseEvent, d) => {
@@ -1007,6 +1024,7 @@ export default function Cladogram({ view, selected, onSelect, onHover, tipDock, 
       onHoverRef.current?.(null);
       traceBranch(null);
       setHover(null);
+      cladePanel(null);
       gate.lock();
     };
     dock?.addEventListener(STEP_CHANGE, onStep);
@@ -1017,12 +1035,17 @@ export default function Cladogram({ view, selected, onSelect, onHover, tipDock, 
     applyGeometry(false);
     api.current = {
       // The page's view for the step; a hover in progress stays on top of it.
-      update: (v, sel, instant) => {
+      update: (v, sel, instant, textFocus = false) => {
         stepView = v;
         stepSel = sel;
+        // A name hovered in the text outranks the chart's own hover or pin while it lasts;
+        // the pinned item's traces step aside and come back after.
+        const own = hoverOn && !textFocus;
+        gBranch.attr("display", textFocus ? "none" : null);
+        gWolf.attr("display", textFocus ? "none" : null);
         DUR = instant ? 0 : FULL;
         try {
-          update(hoverOn ? hoverView(hoverOn) : v, hoverOn ? null : sel);
+          update(own ? hoverView(hoverOn!) : v, own ? null : sel);
         } finally {
           DUR = FULL;
         }
@@ -1030,7 +1053,7 @@ export default function Cladogram({ view, selected, onSelect, onHover, tipDock, 
     };
     // A theme switch rebuilds the tree with the new colors; style it for the current step right
     // away, without replaying the step's animation. (The first build is styled by the effect below.)
-    if (built.current) api.current.update(viewRef.current, selectedRef.current, true);
+    if (built.current) api.current.update(viewRef.current, selectedRef.current, true, textFocusRef.current);
     built.current = true;
 
     return () => {
@@ -1043,8 +1066,8 @@ export default function Cladogram({ view, selected, onSelect, onHover, tipDock, 
   }, [theme]);
 
   useEffect(() => {
-    api.current?.update(view, selected);
-  }, [view, selected]);
+    api.current?.update(view, selected, false, textFocus);
+  }, [view, selected, textFocus]);
 
   // Compact: a viewBox just outside the clade ring. Names are hidden (CSS) because they'd be a
   // few pixels tall; the page lists what's highlighted and a tap shows a breed's details.

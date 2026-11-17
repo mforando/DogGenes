@@ -1,6 +1,6 @@
 import raw from "@/data/circos.json";
 import { cladeColor, cladeVar } from "./palette";
-import { isLeaf, layout } from "./tree";
+import { GEOM, isLeaf, layout } from "./tree";
 
 export type CNode = {
   code: string;
@@ -38,14 +38,19 @@ export const circosData = raw as unknown as {
   links: [string, string, number, number][];
 };
 
+/**
+ * Laid out on the family tree's geometry (GEOM in tree.ts): the same canvas, the breed blocks
+ * ending on the tree's outer circle, the family band just outside them and the names beyond,
+ * so the story can swap the tree for the chords without the ring moving or resizing.
+ */
 export const CGEOM = {
-  size: 1110, // room for breed names (up to three words) and the family ring
-  rIn: 330, // ribbons attach here
-  rOut: 352, // outer edge of breed segments
-  rLabel: 358,
-  rClade0: 497, // the family band sits outside the names
-  rClade1: 507,
-  rCladeName: 519,
+  size: GEOM.size, // 1120
+  rIn: GEOM.rWedge - 22, // ribbons attach here (350)
+  rOut: GEOM.rWedge, // outer edge of breed segments: the tree's outer circle (372)
+  rLabel: GEOM.rLabel, // 389
+  rClade0: GEOM.rClade0, // 377: the family band sits between the blocks and the names
+  rClade1: GEOM.rClade1, // 386
+  rCladeName: GEOM.rCladeName, // 530
 };
 
 const N = circosData.nodes.length;

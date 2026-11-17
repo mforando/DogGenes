@@ -2,12 +2,12 @@
 
 import { circosData, links, nodeByCode, nodes, partnersOf, type CNode } from "@/lib/circos";
 import { photoOf } from "@/lib/photos";
-import { cladeVar } from "@/lib/palette";
 import type { CircosHover } from "./Circos";
 import { stepsApart } from "@/lib/pairs";
 import BreedGallery from "./BreedGallery";
 import RelatedBreeds from "./RelatedBreeds";
 import CladeTree from "./CladeTree";
+import StretchedChord from "./StretchedChord";
 import { data } from "@/lib/tree";
 import { Term } from "./Hints";
 
@@ -190,29 +190,12 @@ export default function CircosDetails({
   );
 }
 
-const otherLabel = (code: string) => {
-  const n = nodeByCode.get(code)!;
-  return n.code === "WOLF" ? "Wild relative" : n.clade ? circosData.clades[n.clade] : "Loners";
-};
-
 /** Hovering a family's band: its tree, and how much DNA it shares with each other family. */
-function CladePanel({ clade }: { clade: string }) {
+export function CladePanel({ clade }: { clade: string }) {
   const members = nodes.filter((n) => n.clade === clade);
   const color = members[0]?.cssColor ?? "#888";
   const codes = new Set(members.map((n) => n.code));
   const out = links.filter((l) => codes.has(l.a) !== codes.has(l.b));
-  const byOther = new Map<string, { label: string; color: string; value: number; ribbons: number }>();
-  for (const l of out) {
-    const other = codes.has(l.a) ? l.b : l.a;
-    const key = otherLabel(other);
-    const o = nodeByCode.get(other)!;
-    const e = byOther.get(key) ?? { label: key, color: o.clade || o.code === "WOLF" ? o.cssColor : cladeVar(null), value: 0, ribbons: 0 };
-    e.value += l.value;
-    e.ribbons += 1;
-    byOther.set(key, e);
-  }
-  const rows = [...byOther.values()].sort((a, b) => b.value - a.value);
-  const max = rows[0]?.value ?? 1;
   return (
     <div className="cd-panel" aria-live="polite">
       <p className="cd-kicker">Family group</p>
@@ -225,29 +208,11 @@ function CladePanel({ clade }: { clade: string }) {
       <p className="cd-tree-h">Its family tree</p>
       <CladeTree clade={clade} />
       <p className="cd-tree-h">Shares <Term id="dna">DNA</Term> with these families</p>
-      {rows.length ? (
-        <ol className="cd-list cd-clade-list">
-          {rows.map((r) => (
-            <li key={r.label}>
-              <span className="cd-pname">
-                <span>
-                  <i className="cd-dot" style={{ background: r.color }} aria-hidden /> {r.label}
-                </span>
-                <span className="cd-pfam">
-                  {r.ribbons} ribbon{r.ribbons === 1 ? "" : "s"}
-                </span>
-              </span>
-              <span className="cd-bar" aria-hidden>
-                <span style={{ width: `${Math.sqrt(r.value / max) * 100}%` }} />
-              </span>
-              <span className="cd-mb">{mb(r.value)}</span>
-            </li>
-          ))}
-        </ol>
-      ) : (
-        <p className="cd-sub">No big DNA overlaps with other families.</p>
-      )}
-      <p className="cd-note">Totals add up every ribbon between this family&rsquo;s breeds and each other family.</p>
+      <StretchedChord clade={clade} />
+      <p className="cd-note">
+        Left: this family&rsquo;s breeds. Right: the breeds they share DNA with, grouped by family. Each chord is one
+        pair, as wide as the DNA they share; hover a breed or chord for the numbers.
+      </p>
     </div>
   );
 }
