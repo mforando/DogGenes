@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Fragment, useEffect, useMemo, useState, useRef } from "react";
+import { Children, Fragment, isValidElement, useCallback, useEffect, useMemo, useState, useRef, type ReactNode } from "react";
 import { breedPath, hasBreedPage } from "@/lib/breedLinks";
 import Cladogram from "./Cladogram";
 import { STEPS, STEP_ALIASES } from "@/lib/steps";
@@ -12,7 +12,7 @@ import { CITATION, PHONE, RotateHint, SiteNav, Specimens, useActiveStep, useMedi
 import Primer, { type TermId } from "./Primer";
 import GlossaryButton from "./GlossaryButton";
 import DnaHelix from "./DnaHelix";
-import { HintBody, HintProvider } from "./Hints";
+import { B, Clade, HintBody, HintProvider } from "./Hints";
 import { Lv, useReadingLevel } from "@/lib/readingLevel";
 import { LEVEL_BODIES } from "@/lib/levels";
 import Circos from "./Circos";
@@ -20,10 +20,28 @@ import CircosReplica from "./CircosReplica";
 import ContinentGlobe from "./ContinentGlobe";
 import { CONTINENT_BREEDS, type Continent } from "@/lib/regions";
 import MotionToggle from "./MotionToggle";
+import PawPrint from "./PawPrint";
+import { DOCK_PIN, DOCK_UNPINNED, PIN_NOTE } from "@/lib/dockPin";
+import { hoverGate, STEP_CHANGE } from "@/lib/hoverGate";
+import { cladeOf, cladesOf, relatedClades } from "@/lib/ringClades";
 
 const GLOSSARY: TermId[] = ["dna", "cladogram", "clade", "bootstrap", "haplotype"];
 // The "?" shows from the glossary section through the end of the scroller.
 const GLOSSARY_WATCH = [".primer", "main.scrolly"];
+
+/** The families a step's text highlights: its breed names (their families) and family names. */
+function textClades(node: ReactNode, out = new Set<string>()): Set<string> {
+  Children.forEach(node, (n) => {
+    if (!isValidElement(n)) return;
+    const p = n.props as { c?: string; id?: string; children?: ReactNode };
+    if (n.type === B && p.c) {
+      const k = cladeOf(p.c);
+      if (k) out.add(k);
+    } else if (n.type === Clade && p.id) out.add(p.id);
+    if (p.children) textClades(p.children, out);
+  });
+  return out;
+}
 
 export default function Story() {
   return <StoryBody />;
@@ -35,17 +53,51 @@ function StoryBody() {
 
   const step = STEPS[active];
   // Hovering a breed photo in a step card highlights that breed in the chart on the right.
-  const [photoHover, setPhotoHover] = useState<string | null>(null);
+  const [photoHoverRaw, setPhotoHoverNow] = useState<string | null>(null);
   // Picking a continent on the step's globe highlights that continent's breeds instead.
   const [continent, setContinent] = useState<Continent | null>(null);
   // Hovering a dot on the step's globe highlights that breed on the circle chart.
-  const [globeHover, setGlobeHover] = useState<string | null>(null);
+  const [globeHoverRaw, setGlobeHoverNow] = useState<string | null>(null);
   // ...and hovering a wedge on the circle chart spins the globe to that breed's origin.
-  const [treeHover, setTreeHover] = useState<string | null>(null);
+  const [treeHover, setTreeHoverNow] = useState<string | null>(null);
+  // Sweeping across the circle crosses dozens of breeds a second; spinning the globe (and
+  // re-rendering the step) for each one makes the page stutter. Wait until the pointer settles.
+  const TREE_HOVER_DELAY = 300;
+  const treeHoverTimer = useRef<number | undefined>(undefined);
+  const setTreeHover = useCallback((code: string | null) => {
+    window.clearTimeout(treeHoverTimer.current);
+    treeHoverTimer.current = window.setTimeout(() => setTreeHoverNow(code), TREE_HOVER_DELAY);
+  }, []);
+  useEffect(() => () => window.clearTimeout(treeHoverTimer.current), []);
   // Hovering a breed's name or a family's name in the text highlights it on the chart too.
-  const [textBreed, setTextBreed] = useState<string | null>(null);
-  const [textClade, setTextClade] = useState<string | null>(null);
+  const [textBreedRaw, setTextBreedNow] = useState<string | null>(null);
+  const [textCladeRaw, setTextCladeNow] = useState<string | null>(null);
+  // Moving to a new step overrides any hover: everything is cleared, and new hovers wait until
+  // the pointer really moves (scrolling brings new things under a resting pointer). Clearing
+  // (null) always goes through. See hoverGate.ts.
+  const gate = useRef(hoverGate()).current;
+  const gated = useCallback(
+    (set: (v: string | null) => void) => (v: string | null) => {
+      if (v !== null && !gate.ok()) return;
+      set(v);
+    },
+    [gate],
+  );
+  const setPhotoHover = useMemo(() => gated(setPhotoHoverNow), [gated]);
+  const setGlobeHover = useMemo(() => gated(setGlobeHoverNow), [gated]);
+  const setTextBreed = useMemo(() => gated(setTextBreedNow), [gated]);
+  const setTextClade = useMemo(() => gated(setTextCladeNow), [gated]);
   const tipDock = useRef<HTMLElement>(null);
+  // Click to pin: a breed or family name clicked in the text keeps its card in the side panel
+  // (textPin); a breed clicked on a chart does the same from inside the chart (chartPinned).
+  // While anything is pinned, other hovers leave the panel and the chart alone. See dockPin.ts.
+  const [textPin, setTextPin] = useState<{ kind: "breed" | "clade"; id: string } | null>(null);
+  const [chartPinned, setChartPinned] = useState(false);
+  const frozen = chartPinned || !!textPin;
+  const photoHover = frozen ? null : photoHoverRaw;
+  const globeHover = frozen ? null : globeHoverRaw;
+  const textBreed = textPin ? (textPin.kind === "breed" ? textPin.id : null) : chartPinned ? null : textBreedRaw;
+  const textClade = textPin ? (textPin.kind === "clade" ? textPin.id : null) : chartPinned ? null : textCladeRaw;
   // Phones: the charts are cropped to their rings (names would be a few pixels tall), so the
   // breeds or families a step highlights are listed under the chart instead.
   const phone = useMedia(PHONE);
@@ -53,10 +105,46 @@ function StoryBody() {
     setPhotoHover(null);
     setContinent(null);
     setGlobeHover(null);
-    setTreeHover(null);
+    window.clearTimeout(treeHoverTimer.current); // a new step drops any hover at once
+    setTreeHoverNow(null);
     setTextBreed(null);
     setTextClade(null);
+    setTextPin(null);
+    gate.lock();
+    tipDock.current?.dispatchEvent(new CustomEvent(STEP_CHANGE)); // the charts clear their own hovers
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [active]);
+  // Pinning a name in the text tells the charts to let go of theirs, and the other way round.
+  useEffect(() => {
+    const dock = tipDock.current;
+    if (!dock) return;
+    const onPin = (e: Event) => {
+      if ((e as CustomEvent).detail === "text") return;
+      setTextPin(null);
+      setChartPinned(true);
+    };
+    const onUnpinned = () => setChartPinned(false);
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setTextPin(null);
+    dock.addEventListener(DOCK_PIN, onPin);
+    dock.addEventListener(DOCK_UNPINNED, onUnpinned);
+    window.addEventListener("keydown", onKey);
+    return () => {
+      dock.removeEventListener(DOCK_PIN, onPin);
+      dock.removeEventListener(DOCK_UNPINNED, onUnpinned);
+      window.removeEventListener("keydown", onKey);
+    };
+  }, []);
+  useEffect(() => {
+    const dock = tipDock.current;
+    if (!dock) return;
+    dock.scrollTop = 0; // a newly pinned card, or the next hovered one, starts at its top
+    if (!textPin) return;
+    dock.dispatchEvent(new CustomEvent(DOCK_PIN, { detail: "text" }));
+  }, [textPin]);
+  const pinText = (kind: "breed" | "term" | "clade", id: string) => {
+    if (phone || kind === "term") return;
+    setTextPin((p) => (p && p.kind === kind && p.id === id ? null : { kind, id }));
+  };
   // A step with a delayed spin ("neighbors aren't necessarily family") shows the plain view
   // first, then rotates the fork once the reader has had a moment to see where the breeds sit.
   const [flipOn, setFlipOn] = useState(false);
@@ -84,24 +172,41 @@ function StoryBody() {
   const dockBreed = phone ? null : textBreed ?? photoHover ?? (step.continentGlobe ? globeHover : null);
   const dockClade = phone || dockBreed ? null : textClade;
   const sel = pointed && !step.circos ? pointed : null;
+  // The family ring brings forward the families the step's text highlights (at the reader's
+  // level, plus any the step's view emphasises); steps that name none show the whole ring.
+  const stepClades = useMemo(() => {
+    const body = level === "adult" ? step.body : LEVEL_BODIES[step.id]?.[level] ?? step.body;
+    const set = textClades(body);
+    for (const c of step.view.clades ?? []) set.add(c);
+    for (const c of step.circos?.clades ?? []) set.add(c);
+    return set.size ? [...set] : undefined;
+  }, [step, level]);
   // While a photo is hovered, the step's own highlights step aside so only that breed shows.
   const treeView = useMemo(() => {
-    const view = step.flipDelay && !flipOn ? { ...step.view, flip: undefined } : step.view;
+    const base = step.flipDelay && !flipOn ? { ...step.view, flip: undefined } : step.view;
+    const view = { ...base, ring: stepClades };
     if (textClade && !pointed && !step.circos) {
       const { codes, clades, paths, outgroup, split, links, ...rest } = view;
       void codes; void clades; void paths; void outgroup; void split; void links;
-      return { ...rest, color: "clade" as const, clades: [textClade] };
+      return { ...rest, color: "clade" as const, clades: [textClade], ring: [textClade] };
     }
     const focus = pointed ? [pointed] : step.continentGlobe && continent ? CONTINENT_BREEDS[continent] : null;
     if (!focus || step.circos) return view;
     const { codes, clades, paths, outgroup, split, links, ...rest } = view;
     void codes; void clades; void paths; void outgroup; void split;
-    return { ...rest, codes: focus, ...(links ? { links: { codes: focus } } : {}) };
-  }, [pointed, continent, step, textClade, flipOn]);
+    return {
+      ...rest,
+      codes: focus,
+      ...(links ? { links: { codes: focus } } : {}),
+      ring: pointed ? relatedClades(pointed) : cladesOf(focus),
+    };
+  }, [pointed, continent, step, textClade, flipOn, stepClades]);
   // The chord diagram keeps the nearest chord step's view while it fades in or out.
   const idx = STEPS.indexOf(step);
   const lastCircos =
     STEPS.slice(0, idx + 1).filter((s) => s.circos).at(-1)?.circos ?? STEPS.find((s) => s.circos)!.circos!;
+  // A stable object, so the chord diagram only restyles when the step (or its families) change.
+  const circosView = useMemo(() => (step.circos ? { ...step.circos, ring: stepClades } : lastCircos), [step, stepClades, lastCircos]);
 
   const chips = useMemo(() => {
     const c = step.circos;
@@ -133,13 +238,12 @@ function StoryBody() {
   }, []);
 
   return (
-    <HintProvider onBreed={setTextBreed} onClade={setTextClade} docked={phone ? [] : ["breed", "clade"]}>
+    <HintProvider onBreed={setTextBreed} onClade={setTextClade} onPin={pinText} allowHover={gate.ok} docked={phone ? [] : ["breed", "clade"]}>
       {/* Desktop: a breed or family named in the text pops out in the panel on the right; phones keep the small pop-up. */}
       <SiteNav />
       <header className="hero">
         <DnaHelix />
         <div className="hero-inner">
-          <p className="eyebrow">The dog breed family tree · a beginner’s guide to dog DNA</p>
           <h1>
             How to read <em>the dog&rsquo;s</em> family tree
           </h1>
@@ -198,15 +302,19 @@ function StoryBody() {
                 <Cladogram view={treeView} selected={sel} onSelect={() => {}} onHover={step.continentGlobe ? setTreeHover : undefined} tipDock={tipDock} compact={phone} />
               </div>
               <div className="stage-circos" aria-hidden={!step.circos} inert={!step.circos}>
-                <Circos view={step.circos ?? lastCircos} spotlight={step.circos ? photoHover ?? textBreed : null} ariaLabel="Chord diagram of DNA shared between dog breeds from different family groups" tipDock={tipDock} compact={phone} />
+                <Circos view={circosView} spotlight={step.circos ? photoHover ?? textBreed : null} ariaLabel="Chord diagram of DNA shared between dog breeds from different family groups" tipDock={tipDock} compact={phone} />
               </div>
             </div>
             {/* Chart tooltips show here, in a fixed panel, instead of following the pointer. */}
-            <aside ref={tipDock} className="tip-dock" aria-live="polite" aria-label="Chart details">
-              <p className="tip-dock-empty">Hover over or tap a breed on the chart to see its photo, family and history here.</p>
+            <aside ref={tipDock} className="tip-dock" data-pinned={textPin ? "text" : undefined} aria-live="polite" aria-label="Chart details">
+              <p className="tip-dock-empty">
+                Hover over or tap a breed on the chart to see its photo, family and history here. Click one to keep it here while
+                you scroll its details.
+              </p>
               {/* The breed or family named in the text, popped out beside the chart (desktop). */}
               {(dockBreed || dockClade) && (
                 <div key={dockBreed ?? dockClade!} className="tip on dock-hint">
+                  {textPin && <div className="tip-pin">{PIN_NOTE}</div>}
                   <HintBody kind={dockBreed ? "breed" : "clade"} id={(dockBreed ?? dockClade)!} docked />
                 </div>
               )}
@@ -236,7 +344,11 @@ function StoryBody() {
               aria-labelledby={`h-${s.id}`}
             >
               <div className="card">
-                <p className="kicker">{s.kicker}</p>
+                <p className="kicker">
+                  <PawPrint className="step-paw" />
+                  {s.kicker}
+                  <PawPrint className="step-paw step-paw-end" />
+                </p>
                 <h2 id={`h-${s.id}`}>{s.title}</h2>
                 {level === "adult" ? s.body : LEVEL_BODIES[s.id]?.[level] ?? s.body}
                 {s.photos && <Specimens codes={s.photos} onHover={i === active ? setPhotoHover : undefined} />}

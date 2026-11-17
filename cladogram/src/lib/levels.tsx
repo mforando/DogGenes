@@ -5,7 +5,7 @@ import MissingLinkFigure from "@/components/MissingLinkFigure";
 import { B, Clade, Term } from "@/components/Hints";
 
 /**
- * Step text for the "Puppy" (about 5th-grade) and "Albert Pawstein" (scientist) reading
+ * Step text for the "Puppy" (about 5th-grade) and "Dog Genius" (scientist) reading
  * levels of the family tree story. "Adult" uses each step's own body in steps.tsx. Steps,
  * charts and photos are the same at every level; only the words change. Scientific
  * details follow Parker et al. 2017 (Cell Reports 19:697–708).

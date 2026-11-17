@@ -3,7 +3,7 @@
 import { LEVELS, useReadingLevel } from "@/lib/readingLevel";
 import { track } from "@/lib/track";
 
-/** Puppy / Adult / Albert Pawstein: switches the story's wording. */
+/** Puppy / Adult / Dog Genius: switches the story's wording. */
 export default function LevelToggle({ className = "" }: { className?: string }) {
   const { level, setLevel } = useReadingLevel();
   return (
@@ -22,6 +22,7 @@ export default function LevelToggle({ className = "" }: { className?: string }) 
           }}
         >
           {l.label}
+          {l.emoji && <span className="level-emoji" aria-hidden="true">{l.emoji}</span>}
         </button>
       ))}
     </div>

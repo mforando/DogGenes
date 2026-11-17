@@ -6,7 +6,7 @@ import SelectionExplainer from "@/components/SelectionExplainer";
 import { B, Clade, Term } from "@/components/Hints";
 
 /**
- * Step text for the "Puppy" (about 5th-grade) and "Albert Pawstein" (scientist) reading levels
+ * Step text for the "Puppy" (about 5th-grade) and "Dog Genius" (scientist) reading levels
  * of the history of dogs (the home page). "Adult" uses each step's own body in steps.tsx.
  * Steps, timeline and visuals are the same at every level; only the words change.
  */

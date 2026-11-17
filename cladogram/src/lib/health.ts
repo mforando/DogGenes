@@ -143,7 +143,7 @@ export function candidates(v: Variant) {
   return [...hits].map(([code, h]) => ({ code, ...h })).sort((x, y) => y.links - x.links || y.mb - x.mb);
 }
 
-/** Each variant's description and note at the Puppy (5th-grade) and Albert Pawstein (scientist) levels. */
+/** Each variant's description and note at the Puppy (5th-grade) and Dog Genius (scientist) levels. */
 export const VARIANT_LEVELS: Record<string, Record<"puppy" | "pro", { what: string; note?: string }>> = {
   cea: {
     puppy: { what: "The back of the eye doesn’t grow quite right. Some dogs see fine, and some go blind.", note: "Every breed with it got the very same broken piece of DNA from one shared great-great-grandparent dog." },

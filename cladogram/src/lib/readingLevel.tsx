@@ -5,10 +5,11 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from "
 /** Reading levels for the whole site: same pages and visuals, different words. */
 export type ReadingLevel = "puppy" | "adult" | "pro";
 
-export const LEVELS: { id: ReadingLevel; label: string; hint: string }[] = [
+/** `emoji` is decorative: shown beside the label, hidden from screen readers. */
+export const LEVELS: { id: ReadingLevel; label: string; emoji?: string; hint: string }[] = [
   { id: "puppy", label: "Puppy", hint: "Simple words and everyday comparisons" },
   { id: "adult", label: "Adult", hint: "The standard version" },
-  { id: "pro", label: "Albert Pawstein", hint: "Scientific terms and methods from the study" },
+  { id: "pro", label: "Dog Genius", emoji: "🧠", hint: "Scientific terms and methods from the study" },
 ];
 
 const KEY = "dg-reading-level";
@@ -39,7 +40,7 @@ export const useReadingLevel = () => useContext(Ctx);
 
 /**
  * Text at the reader's level: `<Lv puppy={…} pro={…}>adult text</Lv>`. Puppy is about a
- * 5th-grade reading level; "pro" (Albert Pawstein) uses the study's scientific terms. A level
+ * 5th-grade reading level; "pro" (Dog Genius) uses the study's scientific terms. A level
  * that isn't given falls back to the adult text.
  */
 export function Lv({ children, puppy, pro }: { children: ReactNode; puppy?: ReactNode; pro?: ReactNode }) {

@@ -192,7 +192,7 @@ Photos are shown as published (scaled and cropped to circles or squares on the s
 
 | Source | Used for | License |
 |---|---|---|
-| Wikipedia contributors, the English Wikipedia article for each breed (219 breeds; the Levriero Meridionale has no English article), via the [MediaWiki API](https://www.mediawiki.org/wiki/API:Main_page) | In every tooltip that shows a single breed: one sentence on what the breed is, one line of its history (from the article's History section), and its origin, height and weight (from the article's infobox). Stored in `cladogram/src/data/breedFacts.json`, built by `cladogram/scripts/fetch-breed-facts.mjs`; each entry keeps its article title | **CC BY-SA 4.0**. The sentences are quoted (shortened) and credited "Wikipedia · CC BY-SA 4.0" in each tooltip and in the page footers; this text is shared under the same license. |
+| Wikipedia contributors, the English Wikipedia article for each breed (219 breeds; the Levriero Meridionale has no English article), via the [MediaWiki API](https://www.mediawiki.org/wiki/API:Main_page) | In every tooltip that shows a single breed: one sentence on what the breed is, one line of its history (from the article's History section), and its origin, height and weight (from the article's infobox). Stored in `cladogram/src/data/breedFacts.json`, built by `cladogram/scripts/fetch-breed-facts.mjs`; each entry keeps its article title | **CC BY-SA 4.0**. The sentences are quoted (shortened) and credited "Wikipedia · CC BY-SA 4.0" in each tooltip and in the page footers, which link to the site's [breed sources page](https://mforando.github.io/DogGenes/sources/breeds/) listing every article A to Z by breed; this text is shared under the same license. |
 
 ## 6b. Dog Breed Game
 
@@ -218,6 +218,7 @@ Photos are shown as published (scaled and cropped to circles or squares on the s
 | [D3.js](https://d3js.org/) v7 | All charts and diagrams | ISC |
 | [Next.js](https://nextjs.org/) 16, [React](https://react.dev/) 19 | Site framework | MIT |
 | [topojson-client](https://github.com/topojson/topojson-client) | Map decoding | ISC |
+| [Phosphor Icons](https://github.com/phosphor-icons/core) "paw-print" (fill), Copyright (c) 2023 Phosphor Icons; inlined in `cladogram/src/components/PawPrint.tsx` | The paw print on each story step (The Evolution of Dogs and Family Tree scrollers) | MIT |
 | Google Fonts: **Bodoni Moda**, **Spectral**, **IBM Plex Sans Condensed** | Typography (bundled into the site at build time) | **SIL Open Font License 1.1** |
 | pandas, scikit-learn, Pillow (build scripts only, not shipped) | NYC and Toronto names analysis, photo thumbnails | BSD-3-Clause / BSD-3-Clause / MIT-CMU |
 | `Skill.md` — "frontend-design" skill | Design guidance | MIT (stated in the file) |

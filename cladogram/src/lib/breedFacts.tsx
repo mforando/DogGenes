@@ -1,5 +1,6 @@
 import raw from "@/data/breedFacts.json";
 import akc from "@/data/akc.json";
+import tree from "@/data/cladogram.json";
 
 /**
  * A short history and key facts for each breed, from English Wikipedia (CC BY-SA 4.0), fetched
@@ -96,4 +97,13 @@ export function BreedFactsBlock({ code, slug }: { code?: string | null; slug?: s
       <div className="bf-src">Wikipedia · CC BY-SA 4.0</div>
     </div>
   );
+}
+
+/** Every breed with facts, by display name (study name, else AKC name), A to Z, for the breed-sources page. */
+export function factSources(): { name: string; title: string; url: string }[] {
+  const study = (tree as unknown as { breeds: Record<string, { name: string }> }).breeds;
+  const akcName = new Map((akc as { breeds: { name: string; slug: string }[] }).breeds.map((b) => [`akc:${b.slug}`, b.name]));
+  return Object.entries(FACTS)
+    .map(([k, f]) => ({ name: study[k]?.name ?? akcName.get(k) ?? f.w.replace(/_/g, " "), title: f.w.replace(/_/g, " "), url: factsUrl(f) }))
+    .sort((a, b) => a.name.localeCompare(b.name));
 }

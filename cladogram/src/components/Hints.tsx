@@ -25,6 +25,10 @@ const HintCtx = createContext<{
   close: (id: string) => void;
   onBreed?: (code: string | null) => void;
   onClade?: (id: string | null) => void;
+  /** A click on a breed or family name (the page may pin its card). */
+  onPin?: (kind: Pop["kind"], id: string) => void;
+  /** False while the page holds hovers back (just after a story step changes). */
+  allowHover?: () => boolean;
   /** The word whose pop-up is open, for aria-expanded. */
   openId: string | null;
 } | null>(null);
@@ -33,11 +37,17 @@ export function HintProvider({
   children,
   onBreed,
   onClade,
+  onPin,
+  allowHover,
   docked = [],
 }: {
   children: ReactNode;
   onBreed?: (code: string | null) => void;
   onClade?: (id: string | null) => void;
+  /** A click on a word: pages with a side panel pin that word's card there. */
+  onPin?: (kind: Pop["kind"], id: string) => void;
+  /** False while the page holds hovers back (just after a story step changes). */
+  allowHover?: () => boolean;
   /** Kinds of word whose card the page shows in a panel of its own (no floating pop-up). */
   docked?: Pop["kind"][];
 }) {
@@ -68,7 +78,7 @@ export function HintProvider({
     };
   }, [pop, onBreed, onClade]);
   return (
-    <HintCtx.Provider value={{ open, close, onBreed, onClade, openId: pop?.id ?? null }}>
+    <HintCtx.Provider value={{ open, close, onBreed, onClade, onPin, allowHover, openId: pop?.id ?? null }}>
       {children}
       {pop && !docked.includes(pop.kind) && typeof document !== "undefined" && createPortal(<HintPop pop={pop} />, document.body)}
     </HintCtx.Provider>
@@ -109,9 +119,12 @@ function Trigger({ kind, id, className, label, children }: { kind: Pop["kind"]; 
           enter();
         } else if (e.key === "Escape") leave();
       }}
-      onPointerEnter={(e) => e.pointerType === "mouse" && enter()}
+      onPointerEnter={(e) => e.pointerType === "mouse" && (ctx.allowHover?.() ?? true) && enter()}
       onPointerLeave={(e) => e.pointerType === "mouse" && leave()}
-      onClick={enter}
+      onClick={() => {
+        enter();
+        ctx.onPin?.(kind, id);
+      }}
       onFocus={enter}
       onBlur={leave}
     >

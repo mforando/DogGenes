@@ -30,7 +30,7 @@ export const GEOM = {
   rTree: 330, // radius at the deepest internal node
   rWedge: 372, // outer edge of breed wedges
   rClade0: 377,
-  rClade1: 383,
+  rClade1: 386, // a band as bold as the DNA web's, ending just short of the breed names
   rLabel: 389,
   rCladeName: 530,
 };

@@ -10,6 +10,7 @@ import { HISTORY_STEPS, STEP_ALIASES } from "@/lib/steps";
 import { HISTORY_LEVEL_BODIES } from "@/lib/historyLevels";
 import { Lv, useReadingLevel } from "@/lib/readingLevel";
 import MotionToggle from "./MotionToggle";
+import PawPrint from "./PawPrint";
 
 /** The history of dogs: 40,000 years of domestication on a scroll-driven timeline. */
 export default function HistoryStory() {
@@ -105,7 +106,11 @@ export default function HistoryStory() {
               aria-labelledby={`h-${s.id}`}
             >
               <div className="card">
-                <p className="kicker">{s.kicker}</p>
+                <p className="kicker">
+                  <PawPrint className="step-paw" />
+                  {s.kicker}
+                  <PawPrint className="step-paw step-paw-end" />
+                </p>
                 <h2 id={`h-${s.id}`}>{s.title}</h2>
                 {level === "adult" ? s.body : HISTORY_LEVEL_BODIES[s.id]?.[level] ?? s.body}
               </div>

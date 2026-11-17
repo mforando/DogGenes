@@ -195,7 +195,7 @@ export const TERMS: Record<TermId, { word: string; say?: string; body: ReactNode
   },
 };
 
-/** Each glossary definition at the Puppy (5th-grade) and Albert Pawstein (scientist) levels. */
+/** Each glossary definition at the Puppy (5th-grade) and Dog Genius (scientist) levels. */
 const TERM_LEVELS: Record<TermId, { puppy: ReactNode; pro: ReactNode }> = {
   dna: {
     puppy: (

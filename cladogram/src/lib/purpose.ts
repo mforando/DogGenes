@@ -127,7 +127,7 @@ export const SUMMARIES: PurposeSummary[] = PURPOSES.map(({ id }) => {
   };
 });
 
-/** Each job's blurb and note at the Puppy (5th-grade) and Albert Pawstein (scientist) reading levels. */
+/** Each job's blurb and note at the Puppy (5th-grade) and Dog Genius (scientist) reading levels. */
 export const PURPOSE_LEVELS: Record<PurposeId, Record<"puppy" | "pro", { blurb: string; note: string }>> = {
   sight: {
     puppy: { blurb: "Skinny, super-fast dogs that hunt by looking, not sniffing. They chase rabbits and deer across open fields.", note: "Sighthounds from Britain and from around the Mediterranean Sea aren’t close cousins. People in different places made the same fast, skinny kind of dog on their own." },

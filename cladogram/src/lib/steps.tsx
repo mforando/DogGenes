@@ -32,6 +32,8 @@ export type View = {
   support?: boolean;
   /** Show the clade ring + names. */
   cladeRing?: boolean;
+  /** Families to bring forward on the ring (the rest fade); all of them when absent. */
+  ring?: string[];
   /** Haplotype-sharing bundles: for specific breeds, or every cross-clade pair. */
   links?: { codes: string[] } | "cross";
   /** Zoom to these breeds' sector of the ring. */
@@ -485,7 +487,18 @@ const CHORD_STEPS: Step[] = CIRCOS_STEPS.filter((c) => c.id !== "explore").map((
   circos: c.view,
 }));
 
-export const STEPS: Step[] = [...BREED_STEPS, ...CHORD_STEPS, ...BUNDLE_STEPS];
+const ALL_STEPS: Step[] = [...BREED_STEPS, ...CHORD_STEPS, ...BUNDLE_STEPS];
+
+/**
+ * The family (clade) bands and names around the circle: never before "Breeds fall into 23
+ * families" introduces them, and always from that step on, on whichever circle chart a step
+ * shows. Set here, once, so no step can drift from the rule.
+ */
+const CLADES_FROM = ALL_STEPS.findIndex((s) => s.id === "clades");
+export const STEPS: Step[] = ALL_STEPS.map((s, i) => {
+  const cladeRing = i >= CLADES_FROM;
+  return { ...s, view: { ...s.view, cladeRing }, ...(s.circos ? { circos: { ...s.circos, cladeRing } } : {}) };
+});
 
 /**
  * Step ids retired when steps were merged, and the step that now holds their text, so old

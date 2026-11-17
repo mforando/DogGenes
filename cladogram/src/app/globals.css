@@ -168,10 +168,11 @@ body::before {
   min-height: 92vh;
   display: flex;
   align-items: center;
+  margin-bottom: 5rem;
 }
 .card {
   max-width: 30rem;
-  padding: 1.6rem 1.6rem 1.4rem;
+  padding: 0 1.6rem 1.4rem;
   border-left: 1px solid var(--rule);
   opacity: 0.28;
   transform: translateX(-8px);
@@ -189,6 +190,26 @@ body::before {
 .card p { margin: 0 0 0.9rem; color: var(--ink-2); }
 .card p strong { color: var(--ink); font-weight: 600; }
 .card em { color: var(--ink); }
+
+/* Paw prints either side of each step's kicker: the left one leans left, the right one leans right. */
+.step-paw {
+  display: inline-block;
+  width: 1.25em;
+  height: 1.25em;
+  margin-right: 0.45em;
+  vertical-align: -0.28em;
+  color: var(--ink-3);
+  transform: rotate(-16deg);
+  transition: color .5s ease;
+}
+.step-paw-end { margin: 0 0 0 0.45em; transform: rotate(16deg); }
+.step.is-active .step-paw { color: var(--gold); animation: paw-press .55s cubic-bezier(.2,.7,.2,1) both; }
+@keyframes paw-press {
+  from { scale: 0.55; }
+  60% { scale: 1.12; }
+  to { scale: 1; }
+}
+@media (prefers-reduced-motion: reduce) { .step.is-active .step-paw { animation: none; } }
 
 .legend-list { list-style: none; padding: 0; margin: 0.4rem 0 1rem; display: grid; gap: 0.35rem; font-family: var(--font-label); color: var(--ink); }
 .legend-list li { display: flex; align-items: center; gap: 0.6rem; }
@@ -279,6 +300,10 @@ body::before {
   letter-spacing: 0.02em;
 }
 .cladogram .hits path { cursor: crosshair; outline: none; }
+.cladogram .branch-hits path { cursor: pointer; }
+.cladogram .clade-hits path { cursor: pointer; }
+/* Hovering a branch: the tree restyles to it (Cladogram.tsx), with its descendants drawn in gold on top. */
+.cladogram .labels text.branch-hot { fill: var(--gold); font-weight: 600; }
 .cladogram .hits path:focus-visible { stroke: var(--gold); stroke-width: 1.5; }
 .cladogram .pulse { fill: none; stroke: var(--gold); stroke-width: 1.2; animation: pulse 1.8s ease-out infinite; transform-box: fill-box; transform-origin: center; }
 .cladogram .root-mk .pulse { stroke: var(--ink); }
@@ -1440,7 +1465,8 @@ body::before {
 .cd-clade-list li { grid-template-columns: minmax(0, 1fr) 2.6rem 3.8rem; }
 .circos .codes text.clickable { cursor: pointer; }
 
-/* ---------- reading level toggle (Puppy / Adult / Albert Pawstein) ---------- */
+/* ---------- reading level toggle (Puppy / Adult / Dog Genius) ---------- */
+.level-toggle .level-emoji { margin-left: 0.3em; }
 .level-toggle { display: inline-flex; background: rgba(13, 17, 16, 0.92); border: 1px solid var(--rule); border-radius: 999px; padding: 3px; gap: 2px; font-family: var(--font-label); box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35); }
 .level-toggle button { font: inherit; font-size: 0.8rem; color: var(--ink-2); background: none; border: 0; border-radius: 999px; padding: 0.35rem 0.75rem; cursor: pointer; white-space: nowrap; }
 .level-toggle button:hover { color: var(--ink); }
@@ -1582,6 +1608,13 @@ body::before {
   font-family: var(--font-label); font-size: 0.8rem; line-height: 1.45; transition: opacity .15s ease; align-self: start;
 }
 .tip-dock:has(.tip.on) .tip-dock-empty { opacity: 0; }
+/* Click to pin (dockPin.ts): the pinned card stays, and the panel scrolls if it's long. */
+.tip-dock.pinned, .tip-dock[data-pinned] { overflow-y: auto; overscroll-behavior: contain; pointer-events: auto; scrollbar-width: thin; }
+.tip-dock[data-pinned] > .tip:not(.dock-hint) { visibility: hidden; }
+.tip-pin {
+  font-family: var(--font-label); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--gold); margin: 0 0 0.6rem;
+}
 @media (max-width: 1180px) and (min-width: 901px) {
   /* Mid-size screens: no room for a side column, so the panel floats in the chart's corner. */
   .tip-dock { position: absolute; right: 0; bottom: 0; z-index: 4; width: 250px; pointer-events: none; }
@@ -1675,7 +1708,7 @@ body::before {
   .cladogram svg { max-height: calc(100svh - 8px); }
   .steps { padding: 12svh 0 30svh; }
   .step { min-height: 100svh; align-items: center; }
-  .card { padding: 0.9rem 1rem 0.8rem; font-size: 0.92rem; line-height: 1.5; max-width: none; border: 1px solid var(--rule); border-left: 2px solid var(--rule); transform: none; background: var(--bg-raise); }
+  .card { padding: 0 1rem 0.8rem; font-size: 0.92rem; line-height: 1.5; max-width: none; border: 1px solid var(--rule); border-left: 2px solid var(--rule); transform: none; background: var(--bg-raise); }
   .step.is-active .card { border-left-color: var(--gold); }
   .card h2 { font-size: 1.35rem; margin-bottom: 0.6rem; }
   .card .kicker { margin-bottom: 0.5rem; font-size: 0.66rem; }
@@ -1866,6 +1899,16 @@ a.bp-link:hover { color: var(--gold); }
 .bp-dir ul { list-style: none; margin: 0; padding: 0; }
 .bp-dir a { color: var(--ink); text-decoration: none; line-height: 1.9; }
 .bp-dir a:hover { color: var(--gold); }
+.src-az { display: flex; flex-wrap: wrap; gap: 0.35rem 0.9rem; margin: 0 0 1.8rem; font-family: var(--font-label); font-size: 0.8rem; letter-spacing: 0.08em; }
+.src-az a { color: var(--ink-2); text-decoration: none; }
+.src-az a:hover { color: var(--gold); }
+.src-list { columns: 2 320px; column-gap: 2.5rem; }
+.src-list section { break-inside: avoid; margin-bottom: 1.8rem; scroll-margin-top: 5rem; }
+.src-list h2 { font-family: var(--font-label); font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-2); margin: 0 0 0.5rem; font-weight: 500; }
+.src-list ul { list-style: none; margin: 0; padding: 0; }
+.src-list li { color: var(--ink); line-height: 1.9; }
+.src-list a { color: var(--ink-2); }
+.src-list a:hover { color: var(--gold); }
 @media (max-width: 760px) {
   .bp-head { grid-template-columns: 1fr; }
   .bp-photo { order: -1; }
@@ -2050,7 +2093,7 @@ svg [tabindex]:focus-visible { outline: 2px solid var(--gold); outline-offset: 2
      grows into width the circle can't use (screens where the circle is height-limited). */
   .figure-stage.docked { container-type: size; }
   .figure-stage.docked .stage-chart { flex: 0 1 100cqh; }
-  .figure-stage.docked .tip-dock { flex: 1 0 clamp(220px, 17vw, 260px); max-width: 460px; align-self: stretch; max-height: none; align-content: center; padding-right: 4px; }
+  .figure-stage.docked .tip-dock { flex: 1 0 clamp(220px, 17vw, 260px); max-width: 460px; align-self: stretch; max-height: none; align-content: start; padding: 2.4rem 4px 0 0; } /* top: clear the fixed reading-level and theme controls */
   .tip-dock .tip, :root[data-theme="light"] .tip-dock .tip { background: none; border: 0; box-shadow: none; padding: 0; font-size: 0.92rem; line-height: 1.45; }
   .tip-dock .tip .tip-photo, .tip-dock .dock-hint .tip-photo { height: auto; aspect-ratio: 4 / 3; max-height: 42svh; margin-bottom: 0.9rem; }
   .tip-dock .tip .tip-name { font-size: clamp(1.5rem, 1.1rem + 0.8vw, 2rem); line-height: 1.1; margin-bottom: 0.35rem; }
@@ -2060,5 +2103,5 @@ svg [tabindex]:focus-visible { outline: 2px solid var(--gold); outline-offset: 2
   /* Four across only when the panel has grown into spare width. */
   @container (min-width: 320px) { .tip-dock .dock-thumbs { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
   .tip-dock .dock-thumbs li { font-size: 0.78rem; }
-  .tip-dock-empty { border: 0; padding: 0; font-size: 0.9rem; align-self: center; }
+  .tip-dock-empty { border: 0; padding: 0; font-size: 0.9rem; align-self: start; }
 }

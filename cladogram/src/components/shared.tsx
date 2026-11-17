@@ -116,7 +116,7 @@ export function SiteNav() {
     <>
     <nav ref={nav} className="site-nav" aria-label="Pages">
       <span className="site-mark" aria-hidden>
-        Canis · 2017
+        DOGS
       </span>
       <ul>
         {PAGES.map((p) => (

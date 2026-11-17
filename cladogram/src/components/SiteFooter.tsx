@@ -35,7 +35,7 @@ const C = {
   wikiGlacial: { text: "Wikipedia: Last Glacial Period; Last Glacial Maximum", url: "https://en.wikipedia.org/wiki/Last_Glacial_Period", license: "CC BY-SA 4.0" },
   wikiBonn: { text: "Wikipedia: Bonn–Oberkassel dog", url: "https://en.wikipedia.org/wiki/Bonn%E2%80%93Oberkassel_dog", license: "CC BY-SA 4.0" },
   wikiPaleo: { text: "Wikipedia: Paleolithic dog", url: "https://en.wikipedia.org/wiki/Paleolithic_dog", license: "CC BY-SA 4.0" },
-  wikiBreeds: { text: "Wikipedia breed articles (Siberian Husky, Chow Chow, Basenji, Saluki, Shar Pei, Lhasa Apso and others): ancient-breed origin dates", url: "https://en.wikipedia.org/wiki/List_of_dog_breeds", license: "CC BY-SA 4.0" },
+  wikiBreeds: { text: "Wikipedia breed articles (Siberian Husky, Chow Chow, Basenji, Saluki, Shar Pei, Lhasa Apso and others): ancient-breed origin dates (every article listed, A to Z by breed)", url: "/sources/breeds/", license: "CC BY-SA 4.0" },
   parker2004: { text: "Parker H.G. et al. (2004). Genetic structure of the purebred domestic dog. Science 304(5674):1160–1164", url: "https://doi.org/10.1126/science.1097406" },
   rosenberg: { text: "Rosenberg N.A. et al. (2002). Genetic structure of human populations. Science 298(5602):2381–2385", url: "https://doi.org/10.1126/science.1078311" },
   boyko: { text: "Boyko A.R. et al. (2010). A simple genetic architecture underlies morphological variation in dogs. PLOS Biology 8(8):e1000451", url: "https://doi.org/10.1371/journal.pbio.1000451", license: "CC BY 4.0" },
@@ -110,8 +110,8 @@ const C = {
     url: "https://doi.org/10.1093/pan/mpn018",
   },
   wikiFacts: {
-    text: "Breed history and facts in the tooltips (a short description, a line of history, origin, height and weight): Wikipedia contributors, each breed's English Wikipedia article; quoted and shortened",
-    url: "https://en.wikipedia.org/",
+    text: "Breed history and facts in the tooltips (a short description, a line of history, origin, height and weight): Wikipedia contributors, each breed's English Wikipedia article (every article listed, A to Z by breed); quoted and shortened",
+    url: "/sources/breeds/",
     license: "CC BY-SA 4.0",
   },
   pudding: { text: "Layout inspired by The Pudding, “Every Outdoor Basketball Court in the U.S.A.” (2024)", url: "https://pudding.cool/2024/09/courts/" },
@@ -126,6 +126,7 @@ const BY_PAGE: Record<string, Cite[]> = {
   "/health": [C.parker, C.omia, C.wikiFacts, C.donner, C.brown, C.marchant, C.karmi, C.dogwellnet, C.dap, C.dogceo, C.commons],
   "/names": [C.nyc, C.toronto, C.wikiFacts, C.torontoCensus, C.acsAncestry, C.monroe, C.parker, C.dogceo, C.commons],
   "/game": [C.dogceo, C.stanfordDogs, C.resnet, C.akc],
+  "/sources/breeds": [C.wikiFacts],
   "/popularity": [C.akc, C.tidytuesday, C.wikiFacts, C.wikiTopBreeds, C.parker, C.dogceo, C.commons],
 };
 
@@ -147,9 +148,13 @@ export default function SiteFooter() {
         <ol>
           {cites.map((c) => (
             <li key={c.url + c.text}>
-              <a href={c.url} target="_blank" rel="noopener noreferrer">
-                {c.text}
-              </a>
+              {c.url.startsWith("/") ? (
+                <Link href={c.url}>{c.text}</Link>
+              ) : (
+                <a href={c.url} target="_blank" rel="noopener noreferrer">
+                  {c.text}
+                </a>
+              )}
               {c.license && <span className="sf-lic"> · {c.license}</span>}
             </li>
           ))}

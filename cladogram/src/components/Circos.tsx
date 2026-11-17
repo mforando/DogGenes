@@ -9,6 +9,9 @@ import { circosTree, elbow, treeCodeOf, type CTNode } from "@/lib/circosTree";
 import { descendantsOf } from "@/lib/pairs";
 import { LIGHT, tone } from "@/lib/theme";
 import { useTheme } from "@/lib/useTheme";
+import { dockPinner, pinNoteHtml } from "@/lib/dockPin";
+import { hoverGate, STEP_CHANGE } from "@/lib/hoverGate";
+import { cladeMembers, cladeOf, cladeTipHtml, cladesOf, relatedClades, relatedToClade } from "@/lib/ringClades";
 
 /** What the circos figure should emphasise. */
 export type CircosView = {
@@ -22,6 +25,8 @@ export type CircosView = {
   silent?: boolean;
   /** Show the clade-name ring. */
   cladeRing?: boolean;
+  /** Families to bring forward on the ring (the rest fade); all of them when absent. */
+  ring?: string[];
   /** Hovering a segment isolates its ribbons. */
   interactive?: boolean;
   /** Mark where the ring starts and which way it runs. */
@@ -95,6 +100,14 @@ export default function Circos({
   onHoverRef.current = onHover;
   const host = useRef<HTMLDivElement>(null);
   const api = useRef<{ update: (v: CircosView) => void; spot: (code: string | null) => void } | null>(null);
+  // What's on screen, so a rebuild (theme switch) can restyle to match at once.
+  const viewRef = useRef(view);
+  viewRef.current = view;
+  const spotRef = useRef(spotlight);
+  spotRef.current = spotlight;
+  const built = useRef(false);
+  const compactRef = useRef(compact);
+  compactRef.current = compact;
 
   const theme = useTheme(); // rebuild when the light/dark switch changes
   useEffect(() => {
@@ -104,7 +117,8 @@ export default function Circos({
     GOLD = tone("#e8b74a", LIGHT.gold);
     const el = host.current!;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const DUR = reduce ? 0 : 750;
+    const FULL = reduce ? 0 : 750;
+    let DUR = FULL; // 0 while restyling instantly after a theme switch
 
     const svg = d3.select(el).append("svg")
       .attr("viewBox", `${-W / 2} ${-W / 2} ${W} ${W}`)
@@ -129,7 +143,28 @@ export default function Circos({
     const gSegs = svg.append("g").attr("class", "segs");
     const gLabels = svg.append("g").attr("class", "codes");
     const gClade = svg.append("g").attr("class", "clade-ring").attr("opacity", 0);
-    const tip = d3.select(tipDock?.current ?? el).append("div").attr("class", "tip").attr("role", "status");
+    // The side panel, read once: in development React empties refs before an effect's cleanup
+    // runs, and the cleanup must take its listeners off the same element they were put on.
+    const dock = tipDock?.current ?? null;
+    // In the story (details go to the side panel), a hover always takes over the chart.
+    const hoverLeads = () => !!dock && !onHoverRef.current;
+    const tip = d3.select(dock ?? el).append("div").attr("class", "tip").attr("role", "status");
+    // Click a breed or ribbon to pin its details in the side panel (then scroll the panel); see
+    // dockPin.ts. Only where the chart reports to the panel: other pages lock on click already.
+    const gate = hoverGate();
+    const pinner = dockPinner(
+      dock,
+      "circos",
+      () => {
+        tip.classed("on", false);
+        hover = null;
+        hoverRibbon = null;
+        hoverClade = null;
+        gRibbons.classed("dim", false).selectAll("path").classed("hot", false);
+        render();
+      },
+      () => !compactRef.current && !onBreedClickRef.current && !onHoverRef.current,
+    );
 
     const arc = d3.arc<{ a0: number; a1: number }>()
       .innerRadius(CGEOM.rIn + 2).outerRadius(CGEOM.rOut)
@@ -216,25 +251,49 @@ export default function Circos({
     const hitArc = d3.arc<{ a0: number; a1: number }>()
       .innerRadius(CGEOM.rClade0 - 6).outerRadius(CGEOM.rCladeName + 34)
       .startAngle((d) => d.a0).endAngle((d) => d.a1);
-    const cladeHits = gClade.selectAll("path.clade-hit").data(onHoverRef.current ? cladeArcs : []).join("path")
+    const cladeHits = gClade.selectAll("path.clade-hit").data(onHoverRef.current || hoverLeads() ? cladeArcs : []).join("path")
       .attr("class", "clade-hit").attr("d", (d) => hitArc(d)).attr("fill", "transparent")
       .attr("tabindex", 0).attr("role", "button")
       .attr("aria-label", (d) => `${circosData.clades[d.clade]} family: show its tree and DNA sharing`)
-      .on("pointerenter focus", (_, d) => {
+      .on("pointerenter focus", (ev: PointerEvent | FocusEvent, d) => {
+        if (!gate.ok() || pinner.busy) return;
         gClade.selectAll<SVGPathElement, { clade: string }>("path.band").classed("hover", (b) => b.clade === d.clade);
         onHoverRef.current?.({ kind: "clade", clade: d.clade });
+        if (hoverLeads()) {
+          hoverClade = d.clade;
+          showCladeTip(ev, d.clade);
+          render();
+        }
+      })
+      .on("pointermove", (ev: PointerEvent, d) => {
+        if (hoverLeads() && gate.ok()) showCladeTip(ev, d.clade);
       })
       .on("pointerleave blur", () => {
+        if (pinner.busy) return;
         gClade.selectAll("path.band").classed("hover", false);
         onHoverRef.current?.(null);
+        if (hoverLeads() && hoverClade) {
+          hoverClade = null;
+          tip.classed("on", false);
+          render();
+        }
+      })
+      .on("click.pin", (ev: MouseEvent, d) => {
+        if (!pinner.can()) return;
+        ev.stopPropagation();
+        if (!pinner.toggle(`clade:${d.clade}`)) return;
+        hoverClade = d.clade;
+        showCladeTip(ev, d.clade);
+        render();
       });
 
     // ---------- state ----------
     let current: CircosView = { ribbons: "none" };
     let hover: string | null = null;
     let spot: string | null = null; // outside highlight; wins over the pointer
-    const active = (v: CircosView) => spot ?? (v.interactive ? hover : null);
+    const active = (v: CircosView) => spot ?? (v.interactive || hoverLeads() ? hover : null);
     let hoverRibbon: CLink | null = null;
+    let hoverClade: string | null = null; // a family band or name under the pointer (story only)
 
     /** Trace tree paths: a breed back to the grey wolf, or two breeds to their meeting point. */
     /** Breeds (tree codes) on white relative lines of the traced breed's path to the wolf. */
@@ -332,20 +391,43 @@ export default function Circos({
       return layoutLinks(keys.map((k) => rawLinkByKey.get(k)!).filter(Boolean));
     }
 
+    /** The family ring: the hovered breed's families, or a hovered ribbon's, else the step's. */
+    function styleRing() {
+      const h = active(current);
+      const set = h
+        ? relatedClades(h)
+        : hoverRibbon
+          ? cladesOf([hoverRibbon.a, hoverRibbon.b])
+          : hoverClade && !spot
+            ? relatedToClade(hoverClade)
+            : current.silent && !spot && current.ring
+              ? // "No ribbons tells a story too": every family with a breed left on the ring
+                [...new Set([...current.ring, ...cladesOf(nodes.filter((n) => n.degree === 0).map((n) => n.code))])]
+              : current.ring;
+      const ring = set ? new Set(set) : null;
+      gClade.selectAll<SVGPathElement, { clade: string }>("path.band")
+        .transition("ring").duration(DUR * 0.4)
+        .attr("fill-opacity", (d) => (!ring || ring.has(d.clade) ? 1 : 0.15));
+      gClade.selectAll<SVGTextElement, { clade: string }>("text.clade-name")
+        .transition("ring").duration(DUR * 0.4)
+        .attr("fill-opacity", (d) => (!ring || ring.has(d.clade) ? 1 : 0.25));
+    }
+
     function render() {
       const v = current;
       let shown = visibleLinks(v);
       const h = active(v);
-      const hoverOn = !!h;
+      const fam = !h && !spot ? hoverClade : null;
+      const hoverOn = !!h || !!fam;
       if (h)
         shown = layoutLinks(links.filter((l) => l.a === h || l.b === h).map((l) => rawLinkByKey.get(l.key)!));
+      else if (fam)
+        shown = layoutLinks(links.filter((l) => cladeOf(l.a) === fam || cladeOf(l.b) === fam).map((l) => rawLinkByKey.get(l.key)!));
 
       const focus = new Set(v.focus ?? []);
-      if (hoverOn) {
-        focus.clear();
-        focus.add(h!);
-      }
-      const clades = new Set(spot ? [] : v.clades ?? []);
+      if (hoverOn) focus.clear();
+      if (h) focus.add(h);
+      const clades = new Set(spot ? [] : fam ? [fam] : v.clades ?? []);
       const silent = !spot && !!v.silent;
       const hasFocus = focus.size > 0 || clades.size > 0 || silent;
       const on = (n: CNode) =>
@@ -360,7 +442,13 @@ export default function Circos({
       const isEnd = (d: CNode) => hasFocus && !on(d) && ends.has(d.code);
       // Hovering a block keeps its partners' blocks in color, as before.
       segSel.transition(T).attr("fill", (d) => (on(d) || (hoverOn && !spot && isEnd(d)) ? d.color : DIM));
+      // "No ribbons tells a story too": only the breeds without ribbons stay on the ring; every
+      // other breed's block and name go, leaving just its chords. A hover brings them back.
+      const hidden = (d: CNode) => silent && !hoverOn && !on(d);
+      segSel.attr("pointer-events", (d) => (hidden(d) ? "none" : null)).transition("hide").duration(DUR * (hoverOn ? 0.4 : 1)).attr("opacity", (d) => (hidden(d) ? 0 : 1));
+      labelSel.attr("pointer-events", (d) => (hidden(d) ? "none" : null)).transition("hide").duration(DUR * (hoverOn ? 0.4 : 1)).attr("opacity", (d) => (hidden(d) ? 0 : 1));
       gClade.transition(T).attr("opacity", v.cladeRing ? 1 : 0);
+      styleRing();
       cladeHits.attr("pointer-events", v.cladeRing ? null : "none");
       gTree.transition(T).attr("opacity", v.tree ? 1 : 0);
       drawTreePaths(v);
@@ -400,21 +488,34 @@ export default function Circos({
         .attr("stroke", (d) => d.color)
         .attr("stroke-width", 0.4)
         .on("pointerenter", (_, d) => {
-          if (current.frozen) return;
+          if (current.frozen || pinner.busy || !gate.ok()) return;
           onHoverRef.current?.({ kind: "ribbon", key: d.key });
           hoverRibbon = d;
           // Fade the other ribbons so the hovered one and its tree path stand out.
           gRibbons.classed("dim", true).selectAll<SVGPathElement, CLink>("path").classed("hot", (x) => x.key === d.key);
           drawTreePaths(current);
+          styleRing();
         })
-        .on("pointermove", (ev: PointerEvent, d) => showRibbonTip(ev, d))
+        .on("pointermove", (ev: PointerEvent, d) => gate.ok() && showRibbonTip(ev, d))
+        .on("click.pin", (ev: MouseEvent, d) => {
+          if (!pinner.can()) return;
+          ev.stopPropagation();
+          if (!pinner.toggle(`rib:${d.key}`)) return;
+          hoverRibbon = d;
+          gRibbons.classed("dim", true).selectAll<SVGPathElement, CLink>("path").classed("hot", (x) => x.key === d.key);
+          drawTreePaths(current);
+          styleRing();
+          showRibbonTip(ev as unknown as PointerEvent, d);
+        })
         .on("pointerleave", () => {
+          if (pinner.busy) return;
           tip.classed("on", false);
           if (current.frozen) return;
           onHoverRef.current?.(null);
           hoverRibbon = null;
           gRibbons.classed("dim", false).selectAll("path").classed("hot", false);
           drawTreePaths(current);
+          styleRing();
         })
         .transition(T)
         .delay((_, i) => (hoverOn || !many ? i * 30 : Math.min(i * 3, 500)))
@@ -447,12 +548,14 @@ export default function Circos({
     }
     function showSegTip(ev: PointerEvent | FocusEvent, d: CNode) {
       if (onHoverRef.current) return;
+      if (pinner.busy && pinner.key !== `seg:${d.code}`) return;
+      const note = pinner.key === `seg:${d.code}` ? pinNoteHtml() : "";
       const ps = partnersOf(d.code);
       // A second sampled population (e.g. Italian cane corsos) uses its breed's photo and facts.
       const breed = d.code === "CHTM" ? "TIBM" : d.code === "COOS" ? "SALU" : d.code === "ITCC" ? "CANE" : d.code;
       const photo = photoOf(breed);
       tip.html(
-        `${photo ? `<img class="tip-photo" src="${photo}" alt="" referrerpolicy="no-referrer" />` : ""}
+        `${note}${photo ? `<img class="tip-photo" src="${photo}" alt="" referrerpolicy="no-referrer" />` : ""}
          <div class="tip-name">${d.name}</div>
          <div class="tip-clade"><i style="background:${d.color}"></i>${cladeLabel(d)}</div>
          ${ps.length
@@ -464,11 +567,19 @@ export default function Circos({
       ).classed("on", true);
       place(ev);
     }
+    function showCladeTip(ev: PointerEvent | MouseEvent | FocusEvent, clade: string) {
+      const key = `clade:${clade}`;
+      if (pinner.busy && pinner.key !== key) return;
+      tip.html(cladeTipHtml(clade, pinner.key === key ? pinNoteHtml() : "")).classed("on", true);
+      place(ev as PointerEvent);
+    }
     function showRibbonTip(ev: PointerEvent, d: CLink) {
       if (onHoverRef.current) return;
+      if (pinner.busy && pinner.key !== `rib:${d.key}`) return;
+      const note = pinner.key === `rib:${d.key}` ? pinNoteHtml() : "";
       const a = nodeByCode.get(d.a)!, b = nodeByCode.get(d.b)!;
       tip.html(
-        `<div class="tip-name">${a.name} ↔ ${b.name}</div>
+        `${note}<div class="tip-name">${a.name} ↔ ${b.name}</div>
          <dl><dt>Shared DNA</dt><dd>${mb(d.value)}</dd>
          <dt>Color comes from</dt><dd>${nodeByCode.get(d.hub)!.name}</dd></dl>`,
       ).classed("on", true);
@@ -477,24 +588,33 @@ export default function Circos({
 
     // Blocks and their name labels respond alike: hover for details, click to lock.
     function enterBreed(ev: PointerEvent | FocusEvent, d: CNode) {
-      if (current.frozen) return;
+      if (current.frozen || pinner.busy || !gate.ok()) return;
       showSegTip(ev, d);
       onHoverRef.current?.({ kind: "breed", code: d.code });
-      if (current.interactive) {
+      if (current.interactive || hoverLeads()) {
         hover = d.code;
         render();
       }
     }
     function leaveBreed() {
+      if (pinner.busy) return;
       tip.classed("on", false);
       if (current.frozen) return;
       onHoverRef.current?.(null);
-      if (current.interactive && hover) {
+      if ((current.interactive || hoverLeads()) && hover) {
         hover = null;
         render();
       }
     }
     function clickBreed(ev: MouseEvent, d: CNode) {
+      if (pinner.can()) {
+        ev.stopPropagation();
+        if (!pinner.toggle(`seg:${d.code}`)) return;
+        showSegTip(ev as unknown as PointerEvent, d);
+        hover = d.code;
+        render();
+        return;
+      }
       if (!onBreedClickRef.current) return;
       ev.stopPropagation();
       onBreedClickRef.current(d.code);
@@ -502,7 +622,7 @@ export default function Circos({
 
     segSel
       .on("pointerenter focus", enterBreed)
-      .on("pointermove", (ev, d) => showSegTip(ev, d))
+      .on("pointermove", (ev, d) => gate.ok() && showSegTip(ev, d))
       .on("pointerleave blur", leaveBreed)
       // Click a block to lock onto it; click again (anywhere on the chart) to go back.
       .on("click", clickBreed)
@@ -516,10 +636,26 @@ export default function Circos({
     labelSel
       .classed("clickable", () => !!onBreedClickRef.current || !!onHoverRef.current)
       .on("pointerenter", enterBreed)
-      .on("pointermove", (ev, d) => showSegTip(ev, d))
+      .on("pointermove", (ev, d) => gate.ok() && showSegTip(ev, d))
       .on("pointerleave", leaveBreed)
       .on("click", clickBreed);
-    svg.on("click", () => onBgClickRef.current?.());
+    // A new step clears any hover (and pin), and hovers wait for the pointer to really move.
+    const onStep = () => {
+      pinner.unpin();
+      tip.classed("on", false);
+      gClade.selectAll("path.band").classed("hover", false);
+      hover = null;
+      hoverRibbon = null;
+      hoverClade = null;
+      gRibbons.classed("dim", false).selectAll("path").classed("hot", false);
+      render();
+      gate.lock();
+    };
+    dock?.addEventListener(STEP_CHANGE, onStep);
+    svg.on("click", () => {
+      pinner.unpin(); // a click on the chart's empty space lets go of a pinned item
+      onBgClickRef.current?.();
+    });
 
     api.current = {
       spot(code) {
@@ -528,15 +664,31 @@ export default function Circos({
         render();
       },
       update(v) {
+        if (v !== current) pinner.unpin();
         current = v;
         hover = null;
         hoverRibbon = null;
+        hoverClade = null;
         gRibbons.classed("dim", false).selectAll("path").classed("hot", false);
         svg.classed("frozen", !!v.frozen);
         render();
       },
     };
+    // A theme switch rebuilds the chart with the new colors; restyle it for the current step and
+    // spotlight right away, without animating. (The first build is styled by the effects below.)
+    if (built.current) {
+      DUR = 0;
+      spot = spotRef.current ?? null;
+      try {
+        api.current.update(viewRef.current);
+      } finally {
+        DUR = FULL;
+      }
+    }
+    built.current = true;
     return () => {
+      dock?.removeEventListener(STEP_CHANGE, onStep);
+      pinner.dispose();
       d3.select(el).selectAll("*").remove();
       tip.remove();
       api.current = null;
@@ -554,7 +706,7 @@ export default function Circos({
   useEffect(() => {
     const half = compact ? CGEOM.rOut + 4 : W / 2;
     d3.select(host.current).select("svg").attr("viewBox", `${-half} ${-half} ${half * 2} ${half * 2}`);
-  }, [compact, ariaLabel]);
+  }, [compact, ariaLabel, theme]); // the rebuild resets the viewBox
 
   return <div ref={host} className={`circos${compact ? " compact" : ""}`} />;
 }
