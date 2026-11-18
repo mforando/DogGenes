@@ -10,6 +10,9 @@ import CladeTree from "./CladeTree";
 import StretchedChord from "./StretchedChord";
 import { data } from "@/lib/tree";
 import { Term } from "./Hints";
+import PuppySwatch from "./PuppySwatch";
+import { useEffect } from "react";
+import { setPanelFocus } from "@/lib/panelFocus";
 
 const mb = (v: number) => `${(v / 1e6).toFixed(1)} Mb`;
 // Country-of-origin populations use the main breed's photos and family-tree entry.
@@ -37,7 +40,7 @@ function BreedHeader({ n, small = false, gallery = false }: { n: CNode; small?: 
           {n.name}
         </p>
         <p className="cd-family">
-          <i style={{ background: n.cssColor }} aria-hidden />
+          <PuppySwatch code={n.code} color={n.cssColor} />
           {familyLabel(n)}
         </p>
       </div>
@@ -158,7 +161,7 @@ export default function CircosDetails({
                   <span className="cd-pname">
                     <span>{o.name}</span>
                     <span className="cd-pfam">
-                      <i style={{ background: o.cssColor }} aria-hidden />
+                      <PuppySwatch code={p.code} color={o.cssColor} />
                       {familyLabel(o)}
                     </span>
                   </span>
@@ -192,6 +195,8 @@ export default function CircosDetails({
 
 /** Hovering a family's band: its tree, and how much DNA it shares with each other family. */
 export function CladePanel({ clade }: { clade: string }) {
+  // A breed pointed at inside the panel lasts only while the panel shows this family.
+  useEffect(() => () => setPanelFocus(null), [clade]);
   const members = nodes.filter((n) => n.clade === clade);
   const color = members[0]?.cssColor ?? "#888";
   const codes = new Set(members.map((n) => n.code));

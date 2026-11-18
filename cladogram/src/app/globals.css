@@ -149,6 +149,7 @@ body::before {
   min-width: 0;
 }
 .figure-meta {
+  position: relative; /* anchors the step menu; phones pin it absolutely instead */
   display: flex;
   align-items: baseline;
   gap: 1rem;
@@ -558,7 +559,7 @@ body::before {
 .lineage-head { padding: 0 0.2rem 0.6rem; border-bottom: 1px solid var(--rule); }
 .lineage-title { font-family: var(--font-display); font-size: var(--step-1); margin: 0 0 0.25rem; }
 .lineage-title strong { color: var(--gold); font-weight: 500; }
-.lineage-sub { margin: 0; color: var(--ink-2); font-size: 0.92rem; line-height: 1.45; max-width: 46rem; }
+.lineage-sub { margin: 0; color: var(--ink-2); font-size: 0.92rem; line-height: 1.45; max-width: 50rem; }
 .lineage-wrap { position: relative; flex: 1 1 auto; min-height: 0; }
 .lineage-svg { position: absolute; inset: 0; overflow: hidden; cursor: grab; touch-action: none; }
 .lineage-svg:active { cursor: grabbing; }
@@ -2156,3 +2157,96 @@ svg [tabindex]:focus-visible { outline: 2px solid var(--gold); outline-offset: 2
   .tip-dock .dock-thumbs li { font-size: 0.78rem; }
   .tip-dock-empty { border: 0; padding: 0; font-size: 0.9rem; align-self: start; }
 }
+
+/* LilPuppies: dog-silhouette font (https://github.com/mforando/LilPuppies), one breed per letter. */
+@font-face {
+  font-family: "LilPuppies";
+  src: url("../fonts/lilpuppies.woff2") format("woff2");
+  font-display: block;
+}
+.clade-tree-dog { font-family: "LilPuppies"; font-size: 17px; }
+
+/* The full chart as the scroller's last step: its details fill the side panel, which scrolls. */
+.tip-dock[data-replica] { align-self: stretch; overflow-y: auto; overscroll-behavior: contain; pointer-events: auto; scrollbar-width: thin; }
+.tip-dock .dock-replica { position: static; max-height: none; overflow: visible; }
+.step .replica-side .replica-details { position: static; max-height: none; overflow: visible; margin: 0 0 1.4rem; }
+
+/* The step read-out above the chart opens a list of every step (StepMenu.tsx). */
+.step-menu-btn {
+  display: flex; align-items: baseline; gap: 1rem; min-width: 0; max-width: 100%;
+  font: inherit; letter-spacing: inherit; text-transform: inherit; color: inherit;
+  background: none; border: 0; padding: 0; margin: 0; cursor: pointer; text-align: left;
+}
+.step-menu-btn:hover .figure-title, .step-menu-btn[aria-expanded="true"] .figure-title { color: var(--ink-2); }
+.step-menu-btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+.step-menu-caret { margin-left: -0.6rem; transition: transform .15s ease; }
+.step-menu-btn[aria-expanded="true"] .step-menu-caret { transform: rotate(180deg); }
+.step-menu {
+  position: absolute; top: calc(100% + 4px); left: 0; z-index: 30;
+  width: min(26rem, calc(100vw - 32px)); max-height: min(70svh, 34rem); overflow-y: auto; overscroll-behavior: contain;
+  margin: 0; padding: 0.3rem 0; list-style: none;
+  background: var(--bg-raise); border: 1px solid var(--rule); border-top: 2px solid var(--gold);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35); scrollbar-width: thin;
+}
+.step-menu button {
+  display: flex; gap: 0.8rem; align-items: baseline; width: 100%; padding: 0.42rem 0.9rem;
+  font: inherit; letter-spacing: inherit; text-transform: inherit; color: var(--ink-2);
+  background: none; border: 0; cursor: pointer; text-align: left;
+}
+.step-menu button:hover, .step-menu button:focus-visible { background: var(--bg); color: var(--ink); outline: none; }
+.step-menu button[aria-current="step"] { color: var(--ink); }
+.step-menu-n { color: var(--ink-3); font-variant-numeric: tabular-nums; flex: none; }
+.step-menu button[aria-current="step"] .step-menu-n { color: var(--gold); font-weight: 600; }
+/* Phones: the reading-level and theme controls float over the top of the chart; open below them. */
+@media (max-width: 900px), (max-height: 520px) and (orientation: landscape) {
+  .step-menu { top: calc(100% + 36px); max-height: 62svh; }
+}
+
+/* A single breed's swatch is its own LilPuppies dog, in the color its square had. */
+.pup-swatch { font-family: "LilPuppies"; font-size: 1.45em; line-height: 1; flex: none; font-style: normal; transform: translateY(-0.06em); }
+/* A breed's DNA partners, each with its own dog (or its square when it has none). */
+.tip-partners dt .pup-swatch { margin-right: 0.4em; }
+.tip-partners dt > i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin: 0 0.45em 0 0.2em; }
+
+/* A family's panel: point at a breed on its tree or chord diagram to find it on both, and on the main chart. */
+.clade-tree-hit { fill: transparent; }
+.clade-tree-leaf { transition: opacity .15s ease; }
+.clade-tree-leaf.dim { opacity: 0.25; }
+.clade-tree-leaf.lit .clade-tree-lab { fill: var(--ink); font-weight: 600; }
+
+/* ---------- About Me & My Dogs ---------- */
+.sf-about { margin: 0.8rem 0 0; font-size: 0.85rem; }
+.sf-about a { color: var(--gold); text-decoration: none; border-bottom: 1px solid var(--gold-dim); }
+.sf-about a:hover { border-bottom-color: var(--gold); }
+.about-links { font-family: var(--font-label); font-size: 0.92rem; color: var(--ink-3); margin: 0; }
+.about-links a { color: var(--gold); text-decoration: none; border-bottom: 1px solid var(--gold-dim); }
+.about-h { font-family: var(--font-label); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); font-weight: 500; margin: 0 0 1rem; }
+/* Photos keep their own shapes, in columns, so no dog is cropped. */
+/* The dogs as a scroller: photos fixed on the left, cross-fading as each dog's text passes on the right. */
+.about-scroller { display: grid; grid-template-columns: minmax(0, 38rem) minmax(14rem, 1fr); gap: 0 3rem; max-width: 72rem; }
+.about-stage { position: sticky; top: 0; height: 100svh; display: grid; align-items: center; justify-items: center; }
+.about-frame { grid-area: 1 / 1; opacity: 0; transform: translateY(10px); transition: opacity .45s ease, transform .45s ease; }
+.about-frame.on { opacity: 1; transform: none; }
+.about-steps { list-style: none; margin: 0; padding: 6vh 0 14vh; }
+.about-steps li { min-height: 42vh; display: flex; flex-direction: column; justify-content: center; opacity: 0.3; transition: opacity .3s ease; }
+.about-steps li.on { opacity: 1; }
+.about-steps h3 { font-family: var(--font-display); font-weight: 500; font-size: 1.6rem; color: var(--ink); margin: 0 0 0.35rem; }
+.about-steps p { margin: 0; font-family: var(--font-label); font-size: 0.95rem; color: var(--ink-2); }
+@media (prefers-reduced-motion: reduce) { .about-frame, .about-steps li { transition: none; } .about-frame { transform: none; } }
+/* Phones: the photo pinned at the top of the screen, the text scrolling up beneath it. */
+@media (max-width: 640px) {
+  .about-scroller { grid-template-columns: 1fr; }
+  .about-stage { top: 48px; height: 46svh; z-index: 2; background: var(--bg); }
+  .about-photo { max-height: 44svh; }
+  .about-steps { padding: 1vh 0 22vh; text-align: center; }
+  .about-steps li { min-height: 34vh; justify-content: flex-start; padding-top: 1.2rem; }
+}
+/* Each dog the same height, centred in its column, shrunk to fit if need be. */
+.about-photo { display: block; width: auto; height: auto; max-width: 100%; max-height: 82svh; margin: 0 auto; overflow: visible; }
+/* The padded outline around each dog, with a soft glow behind it. */
+/* A yellowy white: the site's gold mixed with white; light mode keeps more gold so it reads on the pale page. */
+.about-photo { --halo: color-mix(in srgb, var(--gold) 60%, #ffffff); }
+:root[data-theme="light"] .about-photo { --halo: color-mix(in srgb, var(--gold) 78%, #ffffff); }
+.about-glow { fill: none; stroke: var(--halo); stroke-opacity: 0.55; stroke-linejoin: round; }
+.about-line { fill: none; stroke: var(--halo); stroke-linejoin: round; }
+/* A dog cut out of its photo's background stands on the card itself. */

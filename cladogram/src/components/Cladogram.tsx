@@ -4,6 +4,9 @@ import { useEffect, useRef, type RefObject } from "react";
 import * as d3 from "d3";
 import { ANCESTOR, ANCESTOR_BREED, data, GEOM, isLeaf, layout, nodeIdOf, type TNode } from "@/lib/tree";
 import { cladeColor } from "@/lib/palette";
+import { puppySwatchHtml } from "@/lib/puppyGlyph";
+import { getPanelFocus, panelBreed, subscribePanelFocus } from "@/lib/panelFocus";
+import { treeCodeOf } from "@/lib/circosTree";
 import type { View } from "@/lib/steps";
 import { photoOf } from "@/lib/photos";
 import { factsHtml } from "@/lib/breedFacts";
@@ -351,11 +354,16 @@ export default function Cladogram({ view, selected, onSelect, onHover, tipDock, 
         ring: h.kind === "breed" ? relatedClades(h.code) : cladesOf(focus),
       };
     }
+    // A breed pointed at in a family's panel (its tree or stretched chord): shown like a breed
+    // hover, over the family's own highlight, which comes back when it's let go.
+    let panelCode: string | null = null;
+    const shownHover = (): HoverOn => (panelCode ? { kind: "breed", code: panelCode } : hoverOn);
     function setHover(h: HoverOn) {
       if (!h && !hoverOn) return;
       if (hoverKey(h) === hoverKey(hoverOn)) return;
       hoverOn = h;
       if (textFocusRef.current) return; // the text's highlight is showing; this one waits
+      if (panelCode) return; // the panel's breed is showing; this one waits
       DUR = FULL * 0.35; // hovers restyle quickly
       try {
         update(h ? hoverView(h) : stepView, h ? null : stepSel);
@@ -464,7 +472,7 @@ export default function Cladogram({ view, selected, onSelect, onHover, tipDock, 
       tip.html(
         `${photo ? `<img class="tip-photo" src="${photo}" alt="" referrerpolicy="no-referrer" />` : ""}
          <div class="tip-name">${b.name}</div>
-         <div class="tip-clade"><i style="background:${cladeColor(b.clade, d.data.code)}"></i>${cladeName}</div>
+         <div class="tip-clade">${puppySwatchHtml(d.data.code, cladeColor(b.clade, d.data.code))}${cladeName}</div>
          <dl>
            <dt>Dogs tested</dt><dd>${d.data.n}</dd>
            <dt>Mixed with other families</dt><dd>${cross} breed${cross === 1 ? "" : "s"}</dd>
@@ -1086,6 +1094,20 @@ export default function Cladogram({ view, selected, onSelect, onHover, tipDock, 
       gate.lock();
     };
     dock?.addEventListener(STEP_CHANGE, onStep);
+    const offPanel = subscribePanelFocus(() => {
+      const raw = panelBreed(getPanelFocus());
+      const code = raw ? treeCodeOf(raw) : null;
+      if (code === panelCode || (code && !data.breeds[code])) return;
+      panelCode = code;
+      if (textFocusRef.current) return;
+      const h = shownHover();
+      DUR = FULL * 0.35;
+      try {
+        update(h ? hoverView(h) : stepView, h ? null : stepSel);
+      } finally {
+        DUR = FULL;
+      }
+    });
     svg.on("click.pin", (ev: MouseEvent) => {
       if (!(ev.target as Element).closest(".hits, .branch-hits, .clade-hits")) pinner.unpin();
     });
@@ -1098,12 +1120,13 @@ export default function Cladogram({ view, selected, onSelect, onHover, tipDock, 
         stepSel = sel;
         // A name hovered in the text outranks the chart's own hover or pin while it lasts;
         // the pinned item's traces step aside and come back after.
-        const own = hoverOn && !textFocus;
+        const h = shownHover();
+        const own = h && !textFocus;
         gBranch.attr("display", textFocus ? "none" : null);
         gWolf.attr("display", textFocus ? "none" : null);
         DUR = instant ? 0 : FULL;
         try {
-          update(own ? hoverView(hoverOn!) : v, own ? null : sel);
+          update(own ? hoverView(h!) : v, own ? null : sel);
         } finally {
           DUR = FULL;
         }
@@ -1117,6 +1140,7 @@ export default function Cladogram({ view, selected, onSelect, onHover, tipDock, 
     return () => {
       window.clearTimeout(boxTimer);
       dock?.removeEventListener(STEP_CHANGE, onStep);
+      offPanel();
       pinner.dispose();
       d3.select(el).selectAll("*").remove();
       tip.remove();

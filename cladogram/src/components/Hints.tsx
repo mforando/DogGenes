@@ -6,6 +6,7 @@ import { createPortal } from "react-dom";
 import { TERMS, TermBody, TermFigure, type TermId } from "./Primer";
 import { data } from "@/lib/tree";
 import { cladeVar } from "@/lib/palette";
+import PuppySwatch from "./PuppySwatch";
 import { photoOf } from "@/lib/photos";
 import { BreedFactsBlock } from "@/lib/breedFacts";
 
@@ -170,7 +171,7 @@ export function HintBody({ kind, id, docked = false }: { kind: Pop["kind"]; id: 
         {src && <img className={docked ? "tip-photo" : "hint-photo"} src={src} alt="" referrerPolicy="no-referrer" />}
         <div className="tip-name">{b?.name}</div>
         <div className="hint-fam">
-          <i style={{ background: cladeVar(b?.clade ?? null, id) }} />
+          <PuppySwatch code={id} color={cladeVar(b?.clade ?? null, id)} />
           {b?.clade ? `${data.clades[b.clade]} family` : id === "WOLF" || id === "GDJK" ? "Wild relative" : "No clear family"}
         </div>
         <BreedFactsBlock code={id} />

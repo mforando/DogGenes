@@ -16,11 +16,12 @@ import { B, Clade, HintBody, HintProvider } from "./Hints";
 import { Lv, useReadingLevel } from "@/lib/readingLevel";
 import { LEVEL_BODIES } from "@/lib/levels";
 import Circos, { MORPH_MS, MORPH_OUT_DELAY } from "./Circos";
-import CircosReplica from "./CircosReplica";
+import { ReplicaDetails, ReplicaExtras, ReplicaKey, useReplica } from "./CircosReplica";
 import ContinentGlobe from "./ContinentGlobe";
 import { CONTINENT_BREEDS, type Continent } from "@/lib/regions";
 import MotionToggle from "./MotionToggle";
 import PawPrint from "./PawPrint";
+import StepMenu from "./StepMenu";
 import { DOCK_CLADE, DOCK_PIN, DOCK_UNPINNED } from "@/lib/dockPin";
 import { CladePanel } from "./CircosDetails";
 import { hoverGate, STEP_CHANGE } from "@/lib/hoverGate";
@@ -107,7 +108,14 @@ function StoryBody() {
   // Phones: the charts are cropped to their rings (names would be a few pixels tall), so the
   // breeds or families a step highlights are listed under the chart instead.
   const phone = useMedia(PHONE);
+  // Wide enough for the side panel to be a column of its own (narrower, it floats in a corner).
+  const dockWide = useMedia("(min-width: 1181px) and (min-height: 521px)");
+  // The last step: the full interactive chart, on the same chord chart.
+  const replica = useReplica();
+  const replicaOn = !!step.replica;
+  const { clearHover: clearReplicaHover } = replica;
   useEffect(() => {
+    clearReplicaHover();
     setPhotoHover(null);
     setContinent(null);
     setGlobeHover(null);
@@ -233,7 +241,10 @@ function StoryBody() {
     return () => window.clearTimeout(t);
   }, [step]);
   // A stable object, so the chord diagram only restyles when the step (or its families) change.
-  const circosView = useMemo(() => (step.circos ? { ...step.circos, ring: stepClades } : lastCircos), [step, stepClades, lastCircos]);
+  const circosView = useMemo(
+    () => (step.replica ? replica.view : step.circos ? { ...step.circos, ring: stepClades } : lastCircos),
+    [step, stepClades, lastCircos, replica.view],
+  );
 
   const chips = useMemo(() => {
     const c = step.circos;
@@ -316,24 +327,38 @@ function StoryBody() {
           <p className="sr-only" aria-live="polite" aria-atomic="true">
             {`Step ${active + 1} of ${STEPS.length}: ${step.title}.`}
           </p>
-          <div className="figure-meta">
-            <span className="counter">
-              {String(active + 1).padStart(2, "0")}
-              <span> / {STEPS.length}</span>
-            </span>
-            <span className="figure-title">{step.title}</span>
-          </div>
+          <StepMenu steps={STEPS} active={active} />
           <div className={`figure-stage docked${circosOn ? " circos-on" : ""}`}>
             <div className="stage-chart">
               <div className="stage-circle" aria-hidden={!!step.circos} inert={!!step.circos}>
                 <Cladogram view={treeView} selected={sel} textFocus={textHover} onSelect={() => {}} onHover={step.continentGlobe ? setTreeHover : undefined} tipDock={tipDock} compact={phone} />
               </div>
               <div className="stage-circos" aria-hidden={!step.circos} inert={!step.circos}>
-                <Circos view={circosView} shown={!!step.circos} treeAncestor={!!lastTree.current.view.ancestor} spotlight={step.circos ? photoHover ?? textBreed : null} ariaLabel="Chord diagram of DNA shared between dog breeds from different family groups" tipDock={tipDock} compact={phone} />
+                <Circos
+                  view={circosView}
+                  shown={!!step.circos}
+                  treeAncestor={!!lastTree.current.view.ancestor}
+                                    spotlight={step.circos && !replicaOn ? photoHover ?? textBreed : null}
+                  spotlightClade={step.circos && !replicaOn ? textClade : null}
+                  // The full chart reports hovers and clicks to its own details panel.
+                  onHover={replicaOn ? replica.setHover : undefined}
+                  onBreedClick={replicaOn ? replica.onBreedClick : undefined}
+                  onBackgroundClick={replicaOn ? replica.onBackgroundClick : undefined}
+                  onCladeClick={replicaOn ? replica.onCladeClick : undefined}
+                  ariaLabel="Chord diagram of DNA shared between dog breeds from different family groups"
+                  tipDock={tipDock}
+                  compact={phone}
+                />
               </div>
             </div>
             {/* Chart tooltips show here, in a fixed panel, instead of following the pointer. */}
-            <aside ref={tipDock} className="tip-dock" data-pinned={textPin ? "text" : undefined} data-text-hover={textHover || undefined} aria-live="polite" aria-label="Chart details">
+            <aside ref={tipDock} className="tip-dock" data-pinned={textPin ? "text" : undefined} data-text-hover={textHover || undefined} data-replica={replicaOn && dockWide ? "" : undefined} aria-live="polite" aria-label="Chart details">
+              {replicaOn && dockWide ? (
+                <div className="dock-replica replica-details">
+                  <ReplicaDetails r={replica} />
+                </div>
+              ) : (
+              <>
               <p className="tip-dock-empty">
                 Hover over or tap a breed on the chart to see its photo, family and history here. Click one to keep it here while
                 you scroll its details.
@@ -347,6 +372,8 @@ function StoryBody() {
                 <div key={dockBreed ?? dockClade!} className="tip on dock-hint">
                   <HintBody kind={dockBreed ? "breed" : "clade"} id={(dockBreed ?? dockClade)!} docked />
                 </div>
+              )}
+              </>
               )}
             </aside>
           </div>
@@ -382,7 +409,7 @@ function StoryBody() {
                   <PawPrint className="step-paw step-paw-end" />
                 </p>
                 <h2 id={`h-${s.id}`}>{s.title}</h2>
-                {level === "adult" ? s.body : LEVEL_BODIES[s.id]?.[level] ?? s.body}
+                {s.replica ? <ReplicaKey r={replica} details={!dockWide} /> : level === "adult" ? s.body : LEVEL_BODIES[s.id]?.[level] ?? s.body}
                 {s.photos && <Specimens codes={s.photos} onHover={i === active ? setPhotoHover : undefined} />}
                 {s.continentGlobe && (
                   <ContinentGlobe
@@ -399,7 +426,7 @@ function StoryBody() {
         </div>
       </main>
 
-      <CircosReplica embedded />
+      <ReplicaExtras r={replica} />
 
       <section className="appendix" aria-labelledby="table-h">
         <details>

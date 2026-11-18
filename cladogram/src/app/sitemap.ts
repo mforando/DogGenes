@@ -18,6 +18,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ["/popularity/", 0.7],
     ["/game/", 0.6],
     ["/breeds/", 0.8],
+    ["/about/", 0.4],
   ];
   return [
     ...pages.map(([p, priority]) => ({ url: abs(p), lastModified: now, changeFrequency: "monthly" as const, priority })),

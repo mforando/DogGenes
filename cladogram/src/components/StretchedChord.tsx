@@ -1,8 +1,9 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { circosData, links, nodeByCode, nodes } from "@/lib/circos";
 import { cladeVar } from "@/lib/palette";
+import { setPanelFocus, usePanelFocus } from "@/lib/panelFocus";
 
 /**
  * A stretched chord diagram, after Nadieh Bremer's (visualcinnamon.com/2015/08/stretched-chord):
@@ -40,7 +41,9 @@ type Item = { code: string; name: string; color: string; v: number; a0: number; 
 type Chord = { m: string; p: string; v: number; s0: number; s1: number; t0: number; t1: number; famKey: string };
 
 export default function StretchedChord({ clade }: { clade: string }) {
-  const [hot, setHot] = useState<{ kind: "m" | "p" | "c"; id: string } | null>(null);
+  // What's pointed at, here or on the panel's family tree (shared with the main charts).
+  const hot = usePanelFocus();
+  const setHot = setPanelFocus;
 
   const g = useMemo(() => {
     const members = nodes.filter((n) => n.clade === clade);

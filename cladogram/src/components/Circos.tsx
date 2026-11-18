@@ -13,6 +13,8 @@ import { dockCladeSender, dockPinner } from "@/lib/dockPin";
 import { hoverGate, STEP_CHANGE } from "@/lib/hoverGate";
 import { cladeMembers, cladeOf, cladeTipHtml, cladesOf, relatedClades, relatedToClade } from "@/lib/ringClades";
 import { GEOM, data as treeData, isLeaf, layout as treeLayout } from "@/lib/tree";
+import { puppySwatchHtml } from "@/lib/puppyGlyph";
+import { getPanelFocus, panelBreed, subscribePanelFocus } from "@/lib/panelFocus";
 
 /** How long the ring takes to glide between the tree's layout and the chords' (ms). */
 export const MORPH_MS = 1100;
@@ -128,7 +130,9 @@ export default function Circos({
   onHover,
   onBreedClick,
   onBackgroundClick,
+  onCladeClick,
   spotlight = null,
+  spotlightClade = null,
   tipDock,
   compact = false,
   shown,
@@ -142,8 +146,12 @@ export default function Circos({
   onBreedClick?: (code: string) => void;
   /** Clicking anywhere else on the chart. */
   onBackgroundClick?: () => void;
+  /** Clicking a family's band or name (where the page keeps its own selection). */
+  onCladeClick?: (clade: string) => void;
   /** Breed highlighted from outside the chart (e.g. hovering its photo), shown like a hover. */
   spotlight?: string | null;
+  /** Family highlighted from outside the chart (its name hovered in the story text), shown like a family hover. */
+  spotlightClade?: string | null;
   /** Show the tooltip in this element (a fixed panel beside the chart) instead of at the pointer. */
   tipDock?: RefObject<HTMLElement | null>;
   /** Phone-size screens: crop to the ring of breed blocks (no name labels or family band). */
@@ -162,15 +170,19 @@ export default function Circos({
   onBreedClickRef.current = onBreedClick;
   const onBgClickRef = useRef(onBackgroundClick);
   onBgClickRef.current = onBackgroundClick;
+  const onCladeClickRef = useRef(onCladeClick);
+  onCladeClickRef.current = onCladeClick;
   const onHoverRef = useRef(onHover);
   onHoverRef.current = onHover;
   const host = useRef<HTMLDivElement>(null);
-  const api = useRef<{ update: (v: CircosView) => void; spot: (code: string | null) => void; morph: (dir: "in" | "out", fromHidden: boolean) => void } | null>(null);
+  const api = useRef<{ update: (v: CircosView) => void; spot: (code: string | null) => void; spotClade: (clade: string | null) => void; morph: (dir: "in" | "out", fromHidden: boolean) => void } | null>(null);
   // What's on screen, so a rebuild (theme switch) can restyle to match at once.
   const viewRef = useRef(view);
   viewRef.current = view;
   const spotRef = useRef(spotlight);
   spotRef.current = spotlight;
+  const spotCladeRef = useRef(spotlightClade);
+  spotCladeRef.current = spotlightClade;
   const built = useRef(false);
   const compactRef = useRef(compact);
   compactRef.current = compact;
@@ -357,6 +369,11 @@ export default function Circos({
         }
       })
       .on("click.pin", (ev: MouseEvent, d) => {
+        if (onCladeClickRef.current) {
+          ev.stopPropagation();
+          onCladeClickRef.current(d.clade);
+          return;
+        }
         if (!pinner.can()) return;
         ev.stopPropagation();
         if (!pinner.toggle(`clade:${d.clade}`)) return;
@@ -368,8 +385,16 @@ export default function Circos({
     // ---------- state ----------
     let current: CircosView = { ribbons: "none" };
     let hover: string | null = null;
-    let spot: string | null = null; // outside highlight; wins over the pointer
-    const active = (v: CircosView) => spot ?? (v.interactive || hoverLeads() ? hover : null);
+    // An outside highlight; wins over the pointer. Either a breed pointed at in a family's
+    // panel (its tree or stretched chord), or one the page names (a photo or the text).
+    let propSpot: string | null = null;
+    let panelSpot: string | null = null;
+    let spot: string | null = null;
+    const syncSpot = () => {
+      spot = panelSpot ?? propSpot;
+    };
+    let spotClade: string | null = null; // a family named in the text; wins over the pointer, not over a breed spot
+    const active = (v: CircosView) => spot ?? (spotClade ? null : v.interactive || hoverLeads() ? hover : null);
     let hoverRibbon: CLink | null = null;
     let hoverClade: string | null = null; // a family band or name under the pointer (story only)
 
@@ -474,7 +499,9 @@ export default function Circos({
       const h = active(current);
       const set = h
         ? relatedClades(h)
-        : hoverRibbon
+        : spotClade && !spot
+          ? relatedToClade(spotClade)
+          : hoverRibbon
           ? cladesOf([hoverRibbon.a, hoverRibbon.b])
           : hoverClade && !spot
             ? relatedToClade(hoverClade)
@@ -495,7 +522,7 @@ export default function Circos({
       const v = current;
       let shown = visibleLinks(v);
       const h = active(v);
-      const fam = !h && !spot ? hoverClade : null;
+      const fam = spot ? null : spotClade ?? (!h ? hoverClade : null);
       const hoverOn = !!h || !!fam;
       if (h)
         shown = layoutLinks(links.filter((l) => l.a === h || l.b === h).map((l) => rawLinkByKey.get(l.key)!));
@@ -506,7 +533,8 @@ export default function Circos({
       if (hoverOn) focus.clear();
       if (h) focus.add(h);
       const clades = new Set(spot ? [] : fam ? [fam] : v.clades ?? []);
-      const silent = !spot && !!v.silent;
+      // A family hover (pointer or text) replaces the quiet-breeds highlight.
+      const silent = !spot && !fam && !!v.silent;
       const hasFocus = focus.size > 0 || clades.size > 0 || silent;
       const on = (n: CNode) =>
         !hasFocus ||
@@ -635,10 +663,10 @@ export default function Circos({
       tip.html(
         `${photo ? `<img class="tip-photo" src="${photo}" alt="" referrerpolicy="no-referrer" />` : ""}
          <div class="tip-name">${d.name}</div>
-         <div class="tip-clade"><i style="background:${d.color}"></i>${cladeLabel(d)}</div>
+         <div class="tip-clade">${puppySwatchHtml(d.code, d.color)}${cladeLabel(d)}</div>
          ${ps.length
            ? `<div class="tip-sub">Shares big chunks of DNA with ${ps.length} breed${ps.length === 1 ? "" : "s"} from other families</div>
-              <dl>${ps.slice(0, 6).map((p) => `<dt>${nodeByCode.get(p.code)!.name}</dt><dd>${mb(p.value)}</dd>`).join("")}</dl>
+              <dl class="tip-partners">${ps.slice(0, 6).map((p) => { const o = nodeByCode.get(p.code)!; return `<dt>${puppySwatchHtml(p.code, o.color)}${o.name}</dt><dd>${mb(p.value)}</dd>`; }).join("")}</dl>
               ${ps.length > 6 ? `<div class="tip-more">+ ${ps.length - 6} more</div>` : ""}`
            : `<div class="tip-note">No big DNA overlap with breeds from other families.</div>`}
          ${factsHtml(breed)}`,
@@ -736,6 +764,14 @@ export default function Circos({
       gate.lock();
     };
     dock?.addEventListener(STEP_CHANGE, onStep);
+    // Pointing at a breed in a family's panel shows it here; letting go returns to the family.
+    const offPanel = subscribePanelFocus(() => {
+      const code = panelBreed(getPanelFocus());
+      if (code === panelSpot || (code && !nodeByCode.has(code))) return;
+      panelSpot = code;
+      syncSpot();
+      render();
+    });
     svg.on("click", () => {
       pinner.unpin(); // a click on the chart's empty space lets go of a pinned item
       onBgClickRef.current?.();
@@ -815,8 +851,14 @@ export default function Circos({
     api.current = {
       morph,
       spot(code) {
-        if (code === spot) return;
-        spot = code;
+        if (code === propSpot) return;
+        propSpot = code;
+        syncSpot();
+        render();
+      },
+      spotClade(clade) {
+        if (clade === spotClade) return;
+        spotClade = clade;
         render();
       },
       update(v) {
@@ -834,7 +876,9 @@ export default function Circos({
     // spotlight right away, without animating. (The first build is styled by the effects below.)
     if (built.current) {
       DUR = 0;
-      spot = spotRef.current ?? null;
+      propSpot = spotRef.current ?? null;
+      syncSpot();
+      spotClade = spotCladeRef.current ?? null;
       try {
         api.current.update(viewRef.current);
       } finally {
@@ -844,6 +888,7 @@ export default function Circos({
     built.current = true;
     return () => {
       dock?.removeEventListener(STEP_CHANGE, onStep);
+      offPanel();
       pinner.dispose();
       d3.select(el).selectAll("*").remove();
       tip.remove();
@@ -858,6 +903,10 @@ export default function Circos({
   useEffect(() => {
     api.current?.spot(spotlight);
   }, [spotlight]);
+
+  useEffect(() => {
+    api.current?.spotClade(spotlightClade);
+  }, [spotlightClade]);
 
   // In the story: glide between the tree's layout and the chords' as the chords come and go.
   const wasShown = useRef<boolean | undefined>(undefined);

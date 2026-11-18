@@ -11,6 +11,7 @@ import { HISTORY_LEVEL_BODIES } from "@/lib/historyLevels";
 import { Lv, useReadingLevel } from "@/lib/readingLevel";
 import MotionToggle from "./MotionToggle";
 import PawPrint from "./PawPrint";
+import StepMenu from "./StepMenu";
 
 /** The history of dogs: 40,000 years of domestication on a scroll-driven timeline. */
 export default function HistoryStory() {
@@ -81,13 +82,7 @@ export default function HistoryStory() {
           <p className="sr-only" aria-live="polite" aria-atomic="true">
             {`Step ${active + 1} of ${HISTORY_STEPS.length}: ${step.title}. The timeline now shows this period.`}
           </p>
-          <div className="figure-meta">
-            <span className="counter">
-              {String(active + 1).padStart(2, "0")}
-              <span> / {HISTORY_STEPS.length}</span>
-            </span>
-            <span className="figure-title">{step.title}</span>
-          </div>
+          <StepMenu steps={HISTORY_STEPS} active={active} />
           <div className="figure-stage timeline-on">
             <div className="stage-timeline">
               <Timeline view={step.timeline!} spot={textBreed} />

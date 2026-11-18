@@ -64,6 +64,11 @@ export type Step = {
   circos?: CircosView;
   /** Hold back the view's `flip` this many ms after the step opens, so the rotation plays out. */
   flipDelay?: number;
+  /**
+   * The full interactive chart (Parker et al. 2017, Figure 4) on the chord chart: the card holds
+   * its key and controls and the side panel its details (CircosReplica.tsx), not `body`.
+   */
+  replica?: boolean;
 };
 
 const dogs = data.stats.dogs.toLocaleString("en-US");
@@ -493,7 +498,18 @@ const CHORD_STEPS: Step[] = CIRCOS_STEPS.filter((c) => c.id !== "explore").map((
   circos: c.view,
 }));
 
-const ALL_STEPS: Step[] = [...BREED_STEPS, ...CHORD_STEPS, ...BUNDLE_STEPS];
+/** The last step: the full chart, which the chord chart glides into from the tree above. */
+const REPLICA_STEP: Step = {
+  id: "full-chart",
+  kicker: "Your turn · Figure 4, recreated",
+  title: "Which dog breeds have been mixed together?",
+  body: null,
+  view: { color: "clade", cladeRing: true },
+  circos: { ribbons: "all", cladeRing: true, interactive: true, tree: true },
+  replica: true,
+};
+
+const ALL_STEPS: Step[] = [...BREED_STEPS, ...CHORD_STEPS, ...BUNDLE_STEPS, REPLICA_STEP];
 
 /**
  * The family (clade) bands and names around the circle: never before "Breeds fall into 23

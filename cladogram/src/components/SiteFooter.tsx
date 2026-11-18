@@ -127,6 +127,7 @@ const BY_PAGE: Record<string, Cite[]> = {
   "/names": [C.nyc, C.toronto, C.wikiFacts, C.torontoCensus, C.acsAncestry, C.monroe, C.parker, C.dogceo, C.commons],
   "/game": [C.dogceo, C.stanfordDogs, C.resnet, C.akc],
   "/sources/breeds": [C.wikiFacts],
+  "/about": [],
   "/popularity": [C.akc, C.tidytuesday, C.wikiFacts, C.wikiTopBreeds, C.parker, C.dogceo, C.commons],
 };
 
@@ -144,8 +145,8 @@ export default function SiteFooter() {
   return (
     <footer className="site-footer" aria-label="Sources and credits">
       <div className="sf-cites">
-        <p className="sf-h">Sources for this page</p>
-        <ol>
+        {cites.length > 0 && <p className="sf-h">Sources for this page</p>}
+        {cites.length > 0 && <ol>
           {cites.map((c) => (
             <li key={c.url + c.text}>
               {c.url.startsWith("/") ? (
@@ -158,7 +159,7 @@ export default function SiteFooter() {
               {c.license && <span className="sf-lic"> · {c.license}</span>}
             </li>
           ))}
-        </ol>
+        </ol>}
         <p className="sf-all">
           All sources and licenses: <a href={SOURCES_URL} target="_blank" rel="noopener noreferrer">SOURCES.md</a>. For
           learning, not veterinary advice.
@@ -178,6 +179,9 @@ export default function SiteFooter() {
           </svg>
           Connect on LinkedIn
         </a>
+        <p className="sf-about">
+          <Link href="/about/">About Me &amp; My Dogs →</Link>
+        </p>
       </div>
     </footer>
   );
