@@ -14,6 +14,8 @@ export type Variant = {
   what: string;
   /** study breed codes documented as carrying the variant */
   carriers: string[];
+  /** Further sampled breeds reported as carriers elsewhere (e.g. OMIA) but not marked in the study's figure. */
+  alsoReported?: string[];
   source: { label: string; url: string };
   note?: string;
 };
@@ -25,8 +27,10 @@ export const VARIANTS: Variant[] = [
     short: "Collie eye",
     gene: "NHEJ1 (7.8 kb deletion)",
     what: "Abnormal development of the back of the eye; ranges from mild to blindness.",
-    carriers: ["COLL", "SSHP", "AUSS", "BORD", "OES", "KELP", "NSDT", "PARS", "JACK", "HUSK", "COOK"],
-    source: { label: "OMIA 000218-9615", url: "https://omia.org/OMIA000218/9615/" },
+    // Parker et al. 2017, Figure 7A: the breeds pulled out of the ring as known carriers.
+    carriers: ["COLL", "SSHP", "AUSS", "BORD", "BERD", "NSDT"],
+    alsoReported: ["OES", "KELP", "PARS", "JACK", "HUSK", "COOK"],
+    source: { label: "Parker et al. 2017, Figure 7A; OMIA 000218-9615", url: "https://omia.org/OMIA000218/9615/" },
     note: "The same deletion, inherited from a shared ancestor, in every breed tested (Parker et al. 2007).",
   },
   {
@@ -35,8 +39,10 @@ export const VARIANTS: Variant[] = [
     short: "MDR1",
     gene: "ABCB1 (4 bp deletion)",
     what: "Dangerous reactions to common drugs, including some dewormers and chemotherapy.",
-    carriers: ["COLL", "SSHP", "AUSS", "BORD", "OES", "GSD", "COOK"],
-    source: { label: "OMIA 001402-9615", url: "https://omia.org/OMIA001402/9615/" },
+    // Parker et al. 2017, Figure 7B: the breeds pulled out of the ring as known carriers.
+    carriers: ["COLL", "SSHP", "AUSS", "BORD", "BERD", "OES", "GSD"],
+    alsoReported: ["COOK"],
+    source: { label: "Parker et al. 2017, Figure 7B; OMIA 001402-9615", url: "https://omia.org/OMIA001402/9615/" },
     note: "Found in about 10% of German shepherds and 15% of chinooks (cited in Parker et al. 2017).",
   },
   {

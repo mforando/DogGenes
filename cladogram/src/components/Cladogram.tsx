@@ -216,6 +216,11 @@ export default function Cladogram({ view, selected, onSelect, onHover, tipDock, 
     const gSupport = zoomG.append("g").attr("class", "support");
     const gClade = zoomG.append("g").attr("class", "clade-ring");
     const gLabels = zoomG.append("g").attr("class", "labels");
+    // Known carriers of a mutation (health page): as in Parker et al. 2017, Figure 7, each one is
+    // pulled out of the ring (a block just outside the family band, its name moved out with it),
+    // and its name is outlined.
+    const gCarrierBlock = zoomG.append("g").attr("class", "carrier-blocks").attr("pointer-events", "none");
+    const gCarrierBox = zoomG.append("g").attr("class", "carrier-boxes").attr("pointer-events", "none");
     const gMarks = zoomG.append("g").attr("class", "marks");
     // Hovering a breed traces its line back to the grey wolf (drawn above the step's own paths).
     // Hovering a branch lights up everything descended from it (under the wolf trace).
@@ -633,6 +638,47 @@ export default function Cladogram({ view, selected, onSelect, onHover, tipDock, 
         .text((d) => data.clades[d.clade]);
     }
 
+    /** Carriers pulled out of the ring: a block outside the family band, the name moved out past it, boxed. */
+    const PULL_OUT = 14; // how far a carrier's name moves out, in chart units
+    let boxTimer: number | undefined;
+    function drawCarrierBoxes(carriers: Set<string>) {
+      const isCarrier = (d: TNode) => isLeaf(d) && carriers.has(d.data.code);
+      labelSel.attr("dx", (d) => (isCarrier(d) ? (d.a > Math.PI ? -PULL_OUT : PULL_OUT) : null));
+      const blockArc = d3.arc<TNode>()
+        .innerRadius(GEOM.rClade1 + 2)
+        .outerRadius(GEOM.rClade1 + 2 + PULL_OUT - 3)
+        .startAngle((d) => Math.min(d.a0, d.a - 0.006))
+        .endAngle((d) => Math.max(d.a1, d.a + 0.006));
+      gCarrierBlock
+        .selectAll<SVGPathElement, TNode>("path")
+        .data(L.leaves.filter((d) => isCarrier(d)), (d) => d.data.id)
+        .join("path")
+        .attr("d", (d) => blockArc(d))
+        .attr("fill", (d) => (isLeaf(d) ? cladeColor(data.breeds[d.data.code]?.clade ?? null, d.data.code) : INK));
+      // Names grow when highlighted (a 0.4 s font-size transition in the CSS), so measure now
+      // and again once it has finished, or a newly highlighted name outgrows its box.
+      const measure = () => {
+        const named = labelSel.filter((d) => isCarrier(d) && isLeaf(d) && !!d.data.main).nodes();
+        gCarrierBox
+          .selectAll<SVGRectElement, SVGTextElement>("rect")
+          .data(named, (n) => String((n as unknown as { __data__: TNode }).__data__.data.id))
+          .join("rect")
+          .attr("rx", 2)
+          .each(function (n) {
+            const b = n.getBBox();
+            d3.select(this)
+              .attr("transform", labelTransform((n as unknown as { __data__: TNode }).__data__.a))
+              .attr("x", b.x - 2.5)
+              .attr("y", b.y - 1.2)
+              .attr("width", b.width + 5)
+              .attr("height", b.height + 2.4);
+          });
+      };
+      measure();
+      window.clearTimeout(boxTimer);
+      boxTimer = window.setTimeout(measure, 450);
+    }
+
     // ---------- styling for a view ----------
     function update(v: View, sel: string | null) {
       const prevView = current;
@@ -674,6 +720,7 @@ export default function Cladogram({ view, selected, onSelect, onHover, tipDock, 
           onIds.add(t.data.id);
       });
 
+      const carrierSet = new Set(v.carriers ?? []);
       const colorOf = (d: TNode) => {
         if (isAncestor(d)) return GOLD;
         if (v.color === "ink") return INK;
@@ -709,10 +756,12 @@ export default function Cladogram({ view, selected, onSelect, onHover, tipDock, 
                   : 0.55,
         );
       labelSel
+        .classed("carrier", (d) => isLeaf(d) && carrierSet.has(d.data.code))
         .classed("hi", (d) => hasFocus && onIds.has(d.data.id))
         .transition(T)
         .attr("fill", (d) => (isAncestor(d) ? GOLD : onIds.has(d.data.id) ? (hasFocus ? tone("#fffaf0", LIGHT.hi) : tone("#b9b3a3", LIGHT.ink2)) : tone("#4a524c", LIGHT.dim)))
         .attr("fill-opacity", (d) => (isAncestor(d) ? (ancOn ? 1 : 0) : 1));
+      drawCarrierBoxes(carrierSet);
       hitSel.attr("pointer-events", (d) => (isAncestor(d) && !ancOn ? "none" : null));
       supportSel.transition(T).attr("opacity", v.support ? 1 : 0);
       // The family ring is a key, like the DNA web's: every band and name in full color whenever
@@ -918,10 +967,18 @@ export default function Cladogram({ view, selected, onSelect, onHover, tipDock, 
         const nodes = la.path(lb) as TNode[];
         const pts = nodes.map((n) => ({ a: n.a, r: isLeaf(n) ? n.r : n.r * 0.92 }));
         const partner = focus ? (focus.includes(a) ? b : a) : a;
+        // Mutation view (Figure 7): between two carriers in ink; otherwise the carrier's color.
+        const carriers = v.carriers ? new Set(v.carriers) : null;
+        const carrier = carriers ? (carriers.has(a) ? a : carriers.has(b) ? b : null) : null;
+        const color = carriers && carriers.has(a) && carriers.has(b)
+          ? INK
+          : carrier
+            ? cladeColor(data.breeds[carrier].clade, carrier)
+            : cladeColor(data.breeds[partner].clade, partner);
         bundles.push({
           key: `${a}|${b}`,
           pts,
-          color: cladeColor(data.breeds[partner].clade, partner),
+          color,
           w: focus ? 1 + 2.4 * Math.sqrt(val / maxV) : 0.5 + 1.6 * Math.sqrt(val / maxV),
           o: focus ? 0.85 : 0.42,
         });
@@ -939,7 +996,8 @@ export default function Cladogram({ view, selected, onSelect, onHover, tipDock, 
         .attr("d", (d) => line(d.pts))
         .attr("stroke", (d) => d.color)
         .attr("stroke-width", (d) => d.w)
-        .style("mix-blend-mode", "screen")
+        // Screen lifts the curves off the dark page; on the light page it would wash them out.
+        .style("mix-blend-mode", tone("screen", "multiply"))
         .transition("bundle").duration(DUR).delay((_, i) => (focus ? Math.min(i * 25, 450) : Math.min(i * 2, 600)) * (FULL ? DUR / FULL : 0))
         .attr("stroke-opacity", (d) => d.o);
     }
@@ -1057,6 +1115,7 @@ export default function Cladogram({ view, selected, onSelect, onHover, tipDock, 
     built.current = true;
 
     return () => {
+      window.clearTimeout(boxTimer);
       dock?.removeEventListener(STEP_CHANGE, onStep);
       pinner.dispose();
       d3.select(el).selectAll("*").remove();

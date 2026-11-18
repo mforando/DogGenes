@@ -205,7 +205,9 @@ def describe(row):
     return {"breed": name, "size": size, "family": fam, "job": jobname, "region": region}
 
 
-def main():
+def load():
+    """The cleaned licensing data: every named dog with a recognized breed (also used by
+    build-nyc-name-breeds.py, so both outputs count dogs the same way)."""
     df = pd.read_csv(os.path.join(CACHE, "dogs.csv"), dtype=str)
     raw_records = len(df)
     df["AnimalName"] = df["AnimalName"].fillna("").str.strip().str.upper()
@@ -246,6 +248,11 @@ def main():
     known = named[named["info"].notna()].copy()
     for k in ["breed", "size", "family", "job", "region"]:
         known[k] = known["info"].map(lambda x: x[k])
+    return raw_records, unique_dogs, named, known, breed_words
+
+
+def main():
+    raw_records, unique_dogs, named, known, breed_words = load()
     print(f"{raw_records} records, {unique_dogs} dogs, {len(named)} named, {len(known)} with a recognized breed")
     excluded_breed_words = len(breed_words)
 

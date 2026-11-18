@@ -9,8 +9,19 @@ let INK = "#e9e2d0";
 let GOLD = "#e8b74a";
 
 /** Horizontal bars for "N× more likely" lifts within one group. */
-export function LiftBars({ items: raw, max }: { items: { name: string; n: number; lift: number }[]; max: number }) {
+export function LiftBars({
+  items: raw,
+  max,
+  onName,
+}: {
+  items: { name: string; n: number; lift: number }[];
+  max: number;
+  /** Hovering a name's row reports it (with the pointer event); leaving reports null. */
+  onName?: (name: string | null, ev?: PointerEvent) => void;
+}) {
   const host = useRef<HTMLDivElement>(null);
+  const onNameRef = useRef(onName);
+  onNameRef.current = onName;
   const theme = useTheme(); // rebuild when the light/dark switch changes
   useEffect(() => {
     INK = tone("#e9e2d0", LIGHT.ink);
@@ -29,6 +40,11 @@ export function LiftBars({ items: raw, max }: { items: { name: string; n: number
       .attr("width", 0).transition().duration(600).delay((_, i) => i * 25).attr("width", (d) => Math.max(2, x(Math.max(1, d.lift))));
     g.append("text").attr("x", (d) => left + Math.max(2, x(Math.max(1, d.lift))) + 6).attr("y", rowH / 2).attr("dy", "0.35em")
       .attr("class", "nm-lift").text((d) => `${d.lift}× · ${d.n}`);
+    // A row-wide hover area (when the page shows something for a name).
+    if (onNameRef.current)
+      g.append("rect").attr("class", "nm-hit").attr("x", 0).attr("y", 0).attr("width", W).attr("height", rowH).attr("fill", "transparent")
+        .on("pointerenter pointermove", (ev: PointerEvent, d) => onNameRef.current?.(d.name, ev))
+        .on("pointerleave", () => onNameRef.current?.(null));
     return () => {
       d3.select(el).selectAll("*").remove();
     };

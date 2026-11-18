@@ -79,7 +79,7 @@ export default function HealthPage() {
   const v = atLevel(VARIANTS.find((x) => x.id === sel)!, level);
   const cand = useMemo(() => candidates(v).slice(0, 8), [v]);
   const view = useMemo<View>(
-    () => ({ color: "clade", codes: v.carriers, links: { codes: v.carriers }, cladeRing: true }),
+    () => ({ color: "clade", codes: v.carriers, links: { codes: v.carriers }, cladeRing: true, carriers: v.carriers }),
     [v],
   );
   const caseIds = ["cea", "mdr1"];
@@ -194,6 +194,27 @@ export default function HealthPage() {
           <div className="job-panel">
             <div className="job-tree">
               <Cladogram view={view} selected={null} onSelect={noop} compact={phone} />
+              {/* As in Parker et al. 2017, Figure 7. */}
+              <ul className="hl-key" aria-label="Key">
+                <li>
+                  <i className="hl-key-carrier" aria-hidden />
+                  <Lv puppy="Breeds known to have it (pulled out and boxed)" pro="Known carrier breeds, pulled out of the ring and outlined (Parker et al. 2017, Figure 7)">
+                    Breeds known to carry it (pulled out and outlined, as in the study&rsquo;s Figure 7)
+                  </Lv>
+                </li>
+                <li>
+                  <i className="hl-key-line hl-key-ink" aria-hidden />
+                  <Lv puppy="Two breeds that both have it, sharing DNA" pro="IBD sharing between two carriers">
+                    DNA shared between two carrier breeds
+                  </Lv>
+                </li>
+                <li>
+                  <i className="hl-key-line hl-key-fam" aria-hidden />
+                  <Lv puppy="A breed that has it, sharing DNA with a breed nobody has checked (colored like the breed that has it)" pro="IBD sharing between a carrier and another breed, colored by the carrier">
+                    DNA shared between a carrier and another breed, in the carrier&rsquo;s color
+                  </Lv>
+                </li>
+              </ul>
               <p className="job-tree-cap">
                 <Lv
                   puppy={<>Breeds known to carry {v.name.toLowerCase()}, with curves to the breeds they share DNA with.</>}
@@ -249,6 +270,14 @@ export default function HealthPage() {
                   <Chip key={c} code={c} />
                 ))}
               </ul>
+              {v.alsoReported && v.alsoReported.length > 0 && (
+                <p className="hl-small">
+                  <Lv puppy="Also found in (OMIA list, not marked in the study’s figure): " pro="Also reported in OMIA, not marked in Parker et al. 2017, Figure 7: ">
+                    Also reported as carriers (OMIA), though not marked in the study&rsquo;s figure:{" "}
+                  </Lv>
+                  {v.alsoReported.map((c) => nameOf(c)).join(", ")}.
+                </p>
+              )}
               <p className="side-h">
                 <Lv puppy="Share the most DNA with carriers (good ones to test)" pro="Highest IBD sharing with carriers (screening candidates)">
                   Share the most DNA with carriers (worth testing)

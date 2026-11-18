@@ -34,6 +34,12 @@ export type View = {
   cladeRing?: boolean;
   /** Families to bring forward on the ring (the rest fade); all of them when absent. */
   ring?: string[];
+  /**
+   * Breeds known to carry a mutation (the health page), drawn as in Parker et al. 2017, Figure 7:
+   * carriers in ink (the paper's black), sharing between two carriers in ink, and sharing with any
+   * other breed in the carrier's color.
+   */
+  carriers?: string[];
   /** Haplotype-sharing bundles: for specific breeds, or every cross-clade pair. */
   links?: { codes: string[] } | "cross";
   /** Zoom to these breeds' sector of the ring. */

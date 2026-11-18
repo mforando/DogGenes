@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import * as d3 from "d3";
 import raw from "@/data/nycnames.json";
 import { LiftBars, SizeCompare } from "./NameCharts";
+import NameBreedTip, { showNameTip } from "./NameBreedTip";
 import { SiteNav } from "./shared";
 import CityCompare from "./CityCompare";
 import { B } from "./Hints";
@@ -39,7 +40,7 @@ const NAMES = Object.keys(D.lookup).sort();
 const MORE = [...D.more_breeds].sort((a, b) => a.group.localeCompare(b.group));
 
 /** Search for any breed outside the top 24, with an honest "not enough data" when needed. */
-function OtherBreed({ maxLift }: { maxLift: number }) {
+function OtherBreed({ maxLift, onName }: { maxLift: number; onName: (breed: string) => (name: string | null, ev?: PointerEvent) => void }) {
   const [q, setQ] = useState("");
   const g = MORE.find((b) => b.group.toLowerCase() === q.trim().toLowerCase()) ?? null;
   const analyzed = MORE.filter((b) => b.distinctive).length;
@@ -83,7 +84,7 @@ function OtherBreed({ maxLift }: { maxLift: number }) {
                 </p>
               </div>
             </div>
-            <LiftBars items={g.distinctive.slice(0, 8)} max={maxLift} />
+            <LiftBars items={g.distinctive.slice(0, 8)} max={maxLift} onName={onName(g.group)} />
           </article>
         ) : (
           <p className="nm-miss nm-other-miss">
@@ -187,6 +188,10 @@ function NameDetective() {
 export default function NamesPage() {
   const { level } = useReadingLevel();
   const [tab, setTab] = useState<keyof typeof D.groups>("breed");
+  // Hovering a name shown with a breed: that name's dogs by breed, the breed outlined. Only the
+  // tooltip redraws (it keeps its own state); the page and its charts stay as they are.
+  const onName = (breed: string) => (name: string | null, ev?: PointerEvent) =>
+    showNameTip(name && ev ? { name, breed, x: ev.clientX, y: ev.clientY } : null);
   const groups = D.groups[tab];
   const maxLift = useMemo(() => d3.max(groups.flatMap((g) => g.distinctive.slice(0, 8).map((d) => d.lift))) ?? 10, [groups]);
   const t = TABS.find((x) => x.id === tab)!;
@@ -247,7 +252,12 @@ export default function NamesPage() {
           </p>
           <ul className="nm-tied">
             {D.tied.slice(0, 18).map((x) => (
-              <li key={x.name}>
+              <li
+                key={x.name}
+                onPointerEnter={(e) => onName(x.breed)(x.name, e.nativeEvent)}
+                onPointerMove={(e) => onName(x.breed)(x.name, e.nativeEvent)}
+                onPointerLeave={() => showNameTip(null)}
+              >
                 {/* Breed photo flush with the card's top-left corner, like the breed cards. */}
                 <span className="nm-tphoto">
                   {x.photo ? (
@@ -311,11 +321,11 @@ export default function NamesPage() {
                     </p>
                   </div>
                 </div>
-                <LiftBars items={g.distinctive.slice(0, 8)} max={maxLift} />
+                <LiftBars items={g.distinctive.slice(0, 8)} max={maxLift} onName={tab === "breed" ? onName(g.group) : undefined} />
               </article>
             ))}
           </div>
-          {tab === "breed" && <OtherBreed maxLift={maxLift} />}
+          {tab === "breed" && <OtherBreed maxLift={maxLift} onName={onName} />}
         </section>
 
         <section className="pairs-section" aria-labelledby="see-h">
@@ -393,6 +403,7 @@ export default function NamesPage() {
             Government Licence – Toronto.
           </p>
         </footer>
+        <NameBreedTip />
       </main>
     </>
   );
