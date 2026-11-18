@@ -4,6 +4,7 @@ import type { TimelineView } from "@/components/Timeline";
 import type { CircosView } from "@/components/Circos";
 import { CIRCOS_STEPS } from "./circosSteps";
 import { MODERN_BREEDS } from "./history";
+import { CONTINENT_BREEDS } from "./regions";
 import SelectionExplainer from "@/components/SelectionExplainer";
 import MissingLinkFigure from "@/components/MissingLinkFigure";
 import AncientBreeds from "@/components/AncientBreeds";
@@ -405,7 +406,8 @@ const BREED_STEPS: Step[] = [
       </>
     ),
     continentGlobe: true,
-    view: { color: "clade", cladeRing: true },
+    // Europe's breeds lit by default; a continent picked on the globe takes over.
+    view: { color: "clade", cladeRing: true, codes: CONTINENT_BREEDS.Europe },
   },
   {
     id: "split",

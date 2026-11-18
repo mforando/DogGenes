@@ -23,7 +23,12 @@ export default function BreedGallery({ code, name, fallback }: { code: string; n
     loadExplorer().then(({ BREEDS, photoUrl }) => {
       if (!live) return;
       const b = BREEDS.find((x) => x.code === code);
-      if (b) setUrls(b.files.map((_, k) => photoUrl(b, k)));
+      if (!b) return;
+      const all = b.files.map((_, k) => photoUrl(b, k));
+      setUrls(all);
+      // Start on the photo already showing, so it doesn't swap when the list arrives.
+      const at = fallback ? all.indexOf(fallback) : -1;
+      if (at > 0) setI(at);
     });
     return () => {
       live = false;

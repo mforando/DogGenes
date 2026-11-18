@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SiteNav } from "@/components/shared";
+import BreedGallery from "@/components/BreedGallery";
 import JsonLd, { breadcrumbs } from "@/components/JsonLd";
 import { BREED_CODES, breedPage, breedPath, breedSummary, codeOfSlug, slugOf, type BreedPage } from "@/lib/breeds";
 import { data } from "@/lib/tree";
@@ -127,8 +128,14 @@ function Body({ p }: { p: BreedPage }) {
         </div>
         {p.photo && (
           <figure className="bp-photo">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={p.photo} alt={`A ${p.name}`} width={480} height={360} referrerPolicy="no-referrer" />
+            {p.commons ? (
+              // Wikimedia Commons: a single photo (Dog CEO has none of this breed).
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={p.photo} alt={`A ${p.name}`} width={480} height={360} referrerPolicy="no-referrer" />
+            ) : (
+              // Dog CEO: page through every photo of the breed (‹ › or the arrow keys).
+              <BreedGallery code={p.code} name={p.name} fallback={p.photo} />
+            )}
             <figcaption>
               {p.commons ? (
                 <>

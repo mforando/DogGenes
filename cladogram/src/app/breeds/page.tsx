@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { SiteNav } from "@/components/shared";
+import PuppySwatch from "@/components/PuppySwatch";
 import JsonLd, { breadcrumbs } from "@/components/JsonLd";
 import { BREED_CODES, breedPath } from "@/lib/breeds";
 import { data, ringOrder } from "@/lib/tree";
@@ -64,6 +65,8 @@ export default function Page() {
               <ul>
                 {codes.map((c) => (
                   <li key={c}>
+                    {/* The breed's LilPuppies dog, in its family's color. */}
+                    <PuppySwatch code={c} color={cladeVar(data.breeds[c].clade, c)} />
                     <Link href={breedPath(c)}>{data.breeds[c].name}</Link>
                   </li>
                 ))}

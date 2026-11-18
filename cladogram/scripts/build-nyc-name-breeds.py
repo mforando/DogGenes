@@ -1,6 +1,7 @@
 """
 NYC dog names by breed: for each name the names page shows next to a breed, how the dogs with
-that name split across breeds (the circle-packing tooltip on the names page).
+that name split across breeds, and each breed's total number of named dogs (the tooltip on the
+names page places each breed by the share of its dogs with the name).
 
 Input   .cache/nyc/dogs.csv, .cache/nyc/meta.json (as build-nyc-names.py), src/data/nycnames.json
 Output  src/data/nycnamebreeds.json
@@ -38,9 +39,10 @@ def main():
     # Each breed's family on the site's tree (for colour): its study code, or the code or group
     # it borrows its family from (build-nyc-names.py's breed table).
     clade_by_name = {v: k for k, v in tree["clades"].items()}
-    family = {}
+    family, code_of = {}, {}
     for row in nyc.B:
         name, _, code, *rest = row
+        code_of[name] = code if code in tree["breeds"] else None  # the study breed (for its LilPuppies dog)
         fam_from = (rest[1:2] or [None])[0]
         src = code or (fam_from if fam_from and not fam_from.startswith("=") else None)
         if src and src in tree["breeds"]:
@@ -70,7 +72,16 @@ def main():
         rest = counts.drop(keep)
         out[name] = {"n": int(counts.sum()), "b": rows, "other": [int(rest.sum()), int(len(rest))]}
 
-    data = {"breeds": breeds, "clade": [family.get(b) for b in breeds], "names": out}
+    # Every named dog of each breed, counted the same way as the names above.
+    totals = known["breed"].value_counts()
+    data = {
+        "breeds": breeds,
+        "clade": [family.get(b) for b in breeds],
+        "code": [code_of.get(b) for b in breeds],
+        "total": [int(totals.get(b, 0)) for b in breeds],
+        "all": int(len(known)),  # every named dog with a recognized breed: the overall share's base
+        "names": out,
+    }
     with open(OUT, "w", encoding="utf8") as fh:
         json.dump(data, fh, separators=(",", ":"))
     print(f"{len(out)} names, {len(breeds)} breeds -> {OUT} ({os.path.getsize(OUT) // 1024} KB)")

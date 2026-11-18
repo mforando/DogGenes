@@ -321,11 +321,8 @@ body::before {
 .nb-sub { font-size: 0.78rem; color: var(--ink); margin: 0.15rem 0 0.4rem !important; display: flex; align-items: center; gap: 0.35rem; }
 .nb-swatch { display: inline-block; width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--ink); }
 .nb-tip svg { display: block; margin: 0 auto; overflow: visible; }
-.nb-c { fill-opacity: 0.8; stroke: var(--bg-raise); stroke-width: 0.6; }
-.nb-c.other { fill: var(--rule); fill-opacity: 1; }
-.nb-c.hot { fill-opacity: 1; stroke: var(--ink); stroke-width: 3; }
-.nb-l { font-size: 8.5px; fill: #fff; paint-order: stroke; stroke: rgba(0, 0, 0, 0.45); stroke-width: 2px; pointer-events: none; }
-.nb-n { font-size: 8px; fill-opacity: 0.85; }
+.nb-c { stroke: rgba(0, 0, 0, 0.7); stroke-width: 0.7; }
+.nb-c.hot { stroke: var(--ink); stroke-width: 2.6; }
 .nb-note { font-size: 0.7rem; color: var(--ink-3); margin-top: 0.35rem !important; }
 .nm-tied li { cursor: default; }
 .hl-key i { flex: none; display: inline-block; }
@@ -1012,6 +1009,10 @@ body::before {
 .ex-loading.done .ex-loadbar { visibility: hidden; }
 .ex-mosaic { position: relative; }
 .ex-canvas { position: sticky; top: var(--ex-bar-h, 54px); display: block; outline: none; }
+/* Hidden until every photo sheet has loaded, then faded in whole (ExplorerMosaic). */
+.ex-canvas { opacity: 0; transition: opacity .5s ease; }
+.ex-canvas.ready { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .ex-canvas { transition: none; } }
 .ex-canvas:focus-visible { box-shadow: inset 0 0 0 2px var(--gold); }
 .ex-tip {
   position: absolute; top: 0; left: 0; pointer-events: none; z-index: 5; opacity: 0;
@@ -1925,6 +1926,9 @@ body::before {
 .bp-facts dd { margin: 0.1rem 0 0; color: var(--ink); }
 .bp-photo { margin: 0; }
 .bp-photo img { width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 6px; border: 1px solid var(--rule); background: var(--bg-raise); display: block; }
+/* The photo gallery on a breed page: the frame takes the photo's border and corners. */
+.bp-photo .bg-frame { border-radius: 6px; border: 1px solid var(--rule); background: var(--bg-raise); }
+.bp-photo .bg-frame img { border: 0; border-radius: 0; aspect-ratio: auto; height: 100%; }
 .bp-photo figcaption { font-family: var(--font-label); font-size: 0.72rem; color: var(--ink-3); margin-top: 0.4rem; }
 .bp-photo figcaption a, .bp-src a, .bp-more a { color: var(--ink-2); }
 .bp-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2.2rem clamp(1.5rem, 4vw, 3rem); }
@@ -1949,6 +1953,10 @@ a.bp-link:hover { color: var(--gold); }
 .bp-dir h2 { font-family: var(--font-label); font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-2); margin: 0 0 0.5rem; font-weight: 500; }
 .bp-dir ul { list-style: none; margin: 0; padding: 0; }
 .bp-dir a { color: var(--ink); text-decoration: none; line-height: 1.9; }
+/* Each breed's LilPuppies dog before its name (a square for the few without one), in a fixed slot so names line up. */
+.bp-dir li { display: flex; align-items: center; gap: 0.55rem; }
+.bp-dir li > .pup-swatch { width: 1.6em; text-align: center; }
+.bp-dir li > i { width: 9px; height: 9px; border-radius: 2px; flex: none; margin: 0 calc((1.6 * 1.45em - 9px) / 2); } /* the dog slot: 1.6em of its 1.45em text */
 .bp-dir a:hover { color: var(--gold); }
 .src-az { display: flex; flex-wrap: wrap; gap: 0.35rem 0.9rem; margin: 0 0 1.8rem; font-family: var(--font-label); font-size: 0.8rem; letter-spacing: 0.08em; }
 .src-az a { color: var(--ink-2); text-decoration: none; }
@@ -2169,6 +2177,9 @@ svg [tabindex]:focus-visible { outline: 2px solid var(--gold); outline-offset: 2
 /* The full chart as the scroller's last step: its details fill the side panel, which scrolls. */
 .tip-dock[data-replica] { align-self: stretch; overflow-y: auto; overscroll-behavior: contain; pointer-events: auto; scrollbar-width: thin; }
 .tip-dock .dock-replica { position: static; max-height: none; overflow: visible; }
+/* Like every other step's side panel: no card around the details, and the same top padding. */
+.tip-dock .dock-replica .cd-empty, .tip-dock .dock-replica .cd-panel,
+:root[data-theme="light"] .tip-dock .dock-replica .cd-empty, :root[data-theme="light"] .tip-dock .dock-replica .cd-panel { background: none; border: 0; box-shadow: none; padding: 0; }
 .step .replica-side .replica-details { position: static; max-height: none; overflow: visible; margin: 0 0 1.4rem; }
 
 /* The step read-out above the chart opens a list of every step (StepMenu.tsx). */
@@ -2227,18 +2238,33 @@ svg [tabindex]:focus-visible { outline: 2px solid var(--gold); outline-offset: 2
 .about-stage { position: sticky; top: 0; height: 100svh; display: grid; align-items: center; justify-items: center; }
 .about-frame { grid-area: 1 / 1; opacity: 0; transform: translateY(10px); transition: opacity .45s ease, transform .45s ease; }
 .about-frame.on { opacity: 1; transform: none; }
-.about-steps { list-style: none; margin: 0; padding: 6vh 0 14vh; }
+/* The first step starts level with the photo: half the screen down, less half a step. */
+.about-steps { list-style: none; margin: 0; padding: calc(50svh - 21vh) 0 14vh; }
 .about-steps li { min-height: 42vh; display: flex; flex-direction: column; justify-content: center; opacity: 0.3; transition: opacity .3s ease; }
 .about-steps li.on { opacity: 1; }
 .about-steps h3 { font-family: var(--font-display); font-weight: 500; font-size: 1.6rem; color: var(--ink); margin: 0 0 0.35rem; }
 .about-steps p { margin: 0; font-family: var(--font-label); font-size: 0.95rem; color: var(--ink-2); }
+/* Each dog's breed or mix: the breeds' LilPuppies dogs and names. */
+.about-breeds { display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem 0.5rem; margin: 0.9rem 0 0 !important; }
+.about-breeds-k { font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); margin-right: 0.2rem; }
+.about-breeds-j { color: var(--ink-3); }
+.about-breed { display: inline-flex; align-items: center; gap: 0.35rem; color: var(--ink); }
+.about-breed a { color: inherit; text-decoration: none; border-bottom: 1px solid var(--rule); }
+.about-breed a:hover { border-bottom-color: var(--gold); }
+.about-breed-dog { font-family: "LilPuppies"; font-size: 2em; line-height: 1; }
+.about-breed-alt { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 0.35rem 0.5rem; }
+.about-breed-alt::before { content: "("; color: var(--ink-3); }
+.about-breed-alt::after { content: ")"; color: var(--ink-3); }
 @media (prefers-reduced-motion: reduce) { .about-frame, .about-steps li { transition: none; } .about-frame { transform: none; } }
 /* Phones: the photo pinned at the top of the screen, the text scrolling up beneath it. */
 @media (max-width: 640px) {
   .about-scroller { grid-template-columns: 1fr; }
-  .about-stage { top: 48px; height: 46svh; z-index: 2; background: var(--bg); }
+  .about-stage { top: 0; height: 48svh; z-index: 2; background: var(--bg); }
   .about-photo { max-height: 44svh; }
   .about-steps { padding: 1vh 0 22vh; text-align: center; }
+  /* Each part of the mix on its own line. */
+  .about-breeds { flex-direction: column; gap: 0.25rem; }
+  .about-breed-alt { justify-content: center; }
   .about-steps li { min-height: 34vh; justify-content: flex-start; padding-top: 1.2rem; }
 }
 /* Each dog the same height, centred in its column, shrunk to fit if need be. */
@@ -2250,3 +2276,14 @@ svg [tabindex]:focus-visible { outline: 2px solid var(--gold); outline-offset: 2
 .about-glow { fill: none; stroke: var(--halo); stroke-opacity: 0.55; stroke-linejoin: round; }
 .about-line { fill: none; stroke: var(--halo); stroke-linejoin: round; }
 /* A dog cut out of its photo's background stands on the card itself. */
+/* The names tooltip's beeswarm axis: share of each breed's dogs with the name. */
+.nb-axis-title { font-size: 0.72rem; font-weight: 600; color: var(--ink); margin: 0.1rem 0 0 !important; }
+.nb-axis line { stroke: var(--ink-2); stroke-width: 1; }
+.nb-axis text { font-size: 9.5px; fill: var(--ink-2); font-family: var(--font-label); }
+.nb-mid { stroke: var(--ink-3); stroke-width: 1; stroke-dasharray: 1 2; }
+.nb-in { pointer-events: none; }
+.nb-dog { font-family: "LilPuppies"; }
+.nb-name { font-family: var(--font-label); font-size: 9px; font-weight: 600; }
+.nb-overall line { stroke: var(--ink); stroke-width: 2.2; }
+.nb-overall-k { font-size: 7.5px; font-weight: 600; letter-spacing: 0.04em; fill: var(--ink); font-family: var(--font-label); }
+.nb-overall-v { font-size: 11px; font-weight: 700; fill: var(--ink); font-family: var(--font-label); }

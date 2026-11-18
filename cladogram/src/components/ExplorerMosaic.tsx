@@ -339,6 +339,16 @@ export default function ExplorerMosaic({ arrange, tileSize, spotlight, selected,
     // ---------- sprite sheets ----------
     const sheets: (HTMLImageElement | null)[] = new Array(EX.sheets).fill(null);
     let loaded = 0;
+    // The mosaic stays hidden until every sheet has arrived (or failed), then shows complete,
+    // instead of filling in patch by patch; the loading bar above it shows the progress.
+    let settled = 0;
+    let ready = false;
+    const settle = () => {
+      if (++settled < EX.sheets) return;
+      ready = true;
+      canvas.classList.add("ready");
+      draw();
+    };
     const loadSheet = (k: number) =>
       new Promise<void>((res) => {
         const img = new Image();
@@ -347,10 +357,13 @@ export default function ExplorerMosaic({ arrange, tileSize, spotlight, selected,
           sheets[k] = img;
           loaded += Math.min(EX.perSheet, N - k * EX.perSheet);
           cb.current.onProgress(loaded);
-          draw();
+          settle();
           res();
         };
-        img.onerror = () => res();
+        img.onerror = () => {
+          settle();
+          res();
+        };
         img.src = `${BASE}/explorer/sheet-${k}.jpg`;
       });
     // Two at a time, in order, so the top of the mosaic fills in first.
@@ -432,7 +445,7 @@ export default function ExplorerMosaic({ arrange, tileSize, spotlight, selected,
     let layoutSerial = 0;
 
     function draw() {
-      if (!layout) return;
+      if (!layout || !ready) return;
       GOLD = tone("#e8b74a", LIGHT.gold);
       const off = offset();
       if (layout.mosaic && !animating) {
@@ -600,7 +613,7 @@ export default function ExplorerMosaic({ arrange, tileSize, spotlight, selected,
     let paintRank: Uint32Array | null = null;
     let reach = 0, reachOf: Layout | null = null;
     function tileAt(px: number, py: number) {
-      if (!layout || animating) return -1;
+      if (!layout || animating || !ready) return -1;
       if (layout.paint && !paintRank) {
         paintRank = new Uint32Array(N);
         layout.paint.forEach((i, r) => (paintRank![i] = r));
